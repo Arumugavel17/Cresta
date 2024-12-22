@@ -1,0 +1,5 @@
+# ninja log v6
+13	67	7565995678393999	Editor/CMakeFiles/Editor.dir/src/Main.cpp.obj	fc3d4207559d553e
+3	295	7565995678242747	Engine/CMakeFiles/ProjectA.dir/src/App.cpp.obj	23d6f72838336d3f
+295	363	7565995681254528	Engine/ProjectA.lib	f59e9a84b31b474e
+364	770	7565995681951611	Editor/Editor.exe	513606b06d512083

@@ -1,0 +1,101 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "Engine",
+					"jsonFile" : "directory-Engine-Debug-e7cda9100e735d363573.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Engine",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "Editor",
+					"jsonFile" : "directory-Editor-Debug-7a308ff03f205fcb7b81.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Editor",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2
+					],
+					"name" : "Cresta",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 2,
+					"id" : "Editor::@b58ce4ae47b5f4fc4f99",
+					"jsonFile" : "target-Editor-Debug-a5be8326aa7357a8dedd.json",
+					"name" : "Editor",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "ProjectA::@8f69bdd092c897d92c1e",
+					"jsonFile" : "target-ProjectA-Debug-b35964a9d39ebf0ff56c.json",
+					"name" : "ProjectA",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/dev/Cresta/out/build/x64-debug",
+		"source" : "C:/dev/Cresta"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

@@ -1,0 +1,8 @@
+C:/dev/Cresta/out/build/x64-debug/CMakeFiles/edit_cache.dir
+C:/dev/Cresta/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
+C:/dev/Cresta/out/build/x64-debug/Engine/CMakeFiles/ProjectA.dir
+C:/dev/Cresta/out/build/x64-debug/Engine/CMakeFiles/edit_cache.dir
+C:/dev/Cresta/out/build/x64-debug/Engine/CMakeFiles/rebuild_cache.dir
+C:/dev/Cresta/out/build/x64-debug/Editor/CMakeFiles/Editor.dir
+C:/dev/Cresta/out/build/x64-debug/Editor/CMakeFiles/edit_cache.dir
+C:/dev/Cresta/out/build/x64-debug/Editor/CMakeFiles/rebuild_cache.dir
