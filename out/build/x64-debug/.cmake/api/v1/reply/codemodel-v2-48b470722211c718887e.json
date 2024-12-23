@@ -1,0 +1,368 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						10
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "Engine",
+					"childIndexes" : 
+					[
+						2,
+						7
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Engine-Debug-e7cda9100e735d363573.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "Engine",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "Engine/vendor/assimp",
+					"childIndexes" : 
+					[
+						3,
+						4,
+						5
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Engine.vendor.assimp-Debug-e2b51be15d4e6fb1b635.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.22"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "Engine/vendor/assimp",
+					"targetIndexes" : 
+					[
+						2,
+						6
+					]
+				},
+				{
+					"build" : "Engine/vendor/assimp/contrib/zlib",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Engine.vendor.assimp.contrib.zlib-Debug-458ebc8c7860f34768eb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 3,
+					"source" : "Engine/vendor/assimp/contrib/zlib",
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"build" : "Engine/vendor/assimp/code",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Engine.vendor.assimp.code-Debug-d0338f88d0fc78603b2c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.22"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 2,
+					"source" : "Engine/vendor/assimp/code",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "Engine/vendor/assimp/test",
+					"childIndexes" : 
+					[
+						6
+					],
+					"jsonFile" : "directory-Engine.vendor.assimp.test-Debug-7e7523b939c8f03e2713.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 2,
+					"source" : "Engine/vendor/assimp/test",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "Engine/vendor/assimp/test/headercheck",
+					"jsonFile" : "directory-Engine.vendor.assimp.test.headercheck-Debug-e6da5b397a0a3a995c7a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 2,
+					"source" : "Engine/vendor/assimp/test/headercheck"
+				},
+				{
+					"build" : "Engine/vendor/glfw",
+					"childIndexes" : 
+					[
+						8,
+						9
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Engine.vendor.glfw-Debug-9faaf3e7ba2f8991551a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 4,
+					"source" : "Engine/vendor/glfw"
+				},
+				{
+					"build" : "Engine/vendor/glfw/src",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Engine.vendor.glfw.src-Debug-f1747e2147dc1342c426.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 4,
+					"source" : "Engine/vendor/glfw/src",
+					"targetIndexes" : 
+					[
+						5,
+						8
+					]
+				},
+				{
+					"build" : "Engine/vendor/glfw/docs",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Engine.vendor.glfw.docs-Debug-07df280b766564460dc1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 4,
+					"source" : "Engine/vendor/glfw/docs",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "Editor",
+					"jsonFile" : "directory-Editor-Debug-7a308ff03f205fcb7b81.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Editor",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						10
+					],
+					"name" : "Cresta",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						2,
+						4
+					],
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "Engine",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						3
+					],
+					"directoryIndexes" : 
+					[
+						2,
+						4,
+						5,
+						6
+					],
+					"name" : "Assimp",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						2,
+						3,
+						6,
+						7
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "zlib",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						7,
+						8,
+						9
+					],
+					"name" : "GLFW",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						4,
+						5,
+						8
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 10,
+					"id" : "Editor::@b58ce4ae47b5f4fc4f99",
+					"jsonFile" : "target-Editor-Debug-6dd9f9dc6259a66042ff.json",
+					"name" : "Editor",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "Engine::@8f69bdd092c897d92c1e",
+					"jsonFile" : "target-Engine-Debug-cf1ed941123e70126d48.json",
+					"name" : "Engine",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "UpdateAssimpLibsDebugSymbolsAndDLLs::@5c9022b24e872c99a62d",
+					"jsonFile" : "target-UpdateAssimpLibsDebugSymbolsAndDLLs-Debug-88bdee88494d771385db.json",
+					"name" : "UpdateAssimpLibsDebugSymbolsAndDLLs",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "assimp::@8345882b6b251551862a",
+					"jsonFile" : "target-assimp-Debug-0a82f0e30c895114f0f3.json",
+					"name" : "assimp",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "docs::@ef224a3b2279b628cfdc",
+					"jsonFile" : "target-docs-Debug-466de28af1da5e7793e1.json",
+					"name" : "docs",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "glfw::@3fe0b369d9dfa6178f0b",
+					"jsonFile" : "target-glfw-Debug-db247a64a3e408cdb62b.json",
+					"name" : "glfw",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "uninstall::@5c9022b24e872c99a62d",
+					"jsonFile" : "target-uninstall-Debug-b5927812361cb6540bdd.json",
+					"name" : "uninstall",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "unit::@3b57f40c955af24fce4a",
+					"jsonFile" : "target-unit-Debug-ab6d71b3f01f354a8eef.json",
+					"name" : "unit",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "update_mappings::@3fe0b369d9dfa6178f0b",
+					"jsonFile" : "target-update_mappings-Debug-7c7f5dea5b18e90a8eee.json",
+					"name" : "update_mappings",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zlibstatic::@255568f266026340433b",
+					"jsonFile" : "target-zlibstatic-Debug-977a6679f1b2f650a55b.json",
+					"name" : "zlibstatic",
+					"projectIndex" : 3
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/dev/Cresta/out/build/x64-debug",
+		"source" : "C:/dev/Cresta"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

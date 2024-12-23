@@ -1,0 +1,548 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "Engine/vendor/glfw/src/glfw3d.dll"
+		},
+		{
+			"path" : "Engine/vendor/glfw/src/glfw3ddll.lib"
+		},
+		{
+			"path" : "Engine/vendor/glfw/src/glfw3d.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"install",
+			"target_compile_options",
+			"target_compile_definitions",
+			"include_directories",
+			"target_include_directories",
+			"set_target_properties",
+			"target_sources"
+		],
+		"files" : 
+		[
+			"Engine/vendor/glfw/src/CMakeLists.txt",
+			"Engine/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 2,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 357,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 246,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 255,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 278,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 41,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 37,
+				"parent" : 7
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 133,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 136,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 123,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 16,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 42,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 112,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "/W3"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 4,
+					"define" : "UNICODE"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "_CRT_SECURE_NO_WARNINGS"
+				},
+				{
+					"define" : "_GLFW_BUILD_DLL"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "_GLFW_WIN32"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "_UNICODE"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 8,
+					"path" : "C:/dev/Cresta/Engine/vendor/Jolt"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "C:/dev/Cresta/Engine/vendor/glfw/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/dev/Cresta/Engine/vendor/glfw/src"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/dev/Cresta/out/build/x64-debug/Engine/vendor/glfw/src"
+				}
+			],
+			"language" : "C",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					11
+				],
+				"standard" : "99"
+			},
+			"sourceIndexes" : 
+			[
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				16,
+				17,
+				18,
+				19,
+				22,
+				23,
+				24,
+				27,
+				28,
+				29,
+				30,
+				31
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-DWIN32 -D_DEBUG"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 4,
+					"define" : "UNICODE"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "_CRT_SECURE_NO_WARNINGS"
+				},
+				{
+					"define" : "_GLFW_BUILD_DLL"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "_GLFW_WIN32"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "_UNICODE"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 8,
+					"path" : "C:/dev/Cresta/Engine/vendor/Jolt"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "C:/dev/Cresta/Engine/vendor/glfw/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/dev/Cresta/Engine/vendor/glfw/src"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/dev/Cresta/out/build/x64-debug/Engine/vendor/glfw/src"
+				}
+			],
+			"language" : "RC",
+			"sourceIndexes" : 
+			[
+				32
+			]
+		}
+	],
+	"folder" : 
+	{
+		"name" : "GLFW3"
+	},
+	"id" : "glfw::@3fe0b369d9dfa6178f0b",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 2,
+				"path" : "lib"
+			},
+			{
+				"backtrace" : 2,
+				"path" : "bin"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "C:/dev/Cresta/out/install/x64-debug"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64 /debug /INCREMENTAL",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "C"
+	},
+	"name" : "glfw",
+	"nameOnDisk" : "glfw3d.dll",
+	"paths" : 
+	{
+		"build" : "Engine/vendor/glfw/src",
+		"source" : "Engine/vendor/glfw/src"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				14,
+				15,
+				20,
+				21,
+				25,
+				26
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				16,
+				17,
+				18,
+				19,
+				22,
+				23,
+				24,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/glfw/include/GLFW/glfw3.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/glfw/include/GLFW/glfw3native.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/glfw/src/internal.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/glfw/src/platform.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/glfw/src/mappings.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/context.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/init.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/input.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/monitor.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/platform.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/vulkan.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/window.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/egl_context.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/osmesa_context.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/glfw/src/null_platform.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/glfw/src/null_joystick.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/null_init.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/null_monitor.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/null_window.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/null_joystick.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 12,
+			"path" : "Engine/vendor/glfw/src/win32_time.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 12,
+			"path" : "Engine/vendor/glfw/src/win32_thread.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 12,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/win32_module.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 12,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/win32_time.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 12,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/win32_thread.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 13,
+			"path" : "Engine/vendor/glfw/src/win32_platform.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 13,
+			"path" : "Engine/vendor/glfw/src/win32_joystick.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 13,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/win32_init.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 13,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/win32_joystick.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 13,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/win32_monitor.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 13,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/win32_window.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 13,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/glfw/src/wgl_context.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 14,
+			"compileGroupIndex" : 1,
+			"path" : "out/build/x64-debug/Engine/vendor/glfw/src/glfw.rc",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

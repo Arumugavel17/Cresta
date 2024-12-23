@@ -1,0 +1,381 @@
+{
+	"archive" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64",
+				"role" : "flags"
+			}
+		]
+	},
+	"artifacts" : 
+	[
+		{
+			"path" : "Engine/Engined.lib"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"target_link_libraries",
+			"add_custom_command",
+			"target_compile_options",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"Engine/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 16,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 42,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 49,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 59,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 26,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++17"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/W4"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 2,
+					"define" : "GLFW_DLL"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/src"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/glad"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/imgui"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/stbi_image"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/assimp/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/glfw/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/glm"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/Jolt"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/dev/Cresta/Engine/vendor/assimp/code/../include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/dev/Cresta/out/build/x64-debug/Engine/vendor/assimp/code/../include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				1,
+				3,
+				4,
+				5,
+				7,
+				11,
+				12,
+				17
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/W4"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 2,
+					"define" : "GLFW_DLL"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/src"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/glad"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/imgui"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/stbi_image"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/assimp/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/glfw/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/glm"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/dev/Cresta/Engine/vendor/Jolt"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/dev/Cresta/Engine/vendor/assimp/code/../include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/dev/Cresta/out/build/x64-debug/Engine/vendor/assimp/code/../include"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				16
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "zlibstatic::@255568f266026340433b"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "assimp::@8345882b6b251551862a"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "glfw::@3fe0b369d9dfa6178f0b"
+		}
+	],
+	"id" : "Engine::@8f69bdd092c897d92c1e",
+	"name" : "Engine",
+	"nameOnDisk" : "Engined.lib",
+	"paths" : 
+	{
+		"build" : "Engine",
+		"source" : "Engine"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				2,
+				6,
+				8,
+				9,
+				10,
+				13,
+				14,
+				15
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				1,
+				3,
+				4,
+				5,
+				7,
+				11,
+				12,
+				16,
+				17
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imconfig.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/imgui/imgui/imgui.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imgui.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/imgui/imgui/imgui_demo.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/imgui/imgui/imgui_draw.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/imgui/imgui/imgui_impl_glfw.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imgui_impl_glfw.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/imgui/imgui/imgui_impl_opengl3.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imgui_impl_opengl3.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imgui_impl_opengl3_loader.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imgui_internal.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/imgui/imgui/imgui_tables.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/imgui/imgui/imgui_widgets.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imstb_rectpack.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imstb_textedit.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Engine/vendor/imgui/imgui/imstb_truetype.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "Engine/vendor/glad/glad/glad.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Engine/vendor/stbi_image/stbi_image.cpp",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

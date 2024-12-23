@@ -1,0 +1,63 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target"
+		],
+		"files" : 
+		[
+			"Engine/vendor/glfw/docs/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 49,
+				"parent" : 0
+			}
+		]
+	},
+	"folder" : 
+	{
+		"name" : "GLFW3"
+	},
+	"id" : "docs::@ef224a3b2279b628cfdc",
+	"name" : "docs",
+	"paths" : 
+	{
+		"build" : "Engine/vendor/glfw/docs",
+		"source" : "Engine/vendor/glfw/docs"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"isGenerated" : true,
+			"path" : "out/build/x64-debug/Engine/vendor/glfw/docs/html/index.html",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"path" : "out/build/x64-debug/Engine/vendor/glfw/docs/Doxyfile",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "UTILITY"
+}

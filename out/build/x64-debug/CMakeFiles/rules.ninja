@@ -26,9 +26,18 @@ rule CUSTOM_COMMAND
 
 
 #############################################
+# Rule for compiling C files.
+
+rule C_COMPILER__Engine_unscanned_Debug
+  deps = msvc
+  command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\cl.exe  /nologo $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
+  description = Building C object $out
+
+
+#############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__ProjectA_unscanned_Debug
+rule CXX_COMPILER__Engine_unscanned_Debug
   deps = msvc
   command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\cl.exe  /nologo /TP $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
   description = Building CXX object $out
@@ -37,9 +46,123 @@ rule CXX_COMPILER__ProjectA_unscanned_Debug
 #############################################
 # Rule for linking CXX static library.
 
-rule CXX_STATIC_LIBRARY_LINKER__ProjectA_Debug
+rule CXX_STATIC_LIBRARY_LINKER__Engine_Debug
   command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\lib.exe /nologo $LINK_FLAGS /out:$TARGET_FILE $in && $POST_BUILD"
   description = Linking CXX static library $TARGET_FILE
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling C files.
+
+rule C_COMPILER__zlibstatic_unscanned_Debug
+  deps = msvc
+  command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\cl.exe  /nologo $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
+  description = Building C object $out
+
+
+#############################################
+# Rule for linking C static library.
+
+rule C_STATIC_LIBRARY_LINKER__zlibstatic_Debug
+  command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\lib.exe /nologo $LINK_FLAGS /out:$TARGET_FILE $in && $POST_BUILD"
+  description = Linking C static library $TARGET_FILE
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling C files.
+
+rule C_COMPILER__assimp_unscanned_Debug
+  deps = msvc
+  command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\cl.exe  /nologo $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
+  description = Building C object $out
+
+
+#############################################
+# Rule for compiling CXX files.
+
+rule CXX_COMPILER__assimp_unscanned_Debug
+  deps = msvc
+  command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\cl.exe  /nologo /TP $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
+  description = Building CXX object $out
+
+
+#############################################
+# Rule for compiling RC files.
+
+rule RC_COMPILER__assimp_unscanned_Debug
+  depfile = $DEP_FILE
+  deps = gcc
+  command = C:/PROGRA~1/MIB055~1/2022/COMMUN~1/Common7/IDE/COMMON~1/MICROS~1/CMake/CMake/bin/cmcldeps.exe RC $in $DEP_FILE $out "Note: including file: " "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.42.34433/bin/Hostx64/x64/cl.exe" ${LAUNCHER}${CODE_CHECK}C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\rc.exe $DEFINES $INCLUDES $FLAGS /fo $out $in
+  description = Building RC object $out
+
+
+#############################################
+# Rule for linking CXX shared library.
+
+rule CXX_SHARED_LIBRARY_LINKER__assimp_Debug
+  command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E vs_link_dll --intdir=$OBJECT_DIR --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\mt.exe --manifests $MANIFESTS -- C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\link.exe /nologo @$RSP_FILE  /out:$TARGET_FILE /implib:$TARGET_IMPLIB /pdb:$TARGET_PDB /dll /version:5.4 $LINK_FLAGS && $POST_BUILD"
+  description = Linking CXX shared library $TARGET_FILE
+  rspfile = $RSP_FILE
+  rspfile_content = $in_newline $LINK_PATH $LINK_LIBRARIES
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling C files.
+
+rule C_COMPILER__unit_unscanned_Debug
+  deps = msvc
+  command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\cl.exe  /nologo $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
+  description = Building C object $out
+
+
+#############################################
+# Rule for compiling CXX files.
+
+rule CXX_COMPILER__unit_unscanned_Debug
+  deps = msvc
+  command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\cl.exe  /nologo /TP $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
+  description = Building CXX object $out
+
+
+#############################################
+# Rule for linking CXX executable.
+
+rule CXX_EXECUTABLE_LINKER__unit_Debug
+  command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E vs_link_exe --intdir=$OBJECT_DIR --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\mt.exe --manifests $MANIFESTS -- C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\link.exe /nologo @$RSP_FILE  /out:$TARGET_FILE /implib:$TARGET_IMPLIB /pdb:$TARGET_PDB /version:0.0 $LINK_FLAGS && $POST_BUILD"
+  description = Linking CXX executable $TARGET_FILE
+  rspfile = $RSP_FILE
+  rspfile_content = $in_newline $LINK_PATH $LINK_LIBRARIES
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling C files.
+
+rule C_COMPILER__glfw_unscanned_Debug
+  deps = msvc
+  command = ${LAUNCHER}${CODE_CHECK}C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\cl.exe  /nologo $DEFINES $INCLUDES $FLAGS /showIncludes /Fo$out /Fd$TARGET_COMPILE_PDB /FS -c $in
+  description = Building C object $out
+
+
+#############################################
+# Rule for compiling RC files.
+
+rule RC_COMPILER__glfw_unscanned_Debug
+  depfile = $DEP_FILE
+  deps = gcc
+  command = C:/PROGRA~1/MIB055~1/2022/COMMUN~1/Common7/IDE/COMMON~1/MICROS~1/CMake/CMake/bin/cmcldeps.exe RC $in $DEP_FILE $out "Note: including file: " "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.42.34433/bin/Hostx64/x64/cl.exe" ${LAUNCHER}${CODE_CHECK}C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\rc.exe $DEFINES $INCLUDES $FLAGS /fo $out $in
+  description = Building RC object $out
+
+
+#############################################
+# Rule for linking C shared library.
+
+rule C_SHARED_LIBRARY_LINKER__glfw_Debug
+  command = C:\WINDOWS\system32\cmd.exe /C "$PRE_LINK && "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E vs_link_dll --intdir=$OBJECT_DIR --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100261~1.0\x64\mt.exe --manifests $MANIFESTS -- C:\PROGRA~1\MIB055~1\2022\COMMUN~1\VC\Tools\MSVC\1442~1.344\bin\Hostx64\x64\link.exe /nologo $in  /out:$TARGET_FILE /implib:$TARGET_IMPLIB /pdb:$TARGET_PDB /dll /version:3.5 $LINK_FLAGS $LINK_PATH $LINK_LIBRARIES && $POST_BUILD"
+  description = Linking C shared library $TARGET_FILE
   restat = $RESTAT
 
 

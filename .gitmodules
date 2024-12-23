@@ -1,0 +1,15 @@
+[submodule "Editor/vendor/JoltPhysics"]
+	path = Editor/vendor/JoltPhysics
+	url = https://github.com/jrouwe/JoltPhysics.git
+[submodule "Engine/vendor/JoltPhysics"]
+	path = Engine/vendor/JoltPhysics
+	url = https://github.com/jrouwe/JoltPhysics.git
+[submodule "Engine/vendor/glm"]
+	path = Engine/vendor/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "Engine/vendor/glfw"]
+	path = Engine/vendor/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "Engine/vendor/assimp"]
+	path = Engine/vendor/assimp
+	url = https://github.com/assimp/assimp.git

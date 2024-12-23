@@ -1,0 +1,58 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"Engine/vendor/glfw/src/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 357,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"Engine/vendor/glfw/src/glfw3ddll.lib"
+			],
+			"targetId" : "glfw::@3fe0b369d9dfa6178f0b",
+			"targetIndex" : 5,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"Engine/vendor/glfw/src/glfw3d.dll"
+			],
+			"targetId" : "glfw::@3fe0b369d9dfa6178f0b",
+			"targetIndex" : 5,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "Engine/vendor/glfw/src",
+		"source" : "Engine/vendor/glfw/src"
+	}
+}
