@@ -1,5 +1,4 @@
 #pragma once
-#include "Core/Events/Event.hpp"
 #include "Core/Application.hpp"
 
 namespace Cresta {

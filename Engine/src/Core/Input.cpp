@@ -2,11 +2,11 @@
 #include "Platform/OpenGL/OpenGLInput.hpp"
 
 namespace Cresta {
-	std::unique_ptr<Cresta::Input> Cresta::Input::s_InputClass = nullptr;
+	Cresta::Input* Cresta::Input::s_InputClass = Input::Create();
 
-	void Input::Create()
+	Input* Input::Create()
 	{
-		Input::s_InputClass = std::make_unique<OpenGLInput>();
+		return new OpenGLInput();
 	}
 
 	bool Input::GetKeyDown(KeyCode key)

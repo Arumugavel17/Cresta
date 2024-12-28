@@ -95,13 +95,13 @@ file(GLOB IMGUI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*
 
 message("SOURCE_DIR" ${PROJECT_SOURCE_DIR} " " ${CMAKE_CURRENT_SOURCE_DIR})
 
-file(GLOB_RECURSE SRC_SOURCES ${PROJECT_SOURCE_DIR}/Engine/src/*.cpp)
+file(GLOB_RECURSE ENGINE_SRC_SOURCES ${PROJECT_SOURCE_DIR}/Engine/src/*.cpp)
 
-file(GLOB_RECURSE SRC_HEADERS ${PROJECT_SOURCE_DIR}/Engine/src/*.hpp)
+file(GLOB_RECURSE ENGINE_SRC_HEADERS ${PROJECT_SOURCE_DIR}/Engine/src/*.hpp)
 
-file(GLOB_RECURSE VENDOR_SOURCES ${PROJECT_SOURCE_DIR}/Engine/vendor/glad/*.cpp ${PROJECT_SOURCE_DIR}/Engine/vendor/imgui/*.cpp ${PROJECT_SOURCE_DIR}/Engine/vendor/stbi_image/*.cpp)
+file(GLOB_RECURSE ENGINE_VENDOR_SOURCES ${PROJECT_SOURCE_DIR}/Engine/vendor/glad/*.cpp ${PROJECT_SOURCE_DIR}/Engine/vendor/imgui/*.cpp ${PROJECT_SOURCE_DIR}/Engine/vendor/stbi_image/*.cpp)
 
-file(GLOB_RECURSE VENDOR_HEADERS ${PROJECT_SOURCE_DIR}/Engine/vendor/glad/*.hpp ${PROJECT_SOURCE_DIR}/Engine/vendor/imgui/*.hpp ${PROJECT_SOURCE_DIR}/Engine/vendor/stbi_image/*.hpp)
+file(GLOB_RECURSE ENGINE_VENDOR_HEADERS ${PROJECT_SOURCE_DIR}/Engine/vendor/glad/*.hpp ${PROJECT_SOURCE_DIR}/Engine/vendor/imgui/*.hpp ${PROJECT_SOURCE_DIR}/Engine/vendor/stbi_image/*.hpp)
 
 message(STATUS "UTF-8 Unicode support is enabled")
 
@@ -111,11 +111,10 @@ STATIC
 		"Engine/src/EntryPoint.cpp"
 		"Engine/vendor/glad/glad/glad.c" 
 		"Engine/vendor/stbi_image/stbi_image.cpp"
-		${SRC_SOURCES} 
-		${SRC_HEADERS}
-		${VENDOR_SOURCES} 
-		${VENDOR_HEADERS}
-)
+		${ENGINE_SRC_SOURCES} 
+		${ENGINE_SRC_HEADERS}
+		${ENGINE_VENDOR_SOURCES} 
+		${ENGINE_VENDOR_HEADERS})
 
 # Include directories for the Engine executable
 target_include_directories(Engine PUBLIC 
@@ -137,17 +136,35 @@ target_link_libraries(Engine
 		Jolt
 )
 
+target_compile_definitions(Engine PRIVATE 
+    $<$<CONFIG:Debug>:DEBUG>
+    $<$<CONFIG:Release>:RELEASE>
+    $<$<CONFIG:RelWithDebInfo>:RELWITHDEBINFO>
+    $<$<CONFIG:MinSizeRel>:MINSIZEREL>
+)
 
 target_compile_options(Engine PRIVATE "/utf-8")
 
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "Engine")
 project(Editor)
 
+file(GLOB_RECURSE ENGINE_SRC_SOURCES ${PROJECT_SOURCE_DIR}/Editor/src/*.cpp)
+
+file(GLOB_RECURSE ENGINE_SRC_HEADERS ${PROJECT_SOURCE_DIR}/Editor/src/*.hpp)
+
 add_executable(Editor
-	Editor/src/EditorApplication.cpp
+    ${ENGINE_SRC_SOURCES}
+    ${ENGINE_SRC_HEADERS}
+    ) 
+target_compile_definitions(Editor PRIVATE 
+    $<$<CONFIG:Debug>:DEBUG>
+    $<$<CONFIG:Release>:RELEASE>
+    $<$<CONFIG:RelWithDebInfo>:RELWITHDEBINFO>
+    $<$<CONFIG:MinSizeRel>:MINSIZEREL>
 )
 
 include_directories(Engine/src)
 include_directories(Engine/vendor)
 
+target_compile_options(Editor PRIVATE "/utf-8")
 target_link_libraries(Editor PRIVATE Engine)

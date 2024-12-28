@@ -18,6 +18,8 @@ namespace Cresta {
 		virtual void OnShutDown() = 0;
 		virtual void SetEventCallBack(std::function<void(Event&)> fn) = 0;
 		virtual void SetVSync(bool enabled) = 0;
+		void ResizeViewPort();
+		
 		static Window* Create();
 
 		struct WindowData

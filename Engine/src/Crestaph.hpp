@@ -8,10 +8,13 @@
 
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <array>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+
+#include <cstdint>
 
 #include "Base.hpp"
 #include "Core/Log.hpp"

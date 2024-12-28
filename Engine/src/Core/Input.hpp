@@ -6,7 +6,7 @@
 namespace Cresta {
 	class Input {
 	public:
-		static void Create();
+		static Input* Create();
 
 		static bool GetKeyDown(KeyCode key);
 		static bool GetKeyUp(KeyCode key);
@@ -24,7 +24,7 @@ namespace Cresta {
 
 		virtual std::pair<float, float> GetMousePositionImp() = 0;
 	private:
-		static std::unique_ptr<Input> s_InputClass;
+		static Input* s_InputClass;
 	};
 }
 

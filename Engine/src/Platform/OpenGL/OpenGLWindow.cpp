@@ -7,7 +7,7 @@ namespace Cresta {
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		std::cout << ("GLFW Error ({0}): {1}", error, description);
+		CRESTA_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
 	OpenGLWindow::~OpenGLWindow()
@@ -22,15 +22,12 @@ namespace Cresta {
 
 	void OpenGLWindow::Init()
 	{
-
 		m_Data.Title = "Cresta";
 		m_Data.Width = 1920;
 		m_Data.Height = 1080;
 
-		if (!glfwInit()) {
-			std::cout << " Failed to Initialize GLFW";
-			return;
-		}
+		bool status = glfwInit();	
+		CRESTA_ASSERT(status,"Failed to Initalize GLFW");
 
 		m_Window = glfwCreateWindow( m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
 	
@@ -38,7 +35,6 @@ namespace Cresta {
 
 		glfwMakeContextCurrent(m_Window);
 		
-	
 		glfwSetErrorCallback(GLFWErrorCallback);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -162,6 +158,7 @@ namespace Cresta {
 			glfwSwapInterval(0);
 
 	}
+
 	void* OpenGLWindow::GetWindowContext()
 	{
 		return (void*)m_Window;
