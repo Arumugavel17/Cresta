@@ -42,6 +42,11 @@ namespace Cresta {
 	//Helper Function//////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////
 
+	const glm::vec3 Camera::GetPosition()
+	{
+		return m_CameraPos;
+	}
+
 	const void Camera::SetPosition(glm::vec3& position)
 	{
 		m_CameraPos = position;
@@ -108,5 +113,15 @@ namespace Cresta {
 		m_ViewMatrix = glm::lookAt(m_CameraPos, m_CameraPos + m_CameraFront, m_CameraUp);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 		return m_ViewMatrix;
-	}	
+	}
+
+	void Camera::OnUpdate()
+	{
+
+	}
+
+	void Camera::OnEvent(Event& e)
+	{
+
+	}
 }

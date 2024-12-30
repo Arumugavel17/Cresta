@@ -1,24 +1,19 @@
-#pragma once 
+#pragma once
 #include "Core/Layer.hpp"
 
 namespace Cresta {
-	class EditorLayer : public Layer {
+	class EditorLayer : public Layer{
 	public:
-		virtual void OnEvent();
-		virtual void OnEvent(Event& e);
-		
-		virtual void OnUpdate();
-		virtual void OnAttach();
-		virtual void OnDetach();
-		
-		virtual void OnImGUIRender();
+		EditorLayer() : Layer("Editor Layer") {}
 
-		void Begin();
-		void End();
+		virtual void OnUpdate() override;
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
 
-		void SetDarkThemeColors();
-	
-	private:	
-		bool m_BlockEvents = true;
+		virtual void OnEvent(Event& e) override;
+		virtual void OnImGUIRender() override;
+
+	private:
+
 	};
 }

@@ -13,11 +13,15 @@ namespace Cresta {
 		Window() = default;
 		virtual ~Window() = default;
 		virtual void Init() = 0;
-		virtual void OnUpdate() = 0;
+		virtual void Begin() = 0;
+		virtual void End() = 0;
 		virtual void* GetWindowContext() = 0;
 		virtual void OnShutDown() = 0;
 		virtual void SetEventCallBack(std::function<void(Event&)> fn) = 0;
 		virtual void SetVSync(bool enabled) = 0;
+		virtual uint32_t GetWidth() const = 0;
+		virtual uint32_t GetHeight() const = 0;
+		
 		void ResizeViewPort();
 		
 		static Window* Create();

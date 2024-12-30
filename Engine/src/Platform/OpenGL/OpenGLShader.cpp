@@ -2,7 +2,7 @@
 
 namespace Cresta {
 	
-	OpenGLShader::OpenGLShader(const std::string& filepath)
+	OpenGLShader::OpenGLShader(const std::string& filepath) : Shader(filepath)
 	{
 		m_ProgramID = glCreateProgram();
 

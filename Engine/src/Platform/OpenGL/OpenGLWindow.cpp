@@ -1,4 +1,5 @@
 #include "OpenGLWindow.hpp"
+#include "Renderer/RendererCommand.hpp"
 
 #define HZ_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
@@ -12,7 +13,7 @@ namespace Cresta {
 
 	OpenGLWindow::~OpenGLWindow()
 	{
-
+		glfwDestroyWindow(m_Window);
 	}
 
 	OpenGLWindow::OpenGLWindow()
@@ -139,10 +140,16 @@ namespace Cresta {
 		m_Data.CallBackFunction = fn;
 	}
 
-	void OpenGLWindow::OnUpdate() 
+	void OpenGLWindow::Begin() 
 	{
-		glfwPollEvents();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		RenderCommand::Clear();
+	}
+
+	void OpenGLWindow::End() 
+	{
 		glfwSwapBuffers(m_Window);
+		glfwPollEvents();
 	}
 
 	void OpenGLWindow::OnShutDown()
@@ -156,11 +163,18 @@ namespace Cresta {
 			glfwSwapInterval(1);
 		else
 			glfwSwapInterval(0);
-
 	}
 
 	void* OpenGLWindow::GetWindowContext()
 	{
 		return (void*)m_Window;
+	}
+	uint32_t OpenGLWindow::GetWidth() const
+	{
+		return m_Data.Width;
+	}
+	uint32_t OpenGLWindow::GetHeight() const
+	{
+		return m_Data.Height;
 	}
 }

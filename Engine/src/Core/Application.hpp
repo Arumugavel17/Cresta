@@ -9,33 +9,33 @@
 #include "Core/LayerStack.hpp"
 #include <iostream>
 #include <memory>
+#include "Core/ImGUILayer.hpp"
 
 namespace Cresta {
 	class Application{
 	public:
-		Application() {
-			Log::Init();
-			Application::s_Instance = this;
-			m_Running = true;
-			m_Window = Window::Create();
-		};
+		Application();
+		virtual ~Application();
+		virtual void Run();
+		virtual void OnEvent(Event& e);
+		
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* layer);
 
-		virtual ~Application() = default;
-		virtual void Init() = 0;
-		virtual void Run() = 0;
-		virtual void OnUpdate() = 0;
-		virtual void OnEvent(Event& e) = 0;
-		virtual void FixedUpdate() = 0;
-		virtual void OnImGUI() = 0;
+		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 
-		static bool OnWindowClose(WindowCloseEvent& e);
-		static bool OnWindowResize(WindowResizeEvent& e);
+		void Close();
 		
 		Window& GetWindow() { return *m_Window; }
 		static Application& GetApplication() { return *Application::s_Instance; }
+
 	protected:
+		float m_LastFrameTime = 0.0f;
 		Window* m_Window;
 		bool m_Running;
+		bool m_Minimized;
+		ImGUILayer* m_ImGUILayer;
 		static Application* s_Instance;
 		LayerStack m_LayerStack;
 	};

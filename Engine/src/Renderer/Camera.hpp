@@ -2,6 +2,7 @@
 #include "Crestaph.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp> 
+#include "Core/Events/Event.hpp"
 
 namespace Cresta {
 
@@ -86,6 +87,7 @@ namespace Cresta {
 		
 
 		// Helper Function
+		const glm::vec3 GetPosition();
 		const void SetPosition(glm::vec3& position);
 		const glm::mat4& GetProjectionMatrix() const ;
 		const glm::mat4& GetViewMatrix() const ; 
@@ -94,6 +96,9 @@ namespace Cresta {
 
 		glm::mat4& CalculateProjectionMatrix();
 		glm::mat4& CalculateViewMatrix();
+
+		virtual void OnUpdate();
+		virtual void OnEvent(Event& e);
 
 	private:
 		

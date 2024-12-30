@@ -1,17 +1,20 @@
 #pragma once
 
 #include "Crestaph.hpp"
-
 #include <string>
 #include <unordered_map>
 #include <glm/glm.hpp>
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
 
 namespace Cresta {
 
 	class Shader
 	{
 	public:
-		Shader() = default;
+
+		Shader(const std::string& filepath);
+
 		virtual ~Shader() = default;
 
 		virtual void Bind() const = 0;
@@ -30,11 +33,16 @@ namespace Cresta {
 
 		const std::string& GetFilePath() const { return m_filepath; };
 
+		std::string& ReadFile(const std::string& filepath);
+		std::shared_ptr<std::unordered_map<GLenum, std::string>> PreProcess(const std::string& source);
+		static GLenum ShaderTypeFromString(const std::string& type);
+
 		static std::shared_ptr<Shader> Create(const std::string& filepath);
 		static std::shared_ptr<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 	
 	protected:
 		std::string m_filepath;
+		std::shared_ptr<std::unordered_map<GLenum, std::string>> m_ShaderSrc;
 	};
 
 	class ShaderLibrary

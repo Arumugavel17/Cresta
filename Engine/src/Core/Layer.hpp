@@ -5,10 +5,9 @@
 namespace Cresta {
 	class Layer {
 	public:
-		Layer();
+		Layer(std::string layername) : m_LayerName(layername){}
 		virtual ~Layer() = default;
 
-		virtual void OnEvent() = 0;
 		virtual void OnEvent(Event& e) = 0;
 
 		virtual void OnUpdate() = 0;
@@ -17,8 +16,8 @@ namespace Cresta {
 
 		virtual void OnImGUIRender() = 0;
 		
-		virtual std::string toString() { return LayerName; }
+		virtual std::string toString() { return m_LayerName; }
 	private:
-		std::string LayerName;
+		std::string m_LayerName;
 	};
 }

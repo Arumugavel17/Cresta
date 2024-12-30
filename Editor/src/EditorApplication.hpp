@@ -1,16 +1,15 @@
 #pragma once
 #include "Core/Application.hpp"
+#include "EditorLayer.hpp"
 
 namespace Cresta {
 	class EditorApplication : public Application {
 	public:
-		EditorApplication();
-		void Init();
-		void Run();
-		void OnUpdate();
-		void OnEvent(Event& e);
-		void FixedUpdate();
-		void OnImGUI();
+		EditorApplication::EditorApplication()
+		{
+			EditorLayer* t_EditorLayer = new EditorLayer();
+			PushLayer(t_EditorLayer);
+		}
 	};
 
 	Application* CreateApplication() {

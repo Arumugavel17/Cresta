@@ -13,12 +13,15 @@ namespace Cresta {
 	public:
 		~OpenGLWindow();
 		OpenGLWindow();
-		void OnUpdate() override;
+		void Begin() override;
+		void End() override;
 		void Init() override;
 		void SetEventCallBack(EventCallBackFn fn);
 		void OnShutDown() override;
 		void SetVSync(bool enabled);
 		void* GetWindowContext();
+		uint32_t GetWidth() const ;
+		uint32_t GetHeight() const ;
 	private:
 		EventCallBackFn CallBackFn;
 		GLFWwindow* m_Window;

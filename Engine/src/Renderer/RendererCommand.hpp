@@ -41,6 +41,12 @@ namespace Cresta {
 		{
 			s_RendererAPI->SetLineWidth(width);
 		}
+
+		static float GetTime() 
+		{
+			return s_RendererAPI->GetTime();
+		}
+
 	private:
 		static std::shared_ptr<RendererAPI> s_RendererAPI;
 	};

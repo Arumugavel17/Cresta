@@ -82,6 +82,14 @@ set(CMAKE_EXE_LINKER_FLAGS_DISTRIBUTION "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 # Enable link time optimization in Release and Distribution mode if requested and available
 SET_INTERPROCEDURAL_OPTIMIZATION()
 
+set(SOURCE_FOLDER "${CMAKE_SOURCE_DIR}/Engine/assets")
+
+# Specify the destination directory
+set(DESTINATION_FOLDER "${CMAKE_BINARY_DIR}")
+
+# Copy the folder
+file(COPY ${SOURCE_FOLDER} DESTINATION ${DESTINATION_FOLDER})
+
 #add_subdirectory(Editor)
 add_subdirectory(Engine/vendor/assimp)
 add_subdirectory(Engine/vendor/glfw)
@@ -92,8 +100,7 @@ include_directories(Engine/src/)
 include_directories(Engine/vendor/assimp/include)
 
 file(GLOB IMGUI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*.h")
-
-message("SOURCE_DIR" ${PROJECT_SOURCE_DIR} " " ${CMAKE_CURRENT_SOURCE_DIR})
+file(GLOB IMGUIZMO_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/ImGuizmo/ImGuizmo/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/ImGuizmo/ImGuizmo/*.h")
 
 file(GLOB_RECURSE ENGINE_SRC_SOURCES ${PROJECT_SOURCE_DIR}/Engine/src/*.cpp)
 
@@ -108,6 +115,7 @@ message(STATUS "UTF-8 Unicode support is enabled")
 add_library(Engine
 STATIC
 		${IMGUI_SOURCES}
+		${IMGUIZMO_SOURCES}
 		"Engine/src/EntryPoint.cpp"
 		"Engine/vendor/glad/glad/glad.c" 
 		"Engine/vendor/stbi_image/stbi_image.cpp"
@@ -121,6 +129,7 @@ target_include_directories(Engine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/src
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/glad
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/ImGuizmo
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/stbi_image
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/assimp/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/glfw/include
@@ -168,3 +177,5 @@ include_directories(Engine/vendor)
 
 target_compile_options(Editor PRIVATE "/utf-8")
 target_link_libraries(Editor PRIVATE Engine)
+
+message("SOURCE_DIR" ${PROJECT_SOURCE_DIR} " " ${CMAKE_CURRENT_SOURCE_DIR} " " ${CMAKE_SOURCE_DIR} " " ${CMAKE_BINARY_DIR})
