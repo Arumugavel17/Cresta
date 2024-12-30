@@ -1,7 +1,5 @@
-#include "Application.hpp"
 #include "Core/Application.hpp"
 #include "Crestaph.hpp"
-#include "Renderer/Renderer.hpp"
 
 namespace Cresta
 {
@@ -17,6 +15,7 @@ namespace Cresta
 		m_ImGUILayer = new ImGUILayer();
 		PushOverlay(m_ImGUILayer);
 		m_Window->SetEventCallBack(CRESTA_BIND_EVENT_FN(Application::OnEvent));
+		Init();
 	}
 
 	Application::~Application()
@@ -50,17 +49,18 @@ namespace Cresta
 			{
 				for (Layer* layer : m_LayerStack)
 				{
+
 					layer->OnUpdate();
 				}
 
-				m_ImGUILayer->Begin();
+				/*m_ImGUILayer->Begin();
 				{
 					for (Layer* layer : m_LayerStack)
 					{
 						layer->OnImGUIRender();
 					}
 				}
-				m_ImGUILayer->End();
+				m_ImGUILayer->End();*/
 			}
 			m_Window->End();
 		}
@@ -78,6 +78,10 @@ namespace Cresta
 				break;
 			(*it)->OnEvent(e);
 		}
+	}
+
+	void Application::Init()
+	{
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e) {

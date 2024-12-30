@@ -1,11 +1,12 @@
 #pragma once
 #include "Renderer/VertexArray.hpp"
 #include <glad/glad.h>
-#include <glfw/glfw3.h>
 
 namespace Cresta {
 	class OpenGLVertexArray : public VertexArray
 	{
+	public:
+		OpenGLVertexArray();
 		virtual ~OpenGLVertexArray() = default;
 
 		virtual void Bind() const override;

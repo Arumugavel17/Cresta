@@ -2,16 +2,47 @@
 #include <imgui/imgui.h>
 #include "Core/Application.hpp"
 #include "Renderer/VertexArray.hpp"
+#include "glad/glad.h"
+
 
 namespace Cresta 
 {
-	void EditorLayer::OnUpdate()
+    EditorLayer::EditorLayer() : Layer("Editor Layer")
+    {
+        m_VertexArray = VertexArray::Create();
+        m_Shader = Shader::Create("C:/dev/Cresta/assets/shaders/FlatShader.glsl");
+    }
+    void EditorLayer::OnUpdate()
 	{
-
+        m_Shader->Bind();
+        m_VertexArray->Bind();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
-	void EditorLayer::OnAttach()
+    void EditorLayer::OnAttach()
 	{
+        float vertices[] = {
+            // Positions
+            -0.5f, -0.5f, 0.0f, // Bottom-left
+             0.5f, -0.5f, 0.0f, // Bottom-right
+             0.5f,  0.5f, 0.0f, // Top-right
+            -0.5f,  0.5f, 0.0f  // Top-left
+        };
+
+        unsigned int indices[] = {
+            0, 1, 2, // First triangle
+            2, 3, 0  // Second triangle
+        };
+
+        std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+        std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Create(indices, 6);
+
+        vertexBuffer->SetLayout({
+                { ShaderDataType::FVec3 , "aPos" }
+            });
+
+        m_VertexArray->AddVertexBuffer(vertexBuffer);
+        m_VertexArray->SetIndexBuffer(indexBuffer);
 	}
 
 	void EditorLayer::OnDetach()
@@ -21,6 +52,7 @@ namespace Cresta
 	void EditorLayer::OnEvent(Event& e)
 	{
 	}
+
     void ShowExampleAppDockSpace(bool* p_open = (bool*)0)
     {
         // READ THIS !!!
@@ -64,7 +96,9 @@ namespace Cresta
         // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
         // and handle the pass-thru hole, so we ask Begin() to not render a background.
         if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+        {
             window_flags |= ImGuiWindowFlags_NoBackground;
+        }
 
         // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
         // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
@@ -72,13 +106,19 @@ namespace Cresta
         // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
         if (!opt_padding)
+        {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        }
+        
         ImGui::Begin("DockSpace Demo", p_open, window_flags);
         if (!opt_padding)
+        {
             ImGui::PopStyleVar();
-
+        }
         if (opt_fullscreen)
+        {
             ImGui::PopStyleVar(2);
+        }
 
         // Submit the DockSpace
         ImGuiIO& io = ImGui::GetIO();
@@ -87,6 +127,7 @@ namespace Cresta
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
+
         ImGui::ShowDemoWindow();
 
         if (ImGui::BeginMenuBar())
@@ -108,13 +149,16 @@ namespace Cresta
                 ImGui::Separator();
 
                 if (ImGui::MenuItem("Close", NULL, false, p_open != NULL))
+                {
                     *p_open = false;
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
         }
         ImGui::End();
     }
+
 	void EditorLayer::OnImGUIRender()
 	{
         //ShowExampleAppDockSpace((bool*)1);

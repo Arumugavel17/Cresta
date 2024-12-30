@@ -14,6 +14,7 @@ namespace Cresta {
 	public:
 
 		Shader(const std::string& filepath);
+		Shader(const std::string& filepath,const std::string& vertexSrc, const std::string& fragmentSrc);
 
 		virtual ~Shader() = default;
 
@@ -33,12 +34,12 @@ namespace Cresta {
 
 		const std::string& GetFilePath() const { return m_filepath; };
 
-		std::string& ReadFile(const std::string& filepath);
+		std::string ReadFile(const std::string& filepath);
 		std::shared_ptr<std::unordered_map<GLenum, std::string>> PreProcess(const std::string& source);
 		static GLenum ShaderTypeFromString(const std::string& type);
 
-		static std::shared_ptr<Shader> Create(const std::string& filepath);
-		static std::shared_ptr<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+		static std::shared_ptr<Shader> Create(const std::string filepath);
+		static std::shared_ptr<Shader> Create(const std::string filepath, const std::string& vertexSrc, const std::string& fragmentSrc);
 	
 	protected:
 		std::string m_filepath;

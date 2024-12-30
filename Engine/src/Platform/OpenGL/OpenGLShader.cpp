@@ -2,60 +2,64 @@
 
 namespace Cresta {
 	
+	OpenGLShader::OpenGLShader(const std::string& filepath, 
+							   const const std::string& vertexSrc, 
+							   const std::string& fragmentSrc) 
+		: Shader( filepath, vertexSrc, fragmentSrc)
+	{
+		CreateProgram();
+	}
+	
 	OpenGLShader::OpenGLShader(const std::string& filepath) : Shader(filepath)
 	{
-		m_ProgramID = glCreateProgram();
-
-		unsigned int shader_id;
-		shader_id = glCreateShader(GL_VERTEX_SHADER);
-
-		std::ifstream shader_file(filepath);
-		std::stringstream buffer;
-
-		if (!shader_file.is_open())
-		{
-			std::cerr << "File Unable to open \n returned -1" << std::endl;
-			return;
-		}
-
-		buffer << shader_file.rdbuf();
-		std::cout << buffer.str() << "\n";
-		std::string str = buffer.str();
-		const char* c_str = str.c_str();
-
-		/*
-		you can join above two lines and write
-		const char* c_str = buffer.str().c_str();
-		However, there's a caveat: when using buffer.str().c_str(), str() returns a temporary
-		std::string object, and calling c_str() on it will give a pointer to this temporary object,
-		which might be destroyed after the statement, leading to undefined behavior. Instead, you should
-		store the result of buffer.str() in a separate variable to ensure the pointer remains valid.
-		*/
-
-
-		glShaderSource(shader_id, 1, &c_str, NULL);
-
-		glCompileShader(shader_id);
-
-		int success;
-		char infoLog[512];
-		glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
-
-		if (!success)
-		{
-			glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::" << GL_VERTEX_SHADER << "::COMPILATION_FAILED\n" << infoLog << std::endl;
-		}
-
-		glAttachShader(m_ProgramID, shader_id);
-
-		shader_file.close();
-
+		CreateProgram();
 	}
 
 	OpenGLShader::~OpenGLShader()
 	{
 		glDeleteProgram(m_ProgramID);
+	}
+
+	unsigned int OpenGLShader::CompileShader(GLenum type, const char* shaderSrc)
+	{
+		unsigned int shaderID = glCreateShader(type);
+		glShaderSource(shaderID, 1, &shaderSrc, NULL);
+		glCompileShader(shaderID);
+
+		int success;
+		char infoLog[512];
+		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+
+		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
+		CRESTA_ASSERT(success,"ERROR::SHADER::{0}::COMPILATION_FAILED::{1}",type,infoLog);
+
+		return shaderID;
+	}
+
+	void OpenGLShader::CreateProgram()
+	{
+		m_ProgramID = glCreateProgram();
+		if (m_ShaderSrc) 
+		{
+			for (const auto& pair : *m_ShaderSrc) 
+			{
+				std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+				const char* shaderSrc = pair.second.c_str();
+				
+				unsigned int shaderID = CompileShader(pair.first, shaderSrc);
+				glAttachShader(m_ProgramID,shaderID);
+			}
+
+			glLinkProgram(m_ProgramID);
+			int success;
+			char infoLog[512];
+			glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success);
+			CRESTA_ASSERT(success, "ERROR::LINK::LINK_FAILED::{0}", infoLog)
+		}
+		else 
+		{
+			CRESTA_CORE_ERROR("m_ShaderSrc is null!");
+		}
 	}
 
 	void OpenGLShader::Bind() const

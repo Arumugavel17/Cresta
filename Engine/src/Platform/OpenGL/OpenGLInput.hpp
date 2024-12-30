@@ -1,6 +1,5 @@
 #pragma once
 #include "Core/Input.hpp"
-#include "glfw/glfw3.h"
 
 namespace Cresta {
 	class OpenGLInput : public Input {

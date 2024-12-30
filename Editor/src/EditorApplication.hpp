@@ -9,7 +9,10 @@ namespace Cresta {
 		{
 			EditorLayer* t_EditorLayer = new EditorLayer();
 			PushLayer(t_EditorLayer);
+			Init();
 		}
+
+		void Init();
 	};
 
 	Application* CreateApplication() {

@@ -7,9 +7,10 @@
 #include "Core/Events/MouseEvent.hpp"
 #include "Core/Layer.hpp"
 #include "Core/LayerStack.hpp"
+#include "Renderer/Renderer.hpp"
+#include "Core/ImGUILayer.hpp"
 #include <iostream>
 #include <memory>
-#include "Core/ImGUILayer.hpp"
 
 namespace Cresta {
 	class Application{
@@ -19,6 +20,8 @@ namespace Cresta {
 		virtual void Run();
 		virtual void OnEvent(Event& e);
 		
+		void Init();
+
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 

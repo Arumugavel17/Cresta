@@ -17,7 +17,7 @@ namespace Cresta {
 		return 0;
 	}
 
-	std::string& Shader::ReadFile(const std::string& filepath) 
+	std::string Shader::ReadFile(const std::string& filepath) 
 	{
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
@@ -69,13 +69,25 @@ namespace Cresta {
 		return shaderSources;
 	}
 
-	Shader::Shader(const std::string& filepath) : m_filepath (filepath)
+	Shader::Shader(const std::string& filepath) 
+		: m_filepath (filepath)
 	{
 		std::string& source = ReadFile(filepath);
+
 		m_ShaderSrc = PreProcess(source);
 	}
+	
+	Shader::Shader(const std::string& filepath, 
+				   const std::string& vertexSrc, 
+				   const std::string& fragmentSrc) 
+		: m_filepath(filepath)
+	{
+		(*m_ShaderSrc)[GL_VERTEX_SHADER] = vertexSrc;
+		(*m_ShaderSrc)[GL_FRAGMENT_SHADER] = fragmentSrc;
+	}
 
-	std::shared_ptr<Shader> Shader::Create(const std::string& filepath)
+
+	std::shared_ptr<Shader> Shader::Create(const std::string filepath)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -87,12 +99,13 @@ namespace Cresta {
 		return nullptr;
 	}
 
-	std::shared_ptr<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+
+	std::shared_ptr<Shader> Shader::Create(const std::string filepath, const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:    CRESTA_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+		case RendererAPI::API::OpenGL:  return std::make_shared<OpenGLShader>(filepath, vertexSrc, fragmentSrc);
 		}
 
 		CRESTA_ASSERT(false, "Unknown RendererAPI!");

@@ -76,13 +76,15 @@ if (MSVC)
 	endif()
 endif()
 
+list(FILTER SOURCES EXCLUDE REGEX "${PROJECT_SOURCE_DIR}/src/exclude_folder/.*")
+
 # Set linker flags
 set(CMAKE_EXE_LINKER_FLAGS_DISTRIBUTION "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 
 # Enable link time optimization in Release and Distribution mode if requested and available
 SET_INTERPROCEDURAL_OPTIMIZATION()
 
-set(SOURCE_FOLDER "${CMAKE_SOURCE_DIR}/Engine/assets")
+set(SOURCE_FOLDER "${CMAKE_SOURCE_DIR}/assets")
 
 # Specify the destination directory
 set(DESTINATION_FOLDER "${CMAKE_BINARY_DIR}")
