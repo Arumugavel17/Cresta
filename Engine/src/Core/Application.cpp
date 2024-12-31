@@ -53,14 +53,14 @@ namespace Cresta
 					layer->OnUpdate();
 				}
 
-				/*m_ImGUILayer->Begin();
+				m_ImGUILayer->Begin();
 				{
 					for (Layer* layer : m_LayerStack)
 					{
 						layer->OnImGUIRender();
 					}
 				}
-				m_ImGUILayer->End();*/
+				m_ImGUILayer->End();
 			}
 			m_Window->End();
 		}
@@ -71,7 +71,6 @@ namespace Cresta
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(CRESTA_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(CRESTA_BIND_EVENT_FN(Application::OnWindowResize));
-
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
 			if (e.Handled)

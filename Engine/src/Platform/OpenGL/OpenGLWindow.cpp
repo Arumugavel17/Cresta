@@ -30,10 +30,13 @@ namespace Cresta {
 		bool status = glfwInit();	
 		CRESTA_ASSERT(status,"Failed to Initalize GLFW");
 
-		m_Window = glfwCreateWindow( m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
-	
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
+		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+
+		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
+		glfwSetWindowAttrib(m_Window, GLFW_MAXIMIZED, GLFW_TRUE);
+
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 		glfwMakeContextCurrent(m_Window);
 		
 		glfwSetErrorCallback(GLFWErrorCallback);

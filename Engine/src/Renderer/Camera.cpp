@@ -2,11 +2,10 @@
 
 namespace Cresta {
 
-	Camera::Camera(glm::vec3& CameraPosition, CameraMode cameramode ) 
-		: m_CameraPos(CameraPosition), m_CameraMode(CameraMode::Perspective)
+	Camera::Camera(const glm::vec3& CameraPosition, CameraMode cameramode ) 
+		: m_CameraFront(CameraPosition), m_CameraMode(CameraMode::Perspective)
 	{
-		m_CameraMode = cameramode;
-		CalculateProjectionMatrix();
+
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +75,8 @@ namespace Cresta {
 	{
 		if (m_CameraMode == CameraMode::Perspective)
 		{
-			if (!m_PerspectiveData || !m_PerspectiveData->isValid())
+
+			if (!m_PerspectiveData)
 			{
 				m_PerspectiveData = new PerspectiveData();
 			}
@@ -89,7 +89,7 @@ namespace Cresta {
 		}
 		else if (m_CameraMode == CameraMode::Perspective)
 		{
-			if (!m_OrthographicData || !m_OrthographicData->isValid())
+			if (!m_OrthographicData)
 			{
 				m_OrthographicData = new OrthographicData();
 			}
@@ -111,7 +111,10 @@ namespace Cresta {
 	glm::mat4& Camera::CalculateViewMatrix() 
 	{
 		m_ViewMatrix = glm::lookAt(m_CameraPos, m_CameraPos + m_CameraFront, m_CameraUp);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		if (m_ProjectionMatrix != glm::mat4(0.0f))
+		{
+			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		}
 		return m_ViewMatrix;
 	}
 

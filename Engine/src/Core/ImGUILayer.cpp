@@ -98,8 +98,8 @@ namespace Cresta
 		if (m_BlockEvents)
 		{
 			ImGuiIO& io = ImGui::GetIO();
-			e.Handled |= e.IsInCategory(EventCategory::Mouse_EventCategory) & io.WantCaptureMouse;
-			e.Handled |= e.IsInCategory(EventCategory::Keyboard_EventCategory) & io.WantCaptureKeyboard;
+			//e.Handled |= e.IsInCategory(EventCategory::Mouse_EventCategory) & io.WantCaptureMouse;
+			//e.Handled |= e.IsInCategory(EventCategory::Keyboard_EventCategory) & io.WantCaptureKeyboard;
 		}
 	}
 

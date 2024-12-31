@@ -30,11 +30,6 @@ namespace Cresta {
 			m_FarPlane	= other.m_FarPlane;
 
 		}
-
-		bool isValid() const 
-		{
-			return m_Left != 0 || m_Right != 0 || m_Bottom != 0 || m_Top != 0;
-		}
 	};
 
 	struct PerspectiveData 
@@ -56,11 +51,6 @@ namespace Cresta {
 			m_NearPlane = other.m_NearPlane;
 			m_FarPlane	= other.m_FarPlane;
 		}
-
-		bool isValid() const 
-		{
-			return m_FOV != 0 || m_Width != 0 || m_Height != 0;
-		}
 	};
 
 	enum class CameraMode 
@@ -72,7 +62,7 @@ namespace Cresta {
 	class Camera
 	{
 	public:
-		Camera(glm::vec3& CameraPosition = glm::vec3(0.0f), 
+		Camera(const glm::vec3& CameraPosition =  glm::vec3(0,0,-1.0f), 
 			CameraMode cameramode = CameraMode::Perspective);
 
 		~Camera() = default;
@@ -99,11 +89,10 @@ namespace Cresta {
 
 		virtual void OnUpdate();
 		virtual void OnEvent(Event& e);
-
-	private:
-		
+	
+	protected:	
 		glm::vec3 m_CameraPos;
-		glm::vec3 m_CameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
+		glm::vec3 m_CameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 		glm::vec3 m_CameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 		glm::mat4 m_ProjectionMatrix;
@@ -114,7 +103,7 @@ namespace Cresta {
 
 		CameraMode m_CameraMode;
 			
-		OrthographicData* m_OrthographicData;
-		PerspectiveData* m_PerspectiveData;
+		OrthographicData* m_OrthographicData = nullptr;
+		PerspectiveData* m_PerspectiveData = nullptr;
 	};
 }
