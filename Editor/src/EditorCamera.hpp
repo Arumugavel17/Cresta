@@ -16,7 +16,11 @@ namespace Cresta
 		void CameraMovement();
 		void CameraRotation();
 		glm::vec3 GetCameraFront();
+		void SetCameraMovementEnabled(bool enable);
+		bool GetCameraMovementEnabled();
+
 	private:
+		bool m_CameraMovementEnabled = false;
 		float lasttime = 0;
 		float currenttime = 0;
 		float zoom = 45.0f;

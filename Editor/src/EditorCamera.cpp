@@ -18,8 +18,17 @@ namespace Cresta {
 
 	void EditorCamera::OnUpdate()
 	{
-        CameraMovement();
-        CameraRotation();
+        if(m_CameraMovementEnabled)
+        {
+            CameraMovement();
+            CameraRotation();
+        }
+        else 
+        {
+            std::pair<float, float> mouseXY = Input::GetMousePosition();
+            lastX = mouseXY.first;
+            lastY = mouseXY.second;
+        }
 	}
 
     void EditorCamera::CameraRotation() 
@@ -60,6 +69,16 @@ namespace Cresta {
     glm::vec3 EditorCamera::GetCameraFront()
     {
         return m_CameraFront;
+    }
+
+    void EditorCamera::SetCameraMovementEnabled(bool enable)
+    {
+        m_CameraMovementEnabled = enable;
+    }
+
+    bool EditorCamera::GetCameraMovementEnabled()
+    {
+        return m_CameraMovementEnabled;
     }
 
 

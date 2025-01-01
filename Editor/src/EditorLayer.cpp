@@ -59,10 +59,33 @@ namespace Cresta
 
     void EditorLayer::OnUpdate()
     {
+
+        if (m_SceneActive)
+        {
+            if (Input::GetKeyDown(Key::Escape))
+            {
+                ImGui::SetWindowFocus(nullptr);
+            }
+        }
         m_EditorCamera->OnUpdate();
         m_Framebuffer->Bind();
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         RenderCommand::Clear();
+
+        {
+            m_GridShader->Bind();
+            m_VertexArray->Bind();
+            m_GridShader->SetMat4("model", glm::mat4(1.0f));
+            m_GridShader->SetMat4("view", m_EditorCamera->GetViewMatrix());
+            m_GridShader->SetMat4("projection", m_EditorCamera->GetProjectionMatrix());
+            m_GridShader->SetVec3("cameraPos", m_EditorCamera->GetPosition());
+            m_GridShader->SetVec3("gCameraWorldPos", m_EditorCamera->GetPosition());
+
+
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            m_GridVertexArray->Unbind();
+            m_GridShader->Unbind();
+        }
 
         {
             m_Shader->Bind();
@@ -80,20 +103,7 @@ namespace Cresta
             m_VertexArray->Unbind();
         }
 
-       /* {
-            m_GridShader->Bind();
-            m_VertexArray->Bind();
-            m_GridShader->SetMat4("model", glm::mat4(1.0f));
-            m_GridShader->SetMat4("view", m_EditorCamera->GetViewMatrix());
-            m_GridShader->SetMat4("projection", m_EditorCamera->GetProjectionMatrix());
-            m_GridShader->SetVec3("cameraPos", m_EditorCamera->GetPosition());
-            m_GridShader->SetVec3("gCameraWorldPos", m_EditorCamera->GetPosition());
-            
-
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-            m_GridVertexArray->Unbind();
-            m_GridShader->Unbind();
-        }*/
+       
 
         m_Framebuffer->Unbind();
     }
@@ -185,6 +195,10 @@ namespace Cresta
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         glm::vec2 m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
         uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        
+        m_SceneActive = ImGui::IsWindowFocused(ImGuiFocusedFlags_None);
+        m_EditorCamera->SetCameraMovementEnabled(m_SceneActive);
+
         ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         ImGui::End();
     }

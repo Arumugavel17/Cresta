@@ -27,5 +27,9 @@ namespace Cresta {
 		
 		std::vector<glm::vec3> positions;
 		EditorCamera* m_EditorCamera;
+
+		bool m_SceneActive = false;
+
+		
 	};
 }
