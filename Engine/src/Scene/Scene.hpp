@@ -1,6 +1,8 @@
 #pragma once
 #include "entt/entt.hpp"
 #include "Renderer/Camera.hpp"
+#include "Renderer/Shader.hpp"
+#include "Renderer/VertexArray.hpp"
 
 namespace Cresta {
 
@@ -20,7 +22,7 @@ namespace Cresta {
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity FindEntityByName(std::string_view name);
+		Entity FindEntityByName(std::string name);
 		
 		Entity GetPrimaryCameraEntity();
 
@@ -36,13 +38,16 @@ namespace Cresta {
 		{
 			return m_Registry.view<Components...>();
 		}
+		void RenderScene();
 
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
-		void RenderScene(Camera& camera);	
 
 	private:
+		Ref<Shader> m_Shader;
+		Ref<VertexArray> m_VertexArray;
+
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		bool m_IsRunning = false;
 		bool m_IsPaused = false;

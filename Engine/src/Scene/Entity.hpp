@@ -40,7 +40,7 @@ namespace Cresta {
 		template<typename T>
 		void RemoveComponent()
 		{
-			HZ_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			CRESTA_ASSERT(HasComponent<T>(), "Entity does not have component!");
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 

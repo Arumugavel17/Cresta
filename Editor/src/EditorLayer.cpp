@@ -9,49 +9,17 @@ namespace Cresta
 {
     EditorLayer::EditorLayer() : Layer("Editor Layer")
     {
+        m_EditorCamera = new EditorCamera();
+        
         m_ActiveScene = CreateRef<Scene>();
         m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(m_ActiveScene);
-        m_VertexArray = VertexArray::Create();
-        m_GridVertexArray = VertexArray::Create();
-        m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
-        m_GridShader = Shader::Create("assets/shaders/GridShader.glsl");
-        m_EditorCamera = new EditorCamera();
 
-        for (int i = 0;i < 10;i++) {
-            for (int j = 0;j < 10;j++) {
-                glm::vec3 pos(i, 0, j);
-                positions.push_back(pos);
-            }
-        }
+        m_GridVertexArray = VertexArray::Create();
+        m_GridShader = Shader::Create("assets/shaders/GridShader.glsl");
     }
 
     void EditorLayer::OnAttach()
 	{
-        Entity entt =  m_ActiveScene->CreateEntity("");
-
-        float Vertices[] = {
-            // Positions
-            -0.5f, -0.5f, 0.0f, // Bottom-left
-             0.5f, -0.5f, 0.0f, // Bottom-right
-             0.5f,  0.5f, 0.0f, // Top-right
-            -0.5f,  0.5f, 0.0f  // Top-left
-        };
-
-        unsigned int Indices[] = {
-            0, 1, 2, // First triangle
-            2, 3, 0  // Second triangle
-        };
-
-        Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(Vertices, sizeof(Vertices));
-        Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(Indices, 6);
-
-        vertexBuffer->SetLayout({
-                { ShaderDataType::FVec3 , "aPos" }
-            });
-
-        m_VertexArray->AddVertexBuffer(vertexBuffer);
-        m_VertexArray->SetIndexBuffer(indexBuffer);
-
         FramebufferSpecification fbSpec;
         fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
         fbSpec.Width = 1920;
@@ -79,20 +47,22 @@ namespace Cresta
         }
 
         Renderer::BeginScene((Camera)*m_EditorCamera);
-        m_EditorCamera->OnUpdate();
-        m_Framebuffer->Bind();
-        
-        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-        RenderCommand::Clear();
-
-        Renderer::DrawTriangle(m_GridShader,m_GridVertexArray,NULL,6);
-
-        for (int i = 0;i < 100;i++) 
         {
-            Renderer::Submit(m_Shader, m_VertexArray, glm::translate(glm::mat4(1.0f),positions[i]));
-        }
+            m_EditorCamera->OnUpdate();
+            m_Framebuffer->Bind();
+            {
+                RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+                RenderCommand::Clear();
+             
+                Renderer::DrawTriangle(m_GridShader,m_GridVertexArray,NULL,6);       
+                m_ActiveScene->RenderScene();
+                
+                m_Framebuffer->Unbind();
+            }
        
-        m_Framebuffer->Unbind();
+            Renderer::EndScene();
+        }
+
     }
 
 	void EditorLayer::OnDetach()

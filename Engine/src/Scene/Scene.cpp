@@ -3,13 +3,36 @@
 #include "Entity.hpp"
 
 #include "Components.hpp"
-#include "Renderer/Renderer2D.hpp"
+#include "Renderer/Renderer.hpp"
 #include <glm/glm.hpp>
 
 namespace Cresta {
 
 	Scene::Scene()
 	{
+		m_VertexArray = VertexArray::Create();
+		m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
+		float Vertices[] = {
+			-0.5f, -0.5f, 0.0f, 
+			 0.5f, -0.5f, 0.0f, 
+			 0.5f,  0.5f, 0.0f, 
+			-0.5f,  0.5f, 0.0f  
+		};
+
+		unsigned int Indices[] = {
+			0, 1, 2, // First triangle
+			2, 3, 0  // Second triangle
+		};
+
+		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(Vertices, sizeof(Vertices));
+		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(Indices, 6);
+
+		vertexBuffer->SetLayout({
+				{ ShaderDataType::FVec3 , "aPos" }
+			});
+
+		m_VertexArray->AddVertexBuffer(vertexBuffer);
+		m_VertexArray->SetIndexBuffer(indexBuffer);
 	}
 
 	Scene::~Scene()
@@ -58,7 +81,7 @@ namespace Cresta {
 		m_StepFrames = frames;
 	}
 
-	Entity Scene::FindEntityByName(std::string_view name)
+	Entity Scene::FindEntityByName(std::string name)
 	{
 		auto view = m_Registry.view<TagComponent>();
 		for (auto entity : view)
@@ -70,33 +93,17 @@ namespace Cresta {
 		return {};
 	}
 
-	void Scene::RenderScene(Camera& camera)
+	void Scene::RenderScene()
 	{
-		//Renderer2D::BeginScene(camera);
-
-		//// Draw sprites
-		//{
-		//	auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		//	for (auto entity : group)
-		//	{
-		//		auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-		//		Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-		//	}
-		//}
-
-		//// Draw circles
-		//{
-		//	auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-		//	for (auto entity : view)
-		//	{
-		//		auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-
-		//		Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-		//	}
-		//}
-
-		//Renderer2D::EndScene();
+		// Draw sprites
+		{
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer::Submit(m_Shader, m_VertexArray, transform.GetTransform());
+			}
+		}
 	}
 
 	template<typename T>
@@ -116,17 +123,7 @@ namespace Cresta {
 	}
 
 	template<>
-	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
-	{
-	}
-
-	template<>
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
 	{
 	}
 
@@ -134,25 +131,4 @@ namespace Cresta {
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
 	{
 	}
-
-	template<>
-	void Scene::OnComponentAdded<Rigidbody2DComponent>(Entity entity, Rigidbody2DComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
-	{
-	}
-
 }

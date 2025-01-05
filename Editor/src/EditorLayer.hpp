@@ -37,13 +37,9 @@ namespace Cresta {
 		
 		Ref<Framebuffer> m_Framebuffer;
 		
-		Ref<Shader> m_Shader;
 		Ref<Shader> m_GridShader;
-		
 		Ref<VertexArray> m_GridVertexArray;
-		Ref<VertexArray> m_VertexArray;
 		
-		std::vector<glm::vec3> positions;
 		EditorCamera* m_EditorCamera;
 		ImVec2 m_ViewportSize;
 		bool m_SceneActive = false;

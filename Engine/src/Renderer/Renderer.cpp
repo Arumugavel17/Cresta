@@ -1,15 +1,13 @@
 #include "Crestaph.hpp"
 #include "Renderer/Renderer.hpp"
-#include "Renderer/Renderer2D.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
-		Renderer2D::Init();
 	}
 
 	void Renderer::Shutdown()
@@ -54,6 +52,7 @@ namespace Cresta {
 		shader->SetMat4("u_ProjectionView", s_SceneData->ViewProjectionMatrix);
 		shader->SetVec3("u_CameraPosition", s_SceneData->CamerPosition);
 		shader->SetMat4("u_Model", transform);
+		shader->SetVec4("u_FlatColor", glm::vec4(1.0f));
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
