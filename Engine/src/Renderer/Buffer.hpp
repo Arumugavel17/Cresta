@@ -32,7 +32,7 @@ namespace Cresta {
 		case ShaderDataType::Mat4:		return 4 * 4 * 4;
 		}
 
-		CRESTA_ASSERT(false, "Unknown ShaderDataType!");
+		CRESTA_ASSERT(true, "Unknown ShaderDataType!");
 		return 0;
 	}
 
@@ -71,7 +71,7 @@ namespace Cresta {
 			case ShaderDataType::Mat4:    return 4; // 4* float4
 			}
 
-			CRESTA_ASSERT(false, "Unknown ShaderDataType!");
+			CRESTA_ASSERT(true, "Unknown ShaderDataType!");
 			return 0;
 		}
 	};

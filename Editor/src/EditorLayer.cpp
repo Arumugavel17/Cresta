@@ -2,6 +2,7 @@
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Core/Input.hpp"
+#include "Core/ModelLoading/ModelLoader.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -9,6 +10,7 @@ namespace Cresta
 {
     EditorLayer::EditorLayer() : Layer("Editor Layer")
     {
+        //m_Model = CreateRef<ModelLoader>("assets/models/backpack/backpack.obj");
         m_EditorCamera = new EditorCamera();
         
         m_ActiveScene = CreateRef<Scene>();
@@ -53,7 +55,7 @@ namespace Cresta
             {
                 RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
                 RenderCommand::Clear();
-             
+                
                 Renderer::DrawTriangle(m_GridShader,m_GridVertexArray,NULL,6);       
                 m_ActiveScene->RenderScene();
                 

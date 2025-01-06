@@ -31,7 +31,7 @@ namespace Cresta {
 		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
 
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-		CRESTA_ASSERT(success,"ERROR::SHADER::{0}::COMPILATION_FAILED::{1}",type,infoLog);
+		CRESTA_ASSERT(!success,"ERROR::SHADER::{0}::COMPILATION_FAILED::{1}",type,infoLog);
 
 		return shaderID;
 	}
@@ -54,7 +54,7 @@ namespace Cresta {
 			int success;
 			char infoLog[512];
 			glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success);
-			CRESTA_ASSERT(success, "ERROR::LINK::LINK_FAILED::{0}", infoLog)
+			CRESTA_ASSERT(!success, "ERROR::LINK::LINK_FAILED::{0}", infoLog)
 		}
 		else 
 		{

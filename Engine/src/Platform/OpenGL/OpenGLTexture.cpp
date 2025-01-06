@@ -14,7 +14,7 @@ namespace Cresta
 			case ImageFormat::RGBA8: return GL_RGBA;
 			}
 
-			CRESTA_ASSERT(false);
+			CRESTA_ASSERT(true);
 			return 0;
 		}
 
@@ -26,7 +26,7 @@ namespace Cresta
 			case ImageFormat::RGBA8: return GL_RGBA8;
 			}
 
-			CRESTA_ASSERT(false);
+			CRESTA_ASSERT(true);
 			return 0;
 		}
 
@@ -105,7 +105,7 @@ namespace Cresta
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
 		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
-		CRESTA_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
+		CRESTA_ASSERT(size != m_Width * m_Height * bpp, "Data must be entire texture!");
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 	}
 

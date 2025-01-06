@@ -19,7 +19,7 @@ namespace Cresta {
 		case GL_DEBUG_SEVERITY_NOTIFICATION: CRESTA_CORE_TRACE(message); return;
 		}
 
-		CRESTA_ASSERT(false, "Unknown severity level!");
+		CRESTA_ASSERT(true, "Unknown severity level!");
 	}
 
 	void OpenGLRenderAPI::Init()

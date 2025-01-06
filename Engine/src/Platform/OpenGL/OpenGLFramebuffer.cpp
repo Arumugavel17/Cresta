@@ -85,7 +85,7 @@ namespace Cresta {
 
 		if (m_ColorAttachments.size() > 1)
 		{
-			CRESTA_ASSERT(m_ColorAttachments.size() <= 4);
+			CRESTA_ASSERT(m_ColorAttachments.size() >= 4);
 			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 			glDrawBuffers(m_ColorAttachments.size(), buffers);
 		}
@@ -95,7 +95,7 @@ namespace Cresta {
 			glDrawBuffer(GL_NONE);
 		}
 
-		CRESTA_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
+		CRESTA_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -115,7 +115,7 @@ namespace Cresta {
 
     int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
     {
-        CRESTA_ASSERT(attachmentIndex < m_ColorAttachments.size());
+        CRESTA_ASSERT(attachmentIndex > m_ColorAttachments.size());
 
         glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
         int pixelData;
@@ -125,7 +125,7 @@ namespace Cresta {
 
     void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
     {
-        CRESTA_ASSERT(attachmentIndex < m_ColorAttachments.size());
+        CRESTA_ASSERT(attachmentIndex > m_ColorAttachments.size());
 
         auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
         glClearTexImage(m_ColorAttachments[attachmentIndex], 0,

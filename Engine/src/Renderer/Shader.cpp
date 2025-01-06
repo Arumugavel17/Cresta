@@ -13,7 +13,7 @@ namespace Cresta {
 		if (type == "fragment" || type == "pixel")
 			return GL_FRAGMENT_SHADER;
 
-		CRESTA_ASSERT(false, "Unknown shader type!");
+		CRESTA_ASSERT(true, "Unknown shader type!");
 		return 0;
 	}
 
@@ -54,13 +54,13 @@ namespace Cresta {
 		while (pos != std::string::npos)
 		{
 			size_t eol = source.find_first_of("\r\n", pos); //End of shader type declaration line
-			CRESTA_ASSERT(eol != std::string::npos, "Syntax error");
+			CRESTA_ASSERT(eol == std::string::npos, "Syntax error");
 			size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
 			std::string type = source.substr(begin, eol - begin);
-			CRESTA_ASSERT(Shader::ShaderTypeFromString(type), "Invalid shader type specified");
+			CRESTA_ASSERT(!Shader::ShaderTypeFromString(type), "Invalid shader type specified");
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line
-			CRESTA_ASSERT(nextLinePos != std::string::npos, "Syntax error");
+			CRESTA_ASSERT(nextLinePos == std::string::npos, "Syntax error");
 			pos = source.find(typeToken, nextLinePos); //Start of next shader type declaration line
 
 			(*shaderSources)[Shader::ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
@@ -91,11 +91,11 @@ namespace Cresta {
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None:    CRESTA_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::None:    CRESTA_ASSERT(true, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(filepath);
 		}
 
-		CRESTA_ASSERT(false, "Unknown RendererAPI!");
+		CRESTA_ASSERT(true, "Unknown RendererAPI!");
 		return nullptr;
 	}
 
@@ -104,11 +104,11 @@ namespace Cresta {
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None:    CRESTA_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::None:    CRESTA_ASSERT(true, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(filepath, vertexSrc, fragmentSrc);
 		}
 
-		CRESTA_ASSERT(false, "Unknown RendererAPI!");
+		CRESTA_ASSERT(true, "Unknown RendererAPI!");
 		return nullptr;
 	}
 	
@@ -117,13 +117,13 @@ namespace Cresta {
 	{
 		//with filepath as the name
 		auto& filepath = shader->GetFilePath();
-		CRESTA_ASSERT(!Exists(filepath), "Shader already exists!");
+		CRESTA_ASSERT(Exists(filepath), "Shader already exists!");
 		m_Shaders[filepath] = shader;
 	}
 
 	Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
 	{
-		CRESTA_ASSERT(!Exists(filepath), "Shader already exists!");
+		CRESTA_ASSERT(Exists(filepath), "Shader already exists!");
 		auto shader = Shader::Create(filepath);
 		Add(shader);
 		return shader;
@@ -131,7 +131,7 @@ namespace Cresta {
 
 	Ref<Shader> ShaderLibrary::Get(const std::string& name)
 	{
-		CRESTA_ASSERT(Exists(name), "Shader not found!");
+		CRESTA_ASSERT(!Exists(name), "Shader not found!");
 		return m_Shaders[name];
 	}
 

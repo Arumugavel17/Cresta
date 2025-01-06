@@ -7,7 +7,7 @@
 #include "Scene/Scene.hpp"
 #include "Scene/Entity.hpp"
 #include "Scene/SceneHierarchyPanel.hpp"
-
+#include "Core/ModelLoading/ModelLoader.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      
@@ -30,8 +30,9 @@ namespace Cresta {
 		void CreateDockSpace();
 		void ShowScene();
 	private:
+
 		ImVec2 previousWindowSize = ImVec2(0, 0);
-		 
+		
 		Ref<Scene> m_ActiveScene;
 		Ref<SceneHierarchyPanel> m_HierarchyPanel;
 		
@@ -40,6 +41,8 @@ namespace Cresta {
 		Ref<Shader> m_GridShader;
 		Ref<VertexArray> m_GridVertexArray;
 		
+		Ref<ModelLoader> m_Model;
+
 		EditorCamera* m_EditorCamera;
 		ImVec2 m_ViewportSize;
 		bool m_SceneActive = false;

@@ -63,7 +63,7 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 #endif
 
 #define CRESTA_ASSERT(x, ...) \
-    if (!(x)) { CRESTA_ERROR("Assertion Failed: " __VA_ARGS__); __debugbreak(); }
+    if (x) { CRESTA_ERROR("Assertion Failed: " __VA_ARGS__); __debugbreak(); }
 
 #define CRESTA_CORE_SCOPE_LOG(message) \
     CRESTA_CORE_INFO("Entering: {}", message); \

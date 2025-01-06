@@ -79,7 +79,7 @@ namespace Cresta {
 			case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
 			}
 
-			CRESTA_ASSERT(false);
+			CRESTA_ASSERT(true);
 			return 0;
 		}
 

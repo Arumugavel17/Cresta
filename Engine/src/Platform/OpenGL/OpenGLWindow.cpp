@@ -28,7 +28,7 @@ namespace Cresta {
 		m_Data.Height = 1080;
 
 		bool status = glfwInit();	
-		CRESTA_ASSERT(status,"Failed to Initalize GLFW");
+		CRESTA_ASSERT(!status,"Failed to Initalize GLFW");
 
 
 		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
