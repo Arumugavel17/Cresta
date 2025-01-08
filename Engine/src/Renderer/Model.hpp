@@ -2,6 +2,7 @@
 #include "Crestaph.hpp"
 #include "Renderer/Texture.hpp"
 #include "Renderer/VertexArray.hpp"
+#include "Renderer/Shader.hpp"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -11,30 +12,29 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
 namespace Cresta 
 {
 	struct Mesh
 	{
 		std::vector<float> m_Vertices;
 		std::vector<unsigned int> m_Indices;
-		std::vector<Ref<Texture2D>> m_Textures;
+		/*std::vector<Ref<Texture2D>> m_Textures;*/
 
 		Mesh(std::vector<float> vertices,
-			std::vector<unsigned int> indices,
-			std::vector<Ref<Texture2D>> textures)
+			std::vector<unsigned int> indices/*,
+			std::vector<Ref<Texture2D>> textures*/)
 		{
 			m_Vertices = vertices;
 			m_Indices = indices;
-			m_Textures = textures;
+			//m_Textures = textures;
 		}
 	};
 
-	class ModelLoader 
+	class Model 
 	{
 	public:
-		ModelLoader(const std::string& Path);
-	
+		Model(const std::string& Path);
+		void SetupVAO();
 	private:
 		void LoadModel(std::string Path);
 
@@ -44,13 +44,12 @@ namespace Cresta
 		std::vector<Ref<Texture2D>> LoadMaterialTextures(	aiMaterial* mat,
 													aiTextureType type, 
 													std::string typeName);
-		void SetupVAO();
-		
 	private:
-
+		Ref<Shader> m_Shader;
 		std::string m_Directory;
 		std::vector<Mesh> m_Meshes;
 		std::vector<Ref<Texture2D>> m_TexturesLoaded;
-		Ref<VertexArray> m_VAO;
+	public:
+		Ref<VertexArray> m_VertexArray;
 	};
 }

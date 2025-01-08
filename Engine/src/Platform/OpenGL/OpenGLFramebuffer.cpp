@@ -1,6 +1,7 @@
 #include "Platform/OpenGL/OpenGLFramebuffer.hpp"
 #include "Platform/OpenGL/Utils.hpp"
 #include "glad/glad.h"
+#include "Renderer/RendererCommand.hpp"
 
 namespace Cresta {
 	static const uint32_t s_MaxFramebufferSize = 8192;
@@ -22,7 +23,9 @@ namespace Cresta {
     {
         glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
         glViewport(0, 0, m_Specification.Width, m_Specification.Height);
-		//CRESTA_CORE_INFO("{0},{1}", m_Specification.Width, m_Specification.Height);
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		RenderCommand::Clear();
+		RenderCommand::Enable();
     }
 
     void OpenGLFramebuffer::Unbind()
@@ -73,6 +76,7 @@ namespace Cresta {
 
 		if (m_DepthAttachmentSpecification.TextureFormat != FramebufferTextureFormat::None)
 		{
+
 			Utils::CreateTextures(multisample, &m_DepthAttachment, 1);
 			Utils::BindTexture(multisample, m_DepthAttachment);
 			switch (m_DepthAttachmentSpecification.TextureFormat)

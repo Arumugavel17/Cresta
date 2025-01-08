@@ -4,6 +4,7 @@
 #include "Renderer/Shader.hpp"
 #include "Renderer/RendererAPI.hpp"
 #include "Renderer/RendererCommand.hpp"
+#include "Renderer/Model.hpp"
 
 namespace Cresta {
 
@@ -19,6 +20,7 @@ namespace Cresta {
 		
 		static void EndScene();
 		static void Flush();
+		static void DrawModel(const Ref<Shader>& shader,Ref<Model> model, const glm::mat4& transform);
 		static void DrawTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount);
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
 

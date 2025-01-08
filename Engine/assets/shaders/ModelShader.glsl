@@ -7,14 +7,14 @@ uniform mat4 u_ProjectionView;
 
 void main()
 {
-    gl_Position = u_ProjectionView * u_Model * vec4(aPos, 1.0);
+    gl_Position = u_ProjectionView * u_Model * vec4(aPos,1.0);
 }
 
 //type fragment
 #version 330 core
-out vec4 FragColor;
 
 uniform vec4 u_Color;
+out vec4 FragColor;
 
 void main()
 {

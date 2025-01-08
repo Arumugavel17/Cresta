@@ -29,14 +29,16 @@ namespace Cresta {
 		glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_FRAMEBUFFER_SRGB); 
+		Enable();
 	}
 
+	void OpenGLRenderAPI::Enable()
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LINE_SMOOTH);
+	}
 	void OpenGLRenderAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
 		CRESTA_CORE_INFO("x:{0} , y:{1}", width, height);

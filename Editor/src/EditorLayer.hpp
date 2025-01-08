@@ -7,7 +7,7 @@
 #include "Scene/Scene.hpp"
 #include "Scene/Entity.hpp"
 #include "Scene/SceneHierarchyPanel.hpp"
-#include "Core/ModelLoading/ModelLoader.hpp"
+#include "Renderer/Model.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      
@@ -40,8 +40,11 @@ namespace Cresta {
 		
 		Ref<Shader> m_GridShader;
 		Ref<VertexArray> m_GridVertexArray;
-		
-		Ref<ModelLoader> m_Model;
+
+		Ref<Shader> m_Shader;
+		Ref<VertexArray> m_VertexArray;
+
+		Ref<Model> m_Model;
 
 		EditorCamera* m_EditorCamera;
 		ImVec2 m_ViewportSize;

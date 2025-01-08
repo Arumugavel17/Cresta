@@ -29,6 +29,7 @@ namespace Cresta {
             lastX = mouseXY.first;
             lastY = mouseXY.second;
         }
+
 	}
 
     void EditorCamera::CameraRotation() 

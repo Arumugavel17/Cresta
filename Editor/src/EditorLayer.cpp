@@ -2,7 +2,7 @@
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Core/Input.hpp"
-#include "Core/ModelLoading/ModelLoader.hpp"
+#include "Renderer/Model.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -10,11 +10,14 @@ namespace Cresta
 {
     EditorLayer::EditorLayer() : Layer("Editor Layer")
     {
-        //m_Model = CreateRef<ModelLoader>("assets/models/backpack/backpack.obj");
+        m_Model = CreateRef<Model>("assets/models/backpack/backpack.obj");
         m_EditorCamera = new EditorCamera();
         
         m_ActiveScene = CreateRef<Scene>();
         m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(m_ActiveScene);
+
+        m_VertexArray = VertexArray::Create();
+        m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
 
         m_GridVertexArray = VertexArray::Create();
         m_GridShader = Shader::Create("assets/shaders/GridShader.glsl");
@@ -27,6 +30,81 @@ namespace Cresta
         fbSpec.Width = 1920;
         fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
+
+        float Vertices[] = {
+            // Vertices                Color                Texture Coords
+            // Front face
+             0.5f,  0.5f,  0.5f,      
+             0.5f, -0.5f,  0.5f,      
+            -0.5f, -0.5f,  0.5f,      
+            -0.5f,  0.5f,  0.5f,      
+
+            // Back face
+            -0.5f,  0.5f, -0.5f,      
+            -0.5f, -0.5f, -0.5f,      
+             0.5f, -0.5f, -0.5f,      
+             0.5f,  0.5f, -0.5f,      
+
+             // Left face
+             -0.5f,  0.5f,  0.5f,      
+             -0.5f, -0.5f,  0.5f,      
+             -0.5f, -0.5f, -0.5f,      
+             -0.5f,  0.5f, -0.5f,      
+
+             // Right face
+              0.5f,  0.5f, -0.5f,      
+              0.5f, -0.5f, -0.5f,      
+              0.5f, -0.5f,  0.5f,      
+              0.5f,  0.5f,  0.5f,      
+
+              // Top face
+              -0.5f,  0.5f, -0.5f,     
+              -0.5f,  0.5f,  0.5f,     
+               0.5f,  0.5f,  0.5f,     
+               0.5f,  0.5f, -0.5f,     
+
+               // Bottom face
+                0.5f, -0.5f, -0.5f,    
+                0.5f, -0.5f,  0.5f,    
+               -0.5f, -0.5f,  0.5f,    
+               -0.5f, -0.5f, -0.5f,    
+        };
+
+        unsigned int Indices[] = {
+            // Front face
+   0, 1, 3,   // First triangle
+   1, 2, 3,   // Second triangle
+
+   // Back face
+   4, 5, 7,   // First triangle
+   5, 6, 7,   // Second triangle
+
+   // Left face
+   8, 9, 11,  // First triangle
+   9, 10, 11, // Second triangle
+
+   // Right face
+   12, 13, 15, // First triangle
+   13, 14, 15, // Second triangle
+
+   // Top face
+   16, 17, 19, // First triangle
+   17, 18, 19, // Second triangle
+
+   // Bottom face
+   20, 21, 23, // First triangle
+   21, 22, 23  // Second triangle
+        };
+
+        Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(Vertices, sizeof(Vertices));
+        Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(Indices, sizeof(Indices) / sizeof(unsigned int));
+
+        vertexBuffer->SetLayout({
+                { ShaderDataType::FVec3 , "aPos" }
+            });
+
+        m_VertexArray->AddVertexBuffer(vertexBuffer);
+        m_VertexArray->SetIndexBuffer(indexBuffer);
     }
 
     void EditorLayer::OnUpdate()
@@ -36,6 +114,7 @@ namespace Cresta
             if (Input::GetKeyDown(Key::Escape))
             {
                 ImGui::SetWindowFocus(nullptr);
+                m_SceneActive = false;
             }
         }
 
@@ -53,12 +132,22 @@ namespace Cresta
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
             {
-                RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-                RenderCommand::Clear();
+                m_Model->SetupVAO();
                 
-                Renderer::DrawTriangle(m_GridShader,m_GridVertexArray,NULL,6);       
+                m_Shader->Bind();
+                m_Shader->SetVec4("u_Color", glm::vec4(glm::vec3(0.5),1.0f));
+                m_Shader->Unbind();
+                Renderer::Submit(m_Shader, m_VertexArray, glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+                
+                m_Shader->Bind();
+                m_Shader->SetVec4("u_Color", glm::vec4(glm::vec3(0.2),1.0f));
+                m_Shader->Unbind();
+                Renderer::Submit(m_Shader, m_VertexArray, glm::translate(glm::mat4(1.0f),glm::vec3(1.0f,5.0f,1.0f)));
+
                 m_ActiveScene->RenderScene();
                 
+                Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
+
                 m_Framebuffer->Unbind();
             }
        

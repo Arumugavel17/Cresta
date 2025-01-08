@@ -35,6 +35,15 @@ namespace Cresta
 	{
 
 	}
+	void Renderer::DrawModel(const Ref<Shader>& shader,Ref<Model> model, const glm::mat4& transform)
+	{
+		shader->Bind();
+		shader->SetMat4("u_ProjectionView", s_SceneData->ViewProjectionMatrix);
+		shader->SetVec3("u_CameraPosition", s_SceneData->CamerPosition);
+		shader->SetMat4("u_Model", transform);
+		model->m_VertexArray->Bind();
+		RenderCommand::DrawIndexed(model->m_VertexArray);
+	}
 
 	void Renderer::DrawTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount)
 	{
@@ -52,7 +61,7 @@ namespace Cresta
 		shader->SetMat4("u_ProjectionView", s_SceneData->ViewProjectionMatrix);
 		shader->SetVec3("u_CameraPosition", s_SceneData->CamerPosition);
 		shader->SetMat4("u_Model", transform);
-		shader->SetVec4("u_FlatColor", glm::vec4(1.0f));
+		shader->SetVec4("u_Color", glm::vec4(1.0f));
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}

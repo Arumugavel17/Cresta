@@ -52,7 +52,7 @@ namespace Cresta
 		: m_Path(path)
 	{
 		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
+		stbi_set_flip_vertically_on_load(true);
 		stbi_uc* data = nullptr;
 		{
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -66,21 +66,26 @@ namespace Cresta
 			m_Height = height;
 
 			GLenum internalFormat = 0, dataFormat = 0;
-			if (channels == 4)
+			if (channels == 1)
 			{
-				internalFormat = GL_RGBA8;
-				dataFormat = GL_RGBA;
+				internalFormat = GL_R8;
+				dataFormat = GL_RED;
 			}
 			else if (channels == 3)
 			{
 				internalFormat = GL_RGB8;
 				dataFormat = GL_RGB;
 			}
+			else if (channels == 4)
+			{
+				internalFormat = GL_RGBA8;
+				dataFormat = GL_RGBA;
+			}
 
 			m_InternalFormat = internalFormat;
 			m_DataFormat = dataFormat;
 
-			CRESTA_ASSERT(internalFormat & dataFormat, "Format not supported!");
+			CRESTA_ASSERT(!(internalFormat & dataFormat), "Format not supported!");
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
