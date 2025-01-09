@@ -3,6 +3,36 @@
 
 namespace Cresta
 {
+	enum class TextureType
+	{
+		NONE = 0,
+		Diffuse = 1,
+		Specular = 2,
+		Ambient = 3,
+		Emissive = 4,
+		Height = 5,
+		Normals = 6,
+		Shininess = 7,
+		Opacity = 8,
+		Displacement = 9,
+		Lightmap = 10,
+		Reflection = 11,
+		Base_color = 12,
+		Normal_camera = 13,
+		Emission_color = 14,
+		Metalness = 15,
+		Diffuse_roughness = 16,
+		Ambient_occlusion = 17,
+		Unknown = 18,
+		Sheen = 19,
+		Clearcoat = 20,
+		Transmission = 21,
+		Maya_base = 22,
+		Maya_specular = 23,
+		Maya_specular_color = 24,
+		Maya_specular_roughness = 25,
+	};
+
 	enum class ImageFormat
 	{
 		None = 0,
@@ -31,6 +61,9 @@ namespace Cresta
 		virtual uint32_t GetHeight() const = 0;
 		virtual uint32_t GetRendererID() const = 0;
 
+		virtual void SetTextureType(TextureType type) { p_TextureType = type; }
+		virtual TextureType GetTextureType() const { return p_TextureType; }
+
 		virtual const std::string& GetPath() const = 0;
 
 		virtual void SetData(void* data, uint32_t size) = 0;
@@ -40,6 +73,9 @@ namespace Cresta
 		virtual bool IsLoaded() const = 0;
 
 		virtual bool operator==(const Texture& other) const = 0;
+
+	protected:
+		TextureType p_TextureType;
 	};
 
 	class Texture2D : public Texture

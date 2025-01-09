@@ -1,7 +1,10 @@
 #pragma once
 #include "Renderer/Shader.hpp"
+#include "Renderer/Texture.hpp"
+
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
+
 
 namespace Cresta {
 
@@ -15,6 +18,8 @@ namespace Cresta {
 		virtual void Unbind() const override;
 		
 		virtual void SetInt(const std::string& name, int value) override;
+		virtual void SetTexture(Ref<Texture2D> texture) override;
+		virtual void SetTexture(Ref<Texture2D>* texture, uint32_t size) override;
 		virtual void SetIntArray(const std::string& name, int* values, int count) override;
 		
 		virtual void SetFloat(const std::string& name, float value) override;

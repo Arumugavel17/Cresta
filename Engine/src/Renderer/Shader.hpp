@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Crestaph.hpp"
+#include "Renderer/Texture.hpp"
+
 #include <string>
 #include <unordered_map>
 #include <glm/glm.hpp>
@@ -22,6 +24,8 @@ namespace Cresta {
 		virtual void Unbind() const = 0;
 
 		virtual void SetInt(const std::string& name, int value) = 0;
+		virtual void SetTexture(Ref<Texture2D> texture) = 0;
+		virtual void SetTexture(Ref<Texture2D>* texture,uint32_t size) = 0;
 		virtual void SetFloat(const std::string& name, float value) = 0;
 
 		virtual void SetIntArray(const std::string& name, int* values, int coune) = 0;

@@ -17,16 +17,16 @@ namespace Cresta
 	struct Mesh
 	{
 		std::vector<float> m_Vertices;
-		std::vector<unsigned int> m_Indices;
-		/*std::vector<Ref<Texture2D>> m_Textures;*/
+		std::vector<uint32_t> m_Indices;
+		std::vector<Ref<Texture2D>> m_Textures;
 
 		Mesh(std::vector<float> vertices,
-			std::vector<unsigned int> indices/*,
-			std::vector<Ref<Texture2D>> textures*/)
+			std::vector<uint32_t> indices,
+			std::vector<Ref<Texture2D>> textures)
 		{
 			m_Vertices = vertices;
 			m_Indices = indices;
-			//m_Textures = textures;
+			m_Textures = textures;
 		}
 	};
 
@@ -34,6 +34,7 @@ namespace Cresta
 	{
 	public:
 		Model(const std::string& Path);
+		void Draw();
 		void SetupVAO();
 	private:
 		void LoadModel(std::string Path);
@@ -45,6 +46,7 @@ namespace Cresta
 													aiTextureType type, 
 													std::string typeName);
 	private:
+		std::vector<Ref<VertexArray>> m_VAOs;
 		Ref<Shader> m_Shader;
 		std::string m_Directory;
 		std::vector<Mesh> m_Meshes;

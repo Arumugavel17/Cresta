@@ -70,7 +70,7 @@ namespace Cresta
                -0.5f, -0.5f, -0.5f,    
         };
 
-        unsigned int Indices[] = {
+        uint32_t Indices[] = {
             // Front face
    0, 1, 3,   // First triangle
    1, 2, 3,   // Second triangle
@@ -105,6 +105,10 @@ namespace Cresta
 
         m_VertexArray->AddVertexBuffer(vertexBuffer);
         m_VertexArray->SetIndexBuffer(indexBuffer);
+
+        glBindVertexArray(0);
+        m_Model->SetupVAO();
+        glBindVertexArray(0);
     }
 
     void EditorLayer::OnUpdate()
@@ -132,8 +136,6 @@ namespace Cresta
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
             {
-                m_Model->SetupVAO();
-                
                 m_Shader->Bind();
                 m_Shader->SetVec4("u_Color", glm::vec4(glm::vec3(0.5),1.0f));
                 m_Shader->Unbind();
@@ -144,6 +146,7 @@ namespace Cresta
                 m_Shader->Unbind();
                 Renderer::Submit(m_Shader, m_VertexArray, glm::translate(glm::mat4(1.0f),glm::vec3(1.0f,5.0f,1.0f)));
 
+                m_Model->Draw();
                 m_ActiveScene->RenderScene();
                 
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);

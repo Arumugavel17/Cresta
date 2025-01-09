@@ -25,6 +25,7 @@ namespace Cresta {
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
 		glGenVertexArrays(1, &m_RendererID);
+		glBindVertexArray(m_RendererID);
 	}
 
 	void OpenGLVertexArray::Bind() const
@@ -60,7 +61,6 @@ namespace Cresta {
 					element.Normalized ? GL_TRUE : GL_FALSE,
 					layout.GetStride(),
 					(const void*)element.Offset);
-
 				m_VertexBufferIndex++;
 				break;
 			}
@@ -109,7 +109,6 @@ namespace Cresta {
 	{
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
-
 		m_IndexBuffer = indexBuffer;
 	}
 

@@ -77,6 +77,80 @@ namespace Cresta {
 		glUniform1i(glGetUniformLocation(m_ProgramID, name.c_str()), value);
 	}
 
+	void OpenGLShader::SetTexture(Ref<Texture2D> texture)
+	{
+		TextureType type = texture->GetTextureType();
+		switch (type)
+		{
+		case TextureType::NONE:
+			break;
+		case TextureType::Diffuse:
+			texture->Bind((int)type);
+			glUniform1i(glGetUniformLocation(m_ProgramID, "u_Diffuse"), (int)type);
+			break;
+		case TextureType::Specular:
+			texture->Bind();
+			glUniform1i(glGetUniformLocation(m_ProgramID, "u_Specular"), (int)type);
+			break;
+		case TextureType::Ambient:
+			break;
+		case TextureType::Emissive:
+			break;
+		case TextureType::Height:
+			break;
+		case TextureType::Normals:
+			break;
+		case TextureType::Shininess:
+			break;
+		case TextureType::Opacity:
+			break;
+		case TextureType::Displacement:
+			break;
+		case TextureType::Lightmap:
+			break;
+		case TextureType::Reflection:
+			break;
+		case TextureType::Base_color:
+			break;
+		case TextureType::Normal_camera:
+			break;
+		case TextureType::Emission_color:
+			break;
+		case TextureType::Metalness:
+			break;
+		case TextureType::Diffuse_roughness:
+			break;
+		case TextureType::Ambient_occlusion:
+			break;
+		case TextureType::Unknown:
+			break;
+		case TextureType::Sheen:
+			break;
+		case TextureType::Clearcoat:
+			break;
+		case TextureType::Transmission:
+			break;
+		case TextureType::Maya_base:
+			break;
+		case TextureType::Maya_specular:
+			break;
+		case TextureType::Maya_specular_color:
+			break;
+		case TextureType::Maya_specular_roughness:
+			break;
+		default:
+			break;
+		}
+	}
+
+	void OpenGLShader::SetTexture(Ref<Texture2D>* texture, uint32_t size)
+	{
+		for (uint32_t i = 0;i < size;i++)
+		{
+			SetTexture(texture[i]);
+		}
+	}
+
 	void OpenGLShader::SetFloat(const std::string& name, float value)
 	{
 		glUniform1f(glGetUniformLocation(m_ProgramID, name.c_str()), value);
