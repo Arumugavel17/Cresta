@@ -49,8 +49,8 @@ namespace Cresta
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-		LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-		LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+		LoadMaterialTextures(material, aiTextureType_DIFFUSE);
+		LoadMaterialTextures(material, aiTextureType_SPECULAR);
 		
 		for (int i = 0;i < mesh->mNumVertices;i++)
 		{
@@ -64,7 +64,7 @@ namespace Cresta
 				vertices.push_back(mesh->mTextureCoords[0][i].y);
 			}
 			
-			vertices.push_back(0);
+			vertices.push_back(0); //TODO :: Find a way to pass the correct index of the texture
 		}
 
 
@@ -81,7 +81,7 @@ namespace Cresta
 		return Mesh(vertices, indices);
 	}
 
-	void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+	void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type)
 	{
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
@@ -102,10 +102,10 @@ namespace Cresta
 			if (!skip)
 			{
 				// if texture hasn't been loaded already, load it
-				Ref<Texture2D> texture;
+
 				std::string filename = std::string(str.C_Str());
 				filename = m_Directory + '/' + filename;
-				texture = Texture2D::Create(filename);
+				Ref<Texture2D> texture = Texture2D::Create(filename);
 				texture->SetTextureType((TextureType)type);
 				m_TexturesLoaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
 				m_TextureHandles.push_back(texture->GetTextureHandle());
@@ -114,7 +114,8 @@ namespace Cresta
 	}
 	
 	void Model::SetupVAO()
-	{		
+	{
+
 		for (int i = 0;i < m_Meshes.size();i++)
 		{
 			m_VAOs.push_back(VertexArray::Create());
@@ -128,14 +129,14 @@ namespace Cresta
 			vertexBuffer->SetLayout({
 					{ ShaderDataType::FVec3 , "aPos" },
 					{ ShaderDataType::FVec2 , "aTexCoords" },
-					{ ShaderDataType::Int , "aTexIndex" }
+					{ ShaderDataType::Float , "aTexIndex" }
 				});
 
 			m_VAOs[i]->AddVertexBuffer(vertexBuffer);
 			m_VAOs[i]->SetIndexBuffer(indexBuffer);
 		}
 
-		m_UBO = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(),0, m_TextureHandles.data());
+		m_UBO = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(), 0, m_TextureHandles.data());
 	}
 
 	void Model::Draw()
@@ -143,9 +144,7 @@ namespace Cresta
 		m_UBO->Bind();
 		for (int i = 0;i < m_Meshes.size();i++)
 		{
-			m_Shader->Bind();
-			m_Shader->SetVec4("u_Color", glm::vec4(glm::vec3(0.5), 1.0f));
-			m_Shader->Unbind();
+			Renderer::Submit(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f),glm::vec3(1.0f)));
 			Renderer::Submit(m_Shader, m_VAOs[i], glm::mat4(1.0f));
 		}
 	}

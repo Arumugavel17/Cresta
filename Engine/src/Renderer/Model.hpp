@@ -41,8 +41,7 @@ namespace Cresta
 		Mesh ProcessMesh(const aiMesh* mesh, const aiScene* scene);
 
 		void LoadMaterialTextures(	aiMaterial* mat,
-													aiTextureType type, 
-													std::string typeName);
+													aiTextureType type);
 	private:
 		int TexIndex = 0;
 		std::vector<Ref<VertexArray>> m_VAOs;

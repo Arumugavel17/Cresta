@@ -16,14 +16,24 @@ void main()
 //type fragment
 #version 330 core
 
+uniform int u_TexIndex;
 in vec2 TexCoords;
 uniform sampler2D u_Diffuse;
+uniform sampler2D u_Specular;
 uniform vec4 u_Color;
 out vec4 FragColor;
 
 
 void main()
 {
-    vec4 color = texture(u_Diffuse, TexCoords);
+    vec4 color;
+    if(u_TexIndex == 0)
+    {
+        color = texture(u_Diffuse, TexCoords);
+    }
+    else if(u_TexIndex == 1)
+    {
+        color = texture(u_Specular, TexCoords);
+    }
     FragColor = color;
 }
