@@ -8,7 +8,7 @@ namespace Cresta
 	{
 		CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
 		LoadModel(Path);
-		m_Shader = Shader::Create("assets/shaders/ModelShader.glsl");
+		m_Shader = Shader::Create("assets/shaders/BindlessTextureShader.glsl");
 	}
 
 	void Model::LoadModel(std::string path)
@@ -32,6 +32,7 @@ namespace Cresta
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			m_Meshes.push_back(ProcessMesh(mesh, scene));
+			TexIndex++;
 		}
 
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -45,8 +46,12 @@ namespace Cresta
 	{
 		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
-		std::vector<Ref<Texture2D>> textures;
 
+		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+		LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+		LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+		
 		for (int i = 0;i < mesh->mNumVertices;i++)
 		{
 			vertices.push_back(mesh->mVertices[i].x);
@@ -58,6 +63,8 @@ namespace Cresta
 				vertices.push_back(mesh->mTextureCoords[0][i].x);
 				vertices.push_back(mesh->mTextureCoords[0][i].y);
 			}
+			
+			vertices.push_back(0);
 		}
 
 
@@ -70,21 +77,12 @@ namespace Cresta
 				indices.push_back(face.mIndices[j]);
 			}
 		}
-		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-		std::vector<Ref<Texture2D>> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-
-		std::vector<Ref<Texture2D>> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
-		return Mesh(vertices, indices, textures);
+		return Mesh(vertices, indices);
 	}
 
-	std::vector<Ref<Texture2D>> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+	void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 	{
-		std::vector<Ref<Texture2D>> textures;
-
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
 			aiString str;
@@ -97,7 +95,6 @@ namespace Cresta
 				textureName = textureName.substr(textureName.find_last_of('/') + 1);
 				if (std::strcmp(textureName.c_str(), str.C_Str()) == 0)
 				{
-					textures.push_back(m_TexturesLoaded[j]);
 					skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
 					break;
 				}
@@ -110,11 +107,10 @@ namespace Cresta
 				filename = m_Directory + '/' + filename;
 				texture = Texture2D::Create(filename);
 				texture->SetTextureType((TextureType)type);
-				textures.push_back(texture);
 				m_TexturesLoaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
+				m_TextureHandles.push_back(texture->GetTextureHandle());
 			}
 		}
-		return textures;
 	}
 	
 	void Model::SetupVAO()
@@ -131,24 +127,24 @@ namespace Cresta
 
 			vertexBuffer->SetLayout({
 					{ ShaderDataType::FVec3 , "aPos" },
-					{ ShaderDataType::FVec2 , "aTexCoords" }
+					{ ShaderDataType::FVec2 , "aTexCoords" },
+					{ ShaderDataType::Int , "aTexIndex" }
 				});
 
 			m_VAOs[i]->AddVertexBuffer(vertexBuffer);
 			m_VAOs[i]->SetIndexBuffer(indexBuffer);
 		}
+
+		m_UBO = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(),0, m_TextureHandles.data());
 	}
 
 	void Model::Draw()
 	{
+		m_UBO->Bind();
 		for (int i = 0;i < m_Meshes.size();i++)
 		{
 			m_Shader->Bind();
 			m_Shader->SetVec4("u_Color", glm::vec4(glm::vec3(0.5), 1.0f));
-			for (uint32_t k = 0; k < m_Meshes[k].m_Textures.size(); k++)
-			{
-				m_Shader->SetTexture(m_Meshes[i].m_Textures.data(), m_Meshes[i].m_Textures.size());
-			}
 			m_Shader->Unbind();
 			Renderer::Submit(m_Shader, m_VAOs[i], glm::mat4(1.0f));
 		}

@@ -3,6 +3,7 @@
 #include "Renderer/Texture.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Shader.hpp"
+#include "Renderer/UniformBuffer.hpp"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -18,15 +19,12 @@ namespace Cresta
 	{
 		std::vector<float> m_Vertices;
 		std::vector<uint32_t> m_Indices;
-		std::vector<Ref<Texture2D>> m_Textures;
 
 		Mesh(std::vector<float> vertices,
-			std::vector<uint32_t> indices,
-			std::vector<Ref<Texture2D>> textures)
+			std::vector<uint32_t> indices)
 		{
 			m_Vertices = vertices;
 			m_Indices = indices;
-			m_Textures = textures;
 		}
 	};
 
@@ -42,15 +40,20 @@ namespace Cresta
 		void ProcessNode(const aiNode* node, const aiScene* scene);
 		Mesh ProcessMesh(const aiMesh* mesh, const aiScene* scene);
 
-		std::vector<Ref<Texture2D>> LoadMaterialTextures(	aiMaterial* mat,
+		void LoadMaterialTextures(	aiMaterial* mat,
 													aiTextureType type, 
 													std::string typeName);
 	private:
+		int TexIndex = 0;
 		std::vector<Ref<VertexArray>> m_VAOs;
 		Ref<Shader> m_Shader;
 		std::string m_Directory;
 		std::vector<Mesh> m_Meshes;
 		std::vector<Ref<Texture2D>> m_TexturesLoaded;
+		std::vector<uint64_t> m_TextureHandles;
+		Ref<UniformBuffer> m_UBO;
+		GLuint ubo;
+
 	public:
 		Ref<VertexArray> m_VertexArray;
 	};

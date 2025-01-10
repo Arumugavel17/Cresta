@@ -54,6 +54,7 @@ namespace Cresta {
 			int success;
 			char infoLog[512];
 			glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success);
+			glGetProgramInfoLog(m_ProgramID, 512, NULL, infoLog);
 			CRESTA_ASSERT(!success, "ERROR::LINK::LINK_FAILED::{0}", infoLog)
 		}
 		else 

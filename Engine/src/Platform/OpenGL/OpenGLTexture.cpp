@@ -46,6 +46,8 @@ namespace Cresta
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		CreateHandle();
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
@@ -100,11 +102,21 @@ namespace Cresta
 
 			stbi_image_free(data);
 		}
+		
+		CreateHandle();
 	}
+
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		glDeleteTextures(1, &m_RendererID);
+	}
+
+	uint64_t OpenGLTexture2D::CreateHandle()
+	{
+		m_Handle = glGetTextureHandleARB(m_RendererID);
+		glMakeTextureHandleResidentARB(m_Handle);
+		return m_Handle;
 	}
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)

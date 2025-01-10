@@ -14,9 +14,12 @@ namespace Cresta
 
 		virtual const TextureSpecification& GetSpecification() const override { return m_Specification; }
 
+		virtual uint64_t GetTextureHandle() const override { return m_Handle; };
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
+
+		virtual uint64_t CreateHandle() override;
 
 		virtual const std::string& GetPath() const override { return m_Path; }
 
@@ -33,6 +36,7 @@ namespace Cresta
 	private:
 		TextureSpecification m_Specification;
 
+		uint64_t m_Handle;
 		std::string m_Path;
 		bool m_IsLoaded = false;
 		uint32_t m_Width, m_Height;

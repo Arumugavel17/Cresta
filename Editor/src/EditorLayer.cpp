@@ -106,9 +106,7 @@ namespace Cresta
         m_VertexArray->AddVertexBuffer(vertexBuffer);
         m_VertexArray->SetIndexBuffer(indexBuffer);
 
-        glBindVertexArray(0);
         m_Model->SetupVAO();
-        glBindVertexArray(0);
     }
 
     void EditorLayer::OnUpdate()

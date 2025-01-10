@@ -57,14 +57,17 @@ namespace Cresta
 
 		virtual const TextureSpecification& GetSpecification() const = 0;
 
+		virtual uint64_t GetTextureHandle() const = 0;
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
 		virtual uint32_t GetRendererID() const = 0;
-
-		virtual void SetTextureType(TextureType type) { p_TextureType = type; }
 		virtual TextureType GetTextureType() const { return p_TextureType; }
 
+		virtual void SetTextureType(TextureType type) { p_TextureType = type; }
+
 		virtual const std::string& GetPath() const = 0;
+
+		virtual uint64_t CreateHandle() = 0;
 
 		virtual void SetData(void* data, uint32_t size) = 0;
 
