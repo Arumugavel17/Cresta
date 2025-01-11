@@ -1,38 +1,58 @@
 //type vertex
-#version 420 core
+#version 460 core
+#extension GL_NV_gpu_shader5: enable
+#extension GL_NV_uniform_buffer_std430_layout: enable
+
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoords;
-layout (location = 2) in float aTexIndex;
+layout (location = 2) in int16_t aTexIndex;
 
-flat out int TexIndex;
+flat out int8_t TexCount;
+flat out int16_t TexIndex;
 out vec2 TexCoords;
+
 uniform mat4 u_Model;
 uniform mat4 u_ProjectionView;
 
 void main()
 {
-    TexIndex = int(aTexIndex);
+    TexCount = (int8_t)aTexIndex & (int8_t)0x1F;  // Extract lower 5 bits
+    TexIndex = aTexIndex >> 5;   // Extract upper 11 bits
     TexCoords = aTexCoords;
-    gl_Position = u_ProjectionView * u_Model * vec4(aPos,1.0);
+    gl_Position = u_ProjectionView * u_Model * vec4(aPos, 1.0);
 }
 
 //type fragment
-#version 420 core
-#extension GL_NV_uniform_buffer_std430_layout: enable
+#version 460 core
 #extension GL_NV_gpu_shader5: enable
+#extension GL_NV_uniform_buffer_std430_layout: enable
+#extension GL_EXT_shader_explicit_arithmetic_types : enable
 #extension GL_ARB_bindless_texture: require
 
 layout(std430, binding = 0) uniform TextureHandles {
-    uvec2 textureHandles[1500];  // Array of texture handles
+    uint64_t textureHandles[1500];  // Array of 64-bit texture handles
 };
 
-flat in int TexIndex;
+sampler2D Diffuse;
+sampler2D Specular;
+
+flat in int8_t TexCount;
+flat in int16_t TexIndex;
 in vec2 TexCoords;
 out vec4 FragColor;
 
 void main()
 {
-    uint64_t textureHandle = textureHandles[TexIndex].x;
-    sampler2D tex = sampler2D(textureHandle);
-    FragColor = texture(tex,TexCoords);
+    if(TexCount >= int8_t(0))
+    {
+        uint64_t textureHandle = textureHandles[TexIndex];
+        Diffuse = sampler2D(textureHandle);
+    }
+    if(TexCount >= int8_t(1))
+    {
+        uint64_t textureHandle = textureHandles[TexIndex + int16_t(1)];
+        Specular = sampler2D(textureHandle);
+    }
+    vec4 color = texture(Specular, TexCoords); // Example: accumulate colors    
+    FragColor = color;
 }

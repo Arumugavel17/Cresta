@@ -32,7 +32,7 @@ namespace Cresta
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			m_Meshes.push_back(ProcessMesh(mesh, scene));
-			TexIndex++;
+			m_TexIndex++;
 		}
 
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -44,7 +44,8 @@ namespace Cresta
 
 	Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 	{
-		std::vector<float> vertices;
+		m_TextureCounter = 0;
+		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -54,17 +55,17 @@ namespace Cresta
 		
 		for (int i = 0;i < mesh->mNumVertices;i++)
 		{
-			vertices.push_back(mesh->mVertices[i].x);
-			vertices.push_back(mesh->mVertices[i].y);
-			vertices.push_back(mesh->mVertices[i].z);
-			
-			if (mesh->mTextureCoords[0])
-			{
-				vertices.push_back(mesh->mTextureCoords[0][i].x);
-				vertices.push_back(mesh->mTextureCoords[0][i].y);
-			}
-			
-			vertices.push_back(0); //TODO :: Find a way to pass the correct index of the texture
+			int16_t TextureIndex = 0;
+			TextureIndex = TextureIndex << 5;
+			TextureIndex |= m_TextureCounter & 0x1F;
+
+			aiVector3D position = mesh->mVertices[i];
+			aiVector3D texture = mesh->mTextureCoords[0][i];
+			vertices.push_back({
+				position.x,position.y,position.z,
+				texture.x,texture.y,
+				TextureIndex
+				});
 		}
 
 
@@ -85,6 +86,7 @@ namespace Cresta
 	{
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
+			m_TextureCounter++;
 			aiString str;
 			mat->GetTexture(type, i, &str);
 			// check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
@@ -102,7 +104,6 @@ namespace Cresta
 			if (!skip)
 			{
 				// if texture hasn't been loaded already, load it
-
 				std::string filename = std::string(str.C_Str());
 				filename = m_Directory + '/' + filename;
 				Ref<Texture2D> texture = Texture2D::Create(filename);
@@ -115,21 +116,20 @@ namespace Cresta
 	
 	void Model::SetupVAO()
 	{
-
 		for (int i = 0;i < m_Meshes.size();i++)
 		{
 			m_VAOs.push_back(VertexArray::Create());
 			int VerticesSize = m_Meshes[i].m_Vertices.size();
-			float* Vertices = m_Meshes[i].m_Vertices.data();
+			void* Vertices = m_Meshes[i].m_Vertices.data();
 			int IndicesSize = m_Meshes[i].m_Indices.size();
 			uint32_t* Indices = m_Meshes[i].m_Indices.data();
-			Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(Vertices, sizeof(float) * VerticesSize);
+			Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(Vertices, sizeof(Vertex) * VerticesSize);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(Indices, IndicesSize);
 
 			vertexBuffer->SetLayout({
 					{ ShaderDataType::FVec3 , "aPos" },
 					{ ShaderDataType::FVec2 , "aTexCoords" },
-					{ ShaderDataType::Float , "aTexIndex" }
+					{ ShaderDataType::Int , "aTexIndex" }
 				});
 
 			m_VAOs[i]->AddVertexBuffer(vertexBuffer);

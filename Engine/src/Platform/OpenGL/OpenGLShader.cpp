@@ -25,13 +25,13 @@ namespace Cresta {
 		unsigned int shaderID = glCreateShader(type);
 		glShaderSource(shaderID, 1, &shaderSrc, NULL);
 		glCompileShader(shaderID);
-
+		
 		int success;
 		char infoLog[512];
 		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
 
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-		CRESTA_ASSERT(!success,"ERROR::SHADER::{0}::COMPILATION_FAILED::{1}",type,infoLog);
+		CRESTA_ASSERT(!success,"ERROR::SHADER::{0}::COMPILATION_FAILED::{1}", type,infoLog);
 
 		return shaderID;
 	}

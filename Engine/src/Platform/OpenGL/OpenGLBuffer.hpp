@@ -8,7 +8,7 @@ namespace Cresta {
 	{
 	public:
 		OpenGLVertexBuffer(uint32_t size);
-		OpenGLVertexBuffer(float* vertices, uint32_t size);
+		OpenGLVertexBuffer(void* vertices, uint32_t size);
 		~OpenGLVertexBuffer();
 
 		void Bind() const override;

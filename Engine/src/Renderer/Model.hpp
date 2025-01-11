@@ -15,12 +15,19 @@
 
 namespace Cresta 
 {
+	struct Vertex
+	{
+		float pos_x, pos_y, pos_z;
+		float tex_x, tex_y;
+		int index;
+	};
+
 	struct Mesh
 	{
-		std::vector<float> m_Vertices;
+		std::vector<Vertex> m_Vertices;
 		std::vector<uint32_t> m_Indices;
 
-		Mesh(std::vector<float> vertices,
+		Mesh(std::vector<Vertex> vertices,
 			std::vector<uint32_t> indices)
 		{
 			m_Vertices = vertices;
@@ -43,7 +50,8 @@ namespace Cresta
 		void LoadMaterialTextures(	aiMaterial* mat,
 													aiTextureType type);
 	private:
-		int TexIndex = 0;
+		uint16_t m_TexIndex = 0;
+		uint8_t m_TextureCounter = 0;
 		std::vector<Ref<VertexArray>> m_VAOs;
 		Ref<Shader> m_Shader;
 		std::string m_Directory;
