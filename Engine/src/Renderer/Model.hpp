@@ -38,30 +38,32 @@ namespace Cresta
 	class Model 
 	{
 	public:
+		std::vector<Ref<VertexArray>> m_VAOs;
+	public:
 		Model(const std::string& Path);
-		void Draw();
-		void SetupVAO();
+		void Draw(const glm::vec3& position = glm::vec3(1.0f));
+		void Draw(const glm::mat4& transform = glm::mat4(1.0f));
 	private:
+		void SetupVAO();
 		void LoadModel(std::string Path);
 
 		void ProcessNode(const aiNode* node, const aiScene* scene);
 		Mesh ProcessMesh(const aiMesh* mesh, const aiScene* scene);
 
-		void LoadMaterialTextures(	aiMaterial* mat,
-													aiTextureType type);
+		void LoadMaterialTextures(	aiMaterial* mat, aiTextureType type);
 	private:
+		bool m_IsStatic = false; // To know if the model is static if yes then it can be batched else draw it individually.
 		uint16_t m_TexIndex = 0;
 		uint8_t m_TextureCounter = 0;
-		std::vector<Ref<VertexArray>> m_VAOs;
+		int m_NodeCount = 0;
+
+		bool m_FBXModel = false;
+		bool m_EmbeddedTexture = false;
 		Ref<Shader> m_Shader;
 		std::string m_Directory;
 		std::vector<Mesh> m_Meshes;
 		std::vector<Ref<Texture2D>> m_TexturesLoaded;
 		std::vector<uint64_t> m_TextureHandles;
-		Ref<UniformBuffer> m_UBO;
-		GLuint ubo;
-
-	public:
-		Ref<VertexArray> m_VertexArray;
+		Ref<UniformBuffer> m_UniformBuffer;
 	};
 }

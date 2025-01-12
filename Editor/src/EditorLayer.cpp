@@ -10,8 +10,8 @@ namespace Cresta
 {
     EditorLayer::EditorLayer() : Layer("Editor Layer")
     {
-        m_Model = CreateRef<Model>("assets/models/backpack/backpack.obj");
-        m_EditorCamera = new EditorCamera();
+        DragIcon = Texture2D::Create("assets/diffuse.jpg");
+        m_EditorCamera = CreateRef<EditorCamera>();
         
         m_ActiveScene = CreateRef<Scene>();
         m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(m_ActiveScene);
@@ -106,7 +106,6 @@ namespace Cresta
         m_VertexArray->AddVertexBuffer(vertexBuffer);
         m_VertexArray->SetIndexBuffer(indexBuffer);
 
-        m_Model->SetupVAO();
     }
 
     void EditorLayer::OnUpdate()
@@ -144,7 +143,6 @@ namespace Cresta
                 m_Shader->Unbind();
                 Renderer::Submit(m_Shader, m_VertexArray, glm::translate(glm::mat4(1.0f),glm::vec3(1.0f,5.0f,1.0f)));
 
-                m_Model->Draw();
                 m_ActiveScene->RenderScene();
                 
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
@@ -241,6 +239,10 @@ namespace Cresta
     void EditorLayer::OnImGUIRender()
     {
         CreateDockSpace();
+        
+        ShowFileManager("assets","assets");
+        ShowInputFieldWithDrop();
+
         ShowScene();
         m_HierarchyPanel->OnImGuiRender();
     }
@@ -257,5 +259,70 @@ namespace Cresta
         ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         ImGui::End();
     }
+
+    void EditorLayer::ShowFileManager(const std::filesystem::path& directory, const std::string& currentPath)
+    {
+        ImGui::Begin("File Manager");
+        ImGui::Text("File Manager - %s", currentPath.c_str());
+
+        // List directories first
+        for (const auto& entry : std::filesystem::directory_iterator(directory))
+        {
+            std::string filename = entry.path().filename().string();
+            if (entry.is_directory())
+            {
+                if (ImGui::TreeNode(entry.path().filename().string().c_str()))
+                {
+                    ShowFileManager(entry.path(), currentPath + "/" + entry.path().filename().string());
+                    ImGui::TreePop();
+                }
+            }
+            else if (entry.is_regular_file())
+            {
+                if (ImGui::Selectable(entry.path().filename().string().c_str()))
+                {
+                    //TODO: Create a way open files through the editor
+                }
+
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoPreviewTooltip))
+                {
+                    // Set the drag payload to the file path
+                    ImGui::SetDragDropPayload("FILE_PATH", filename.c_str(), filename.length() + 1);
+                    ImGui::Text(filename.c_str()); // Display file name as label 
+                    ImGui::EndDragDropSource();
+                }
+            }
+
+        }
+
+        ImGui::End();
+    }
+
+    // This function would go in the window where you want to drop the file
+    void EditorLayer::ShowInputFieldWithDrop()
+    {
+        ImGui::Begin("Input Window");
+
+        static char inputField[256] = "";
+
+        // Display the input field
+        ImGui::InputText("Input File Path", inputField, sizeof(inputField));
+
+        // Set up the drop target
+        if (ImGui::BeginDragDropTarget())
+        {
+            // Check if the dropped item is a file path
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+            {
+                // Get the file path from the payload and set it to the input field
+                const char* filePath = (const char*)payload->Data;
+                strncpy(inputField, filePath, sizeof(inputField) - 1);
+            }
+            ImGui::EndDragDropTarget();
+        }
+
+        ImGui::End();
+    }
+
 
 }

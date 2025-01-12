@@ -23,6 +23,9 @@ namespace Cresta {
 		virtual void OnDetach() override;
 		virtual void OnEvent(Event& e) override;
 		virtual void OnImGUIRender() override;
+		
+		void ShowFileManager(const std::filesystem::path& directory, const std::string& currentPath);
+		void ShowInputFieldWithDrop();
 
 		void SetupDockSpace();
 
@@ -31,6 +34,7 @@ namespace Cresta {
 		void ShowScene();
 	private:
 
+		Ref<Texture2D> DragIcon;
 		ImVec2 previousWindowSize = ImVec2(0, 0);
 		
 		Ref<Scene> m_ActiveScene;
@@ -44,9 +48,7 @@ namespace Cresta {
 		Ref<Shader> m_Shader;
 		Ref<VertexArray> m_VertexArray;
 
-		Ref<Model> m_Model;
-
-		EditorCamera* m_EditorCamera;
+		Ref<EditorCamera> m_EditorCamera;
 		ImVec2 m_ViewportSize;
 		bool m_SceneActive = false;
 	};

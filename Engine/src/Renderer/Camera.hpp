@@ -90,8 +90,6 @@ namespace Cresta {
 
 		virtual void OnUpdate();
 		virtual void OnEvent(Event& e);
-	
-
 	protected:	
 		glm::vec3 m_CameraPos;
 		glm::vec3 m_CameraFront = glm::vec3(0.0f, 0.0f, -1.0f);

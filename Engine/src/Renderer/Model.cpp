@@ -9,20 +9,75 @@ namespace Cresta
 		CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
 		LoadModel(Path);
 		m_Shader = Shader::Create("assets/shaders/BindlessTextureShader.glsl");
+		SetupVAO();
 	}
 
 	void Model::LoadModel(std::string path)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-		
+		const aiScene* scene = importer.ReadFile(path,
+			aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs |
+			aiProcess_CalcTangentSpace | aiProcess_ConvertToLeftHanded);
+
 		bool condition = !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode;
 
 		CRESTA_ASSERT(condition,
 			"ERROR::ASSIMP::{0}",
 			importer.GetErrorString());
-
 		m_Directory = path.substr(0, path.find_last_of('/'));
+		if (path.substr(path.find_last_of('.'), path.length() - 1) == ".fbx")
+		{
+			m_FBXModel = true;
+		}
+
+		if (scene->HasTextures())
+		{
+			m_EmbeddedTexture = true;
+			for (unsigned int t = 0; t < scene->mNumTextures; ++t)
+			{
+				aiTexture* texture = scene->mTextures[t];
+				if (texture->mHeight == 0)
+				{
+
+					std::string format(texture->achFormatHint);
+					std::string filename = texture->mFilename.C_Str();
+					filename = m_Directory + "/" + filename.substr(filename.find_last_of('/') + 1,filename.length() - 1);
+
+					std::ofstream outFile(filename, std::ios::binary);
+					outFile.write(reinterpret_cast<const char*>(texture->pcData), texture->mWidth);
+					outFile.close();
+
+					CRESTA_INFO("Saved compressed texture as: {0}", filename);
+					Ref<Texture2D> texture = Texture2D::Create(filename,false);
+
+					if (filename.find("_diffuse") != -1)
+					{
+						texture->SetTextureType(TextureType::Diffuse);
+					}
+					else if (filename.find("_specular") != -1)
+					{
+						texture->SetTextureType(TextureType::Specular);
+					}
+					else if (filename.find("_normal") != -1)
+					{
+						texture->SetTextureType(TextureType::Normals);
+					}
+
+					m_TexIndex++;
+					m_TexturesLoaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
+					m_TextureHandles.push_back(texture->GetTextureHandle());
+				}
+				if (texture->mHeight > 0) {
+					int width = texture->mWidth;
+					int height = texture->mHeight;
+					unsigned char* data = reinterpret_cast<unsigned char*>(texture->pcData);
+
+					Ref<Texture2D> texture = Texture2D::Create( width, height, data);
+					m_TexturesLoaded.push_back(texture);
+					m_TextureHandles.push_back(texture->GetTextureHandle());
+				}
+			}
+		}
 		ProcessNode(scene->mRootNode, scene);
 	}
 
@@ -37,21 +92,27 @@ namespace Cresta
 
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
 		{
-			CRESTA_INFO("Processing Node {0}", i);
+			m_NodeCount++;
+			CRESTA_INFO("Processing Node {0}", m_NodeCount);
 			ProcessNode(node->mChildren[i], scene);
 		}
 	}
 
 	Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 	{
-		m_TextureCounter = 0;
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-		LoadMaterialTextures(material, aiTextureType_DIFFUSE);
-		LoadMaterialTextures(material, aiTextureType_SPECULAR);
+		if (!m_EmbeddedTexture)
+		{
+			m_TextureCounter = 0;
+			LoadMaterialTextures(material, aiTextureType_DIFFUSE);
+			LoadMaterialTextures(material, aiTextureType_SPECULAR);
+			LoadMaterialTextures(material, aiTextureType_BASE_COLOR);
+			LoadMaterialTextures(material, aiTextureType_UNKNOWN);
+		}
 		
 		for (int i = 0;i < mesh->mNumVertices;i++)
 		{
@@ -60,12 +121,23 @@ namespace Cresta
 			TextureIndex |= m_TextureCounter & 0x1F;
 
 			aiVector3D position = mesh->mVertices[i];
-			aiVector3D texture = mesh->mTextureCoords[0][i];
-			vertices.push_back({
-				position.x,position.y,position.z,
-				texture.x,texture.y,
-				TextureIndex
-				});
+			aiVector3D texture = mesh->mTextureCoords[0] ? mesh->mTextureCoords[0][i] : aiVector3D(0.0f, 0.0f, 0.0f); 
+			if (m_FBXModel)
+			{
+				vertices.push_back({
+					position.x / 100,position.y / 100,position.z / 100,
+					texture.x,texture.y,
+					TextureIndex
+					});
+			}
+			else 
+			{
+				vertices.push_back({ 
+					position.x,position.y,position.z,
+					texture.x,texture.y,
+					TextureIndex
+					});
+			}
 		}
 
 
@@ -119,6 +191,7 @@ namespace Cresta
 		for (int i = 0;i < m_Meshes.size();i++)
 		{
 			m_VAOs.push_back(VertexArray::Create());
+			m_VAOs[i]->Bind();
 			int VerticesSize = m_Meshes[i].m_Vertices.size();
 			void* Vertices = m_Meshes[i].m_Vertices.data();
 			int IndicesSize = m_Meshes[i].m_Indices.size();
@@ -135,17 +208,33 @@ namespace Cresta
 			m_VAOs[i]->AddVertexBuffer(vertexBuffer);
 			m_VAOs[i]->SetIndexBuffer(indexBuffer);
 		}
-
-		m_UBO = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(), 0, m_TextureHandles.data());
+		m_UniformBuffer = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(), 0, m_TextureHandles.data());
 	}
 
-	void Model::Draw()
+	void Model::Draw(const glm::vec3& position)
 	{
-		m_UBO->Bind();
+		if (m_IsStatic)
+		{
+			return;
+		}
+		m_UniformBuffer->Bind();
 		for (int i = 0;i < m_Meshes.size();i++)
 		{
-			Renderer::Submit(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f),glm::vec3(1.0f)));
-			Renderer::Submit(m_Shader, m_VAOs[i], glm::mat4(1.0f));
+			Renderer::Submit(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
+		}
+	}
+
+	void Model::Draw(const glm::mat4& transform)
+	{
+		if (m_IsStatic)
+		{
+			return;
+		}
+
+		m_UniformBuffer->Bind();
+		for (int i = 0;i < m_Meshes.size();i++)
+		{
+			Renderer::Submit(m_Shader, m_VAOs[i], transform);	
 		}
 	}
 }

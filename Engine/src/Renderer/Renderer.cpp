@@ -1,12 +1,15 @@
+#include "Renderer.hpp"
 #include "Crestaph.hpp"
 #include "Renderer/Renderer.hpp"
 
 namespace Cresta 
 {
 	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
+	Ref<VertexArray> Renderer::s_VertexArray = nullptr;
 
 	void Renderer::Init()
 	{
+		s_VertexArray = VertexArray::Create();
 		RenderCommand::Init();
 	}
 
@@ -35,14 +38,15 @@ namespace Cresta
 	{
 
 	}
+
 	void Renderer::DrawModel(const Ref<Shader>& shader,Ref<Model> model, const glm::mat4& transform)
 	{
 		shader->Bind();
 		shader->SetMat4("u_ProjectionView", s_SceneData->ViewProjectionMatrix);
 		shader->SetVec3("u_CameraPosition", s_SceneData->CamerPosition);
 		shader->SetMat4("u_Model", transform);
-		model->m_VertexArray->Bind();
-		RenderCommand::DrawIndexed(model->m_VertexArray);
+		//model->m_VertexArray->Bind();
+		//RenderCommand::DrawIndexed(model->m_VertexArray);
 	}
 
 	void Renderer::DrawTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount)
@@ -66,4 +70,8 @@ namespace Cresta
 		RenderCommand::DrawIndexed(vertexArray);
 	}
 
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer)
+	{
+
+	}
 }

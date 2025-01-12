@@ -62,6 +62,7 @@ namespace Cresta{
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
 		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
+		virtual uint32_t GetDepthAttachement() const = 0;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
 

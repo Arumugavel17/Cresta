@@ -8,8 +8,9 @@ namespace Cresta
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
+		OpenGLTexture2D(int height, int width, unsigned char* data);
 		OpenGLTexture2D(const TextureSpecification& specification);
-		OpenGLTexture2D(const std::string& path);
+		OpenGLTexture2D(const std::string& path, bool slipTexture );
 		virtual ~OpenGLTexture2D();
 
 		virtual const TextureSpecification& GetSpecification() const override { return m_Specification; }

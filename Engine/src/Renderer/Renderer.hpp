@@ -23,8 +23,9 @@ namespace Cresta {
 		static void DrawModel(const Ref<Shader>& shader,Ref<Model> model, const glm::mat4& transform);
 		static void DrawTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount);
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
-
+		static void Submit(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer);
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+
 	private:
 		struct SceneData
 		{
@@ -32,6 +33,7 @@ namespace Cresta {
 			glm::mat4 ViewProjectionMatrix;
 		};
 
+		static Ref<VertexArray> s_VertexArray;
 		static Scope<SceneData> s_SceneData;
 	};
 }

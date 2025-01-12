@@ -140,4 +140,9 @@ namespace Cresta {
     {
 		return m_ColorAttachments[index];
     }
+
+	uint32_t OpenGLFramebuffer::GetDepthAttachement() const
+	{
+		return m_DepthAttachment;
+	}
 }

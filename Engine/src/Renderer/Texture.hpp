@@ -84,7 +84,8 @@ namespace Cresta
 	class Texture2D : public Texture
 	{
 	public:
+		static Ref<Texture2D> Create(int height,int width,unsigned char* data);
 		static Ref<Texture2D> Create(const TextureSpecification& specification);
-		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const std::string& path, bool flipTexture = true);
 	};
 }

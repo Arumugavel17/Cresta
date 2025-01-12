@@ -46,6 +46,7 @@ namespace Cresta {
 
 	private:
 		Ref<Shader> m_Shader;
+		Ref<Shader> m_ModelShader;
 		Ref<VertexArray> m_VertexArray;
 
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;

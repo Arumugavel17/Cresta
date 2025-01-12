@@ -53,6 +53,6 @@ void main()
         uint64_t textureHandle = textureHandles[TexIndex + int16_t(1)];
         Specular = sampler2D(textureHandle);
     }
-    vec4 color = texture(Specular, TexCoords); // Example: accumulate colors    
+    vec4 color = texture(Diffuse, TexCoords); // Example: accumulate colors    
     FragColor = color;
 }

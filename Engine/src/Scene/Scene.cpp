@@ -12,6 +12,7 @@ namespace Cresta {
 	{
 		m_VertexArray = VertexArray::Create();
 		m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
+		m_ModelShader = Shader::Create("assets/shaders/FlatShader.glsl");
 		float Vertices[] = {
 			-0.5f, -0.5f, 0.0f, 
 			 0.5f, -0.5f, 0.0f, 
@@ -97,11 +98,14 @@ namespace Cresta {
 	{
 		// Draw sprites
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			auto group = m_Registry.group<TransformComponent>(entt::get<MeshRenderer>);
 			for (auto entity : group)
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer::Submit(m_Shader, m_VertexArray, transform.GetTransform());
+				auto [transform, Model] = group.get<TransformComponent, MeshRenderer>(entity);
+				if (Model.model) 
+				{
+					Model.model->Draw(transform.GetTransform());
+				}
 			}
 		}
 	}
@@ -125,6 +129,12 @@ namespace Cresta {
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
 	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<MeshRenderer>(Entity entity, MeshRenderer& component)	
+	{
+		//component.model = CreateRef<Model>("assets/models/backpack/backpack.obj");	
 	}
 
 	template<>

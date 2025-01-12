@@ -32,6 +32,11 @@ namespace Cresta
 
 	}
 
+	OpenGLTexture2D::OpenGLTexture2D(int height, int width, unsigned char* data)
+	{
+		
+	}
+
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& specification)
 		: m_Specification(specification), m_Width(m_Specification.Width), m_Height(m_Specification.Height)
 	{
@@ -46,15 +51,14 @@ namespace Cresta
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 		CreateHandle();
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, bool flipTexture)
 		: m_Path(path)
 	{
 		int width, height, channels;
-		stbi_set_flip_vertically_on_load(true);
+		stbi_set_flip_vertically_on_load(flipTexture);
 		stbi_uc* data = nullptr;
 		{
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -87,10 +91,10 @@ namespace Cresta
 			m_InternalFormat = internalFormat;
 			m_DataFormat = dataFormat;
 
-			CRESTA_ASSERT(!(internalFormat & dataFormat), "Format not supported!");
+			CRESTA_ASSERT(!(m_InternalFormat & m_DataFormat), "Format not supported!");
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
+			glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
 			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -98,7 +102,7 @@ namespace Cresta
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 
 			stbi_image_free(data);
 		}
