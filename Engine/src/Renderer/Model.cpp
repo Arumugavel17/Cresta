@@ -4,6 +4,8 @@
 
 namespace Cresta
 {
+	std::unordered_map<std::string, Ref<Model>> Model::s_ModelsLoaded;
+
 	Model::Model(const std::string& Path)
 	{
 		CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
@@ -125,16 +127,16 @@ namespace Cresta
 			if (m_FBXModel)
 			{
 				vertices.push_back({
-					position.x / 100,position.y / 100,position.z / 100,
-					texture.x,texture.y,
+					{ position.x / 100,position.y / 100,position.z / 100 },
+					{ texture.x,texture.y},
 					TextureIndex
 					});
 			}
 			else 
 			{
-				vertices.push_back({ 
-					position.x,position.y,position.z,
-					texture.x,texture.y,
+				vertices.push_back({
+					{ position.x,position.y,position.z },
+					{ texture.x,texture.y },
 					TextureIndex
 					});
 			}
@@ -236,5 +238,11 @@ namespace Cresta
 		{
 			Renderer::Submit(m_Shader, m_VAOs[i], transform);	
 		}
+	}
+
+	Ref<Model> Model::Create(const std::string& Path)
+	{
+		Model::s_ModelsLoaded[Path] = CreateRef<Model>(Path);
+		return Model::s_ModelsLoaded[Path];
 	}
 }

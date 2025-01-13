@@ -6,8 +6,10 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoords;
 layout (location = 2) in int16_t aTexIndex;
+layout (location = 3) in vec3 aTangent;
+layout (location = 4) in float aBitTangenet;
 
-flat out int8_t TexCount;
+flat out int8_t TexCount;   
 flat out int16_t TexIndex;
 out vec2 TexCoords;
 
@@ -30,7 +32,7 @@ void main()
 #extension GL_ARB_bindless_texture: require
 
 layout(std430, binding = 0) uniform TextureHandles {
-    uint64_t textureHandles[1500];  // Array of 64-bit texture handles
+    uint64_t textureHandles[5];  // Array of 64-bit texture handles
 };
 
 sampler2D Diffuse;

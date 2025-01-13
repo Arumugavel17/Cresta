@@ -241,7 +241,6 @@ namespace Cresta
         CreateDockSpace();
         
         ShowFileManager("assets","assets");
-        ShowInputFieldWithDrop();
 
         ShowScene();
         m_HierarchyPanel->OnImGuiRender();
@@ -286,8 +285,9 @@ namespace Cresta
 
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoPreviewTooltip))
                 {
+                    std::string payload = currentPath + "/" + filename;
                     // Set the drag payload to the file path
-                    ImGui::SetDragDropPayload("FILE_PATH", filename.c_str(), filename.length() + 1);
+                    ImGui::SetDragDropPayload("FILE_PATH", payload.c_str(), payload.length() + 1);
                     ImGui::Text(filename.c_str()); // Display file name as label 
                     ImGui::EndDragDropSource();
                 }
@@ -297,32 +297,4 @@ namespace Cresta
 
         ImGui::End();
     }
-
-    // This function would go in the window where you want to drop the file
-    void EditorLayer::ShowInputFieldWithDrop()
-    {
-        ImGui::Begin("Input Window");
-
-        static char inputField[256] = "";
-
-        // Display the input field
-        ImGui::InputText("Input File Path", inputField, sizeof(inputField));
-
-        // Set up the drop target
-        if (ImGui::BeginDragDropTarget())
-        {
-            // Check if the dropped item is a file path
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
-            {
-                // Get the file path from the payload and set it to the input field
-                const char* filePath = (const char*)payload->Data;
-                strncpy(inputField, filePath, sizeof(inputField) - 1);
-            }
-            ImGui::EndDragDropTarget();
-        }
-
-        ImGui::End();
-    }
-
-
 }
