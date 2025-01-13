@@ -8,7 +8,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-namespace Cresta 
+namespace Cresta
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
@@ -137,7 +137,7 @@ namespace Cresta
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
 			ImGui::PushFont(boldFont);
 
-			if (ImGui::Button(buttonLabel.substr(2,-1).c_str(), buttonSize))
+			if (ImGui::Button(buttonLabel.substr(2, -1).c_str(), buttonSize))
 				*value = resetValue;
 
 			ImGui::PopFont();
@@ -145,7 +145,7 @@ namespace Cresta
 			ImGui::SameLine();
 			std::string dragFloatID = buttonLabel + "DrawFloat";
 
-			float dragWidth = availableWidth * 0.2f;  
+			float dragWidth = availableWidth * 0.2f;
 			ImGui::PushItemWidth(dragWidth);  // Set width for DragFloat
 			ImGui::DragFloat(dragFloatID.c_str(), value, 0.1f, 0.0f, 0.0f, "%.2f");
 			ImGui::PopItemWidth(); // Restore the previous width
@@ -175,11 +175,11 @@ namespace Cresta
 		}
 
 		auto& tag = m_SelectedEntity.GetComponent<TagComponent>().Tag;
-		
+
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
 		strncpy_s(buffer, sizeof(buffer), tag.c_str(), sizeof(buffer));
-		
+
 		if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
 		{
 			tag = std::string(buffer);
@@ -197,6 +197,7 @@ namespace Cresta
 		{
 			DisplayAddComponentEntry<CameraComponent>("Camera");
 			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
+			DisplayAddComponentEntry<MeshRenderer>("Mesh Renderer");
 			ImGui::EndPopup();
 		}
 
@@ -233,6 +234,26 @@ namespace Cresta
 					ImGui::EndDragDropTarget();
 				}
 				ImGui::PopItemWidth(); // Restore the previous width
+			});
+
+		DrawComponent<MeshRenderer>("Mesh Renderer", m_SelectedEntity, [](auto& component)
+			{
+				ImGui::InputText("TextPath",component.path,128);
+				if (ImGui::BeginDragDropTarget())
+				{
+					// Accept the drag payload
+					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH");
+					if (payload != nullptr)
+					{
+						// Get the dropped file path
+						std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
+						std::copy(tempString.begin(), tempString.end(), component.path);
+						component.path[tempString.size()] = '\0'; // Null-terminate the string
+						std::cout << component.path;
+						component.PathChanged();
+					}
+					ImGui::EndDragDropTarget();
+				}
 			});
 		ImGui::End();
 	}

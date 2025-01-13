@@ -25,7 +25,6 @@ namespace Cresta {
 		virtual void OnImGUIRender() override;
 		
 		void ShowFileManager(const std::filesystem::path& directory, const std::string& currentPath);
-		void ShowInputFieldWithDrop();
 
 		void SetupDockSpace();
 

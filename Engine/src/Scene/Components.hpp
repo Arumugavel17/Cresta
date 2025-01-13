@@ -1,7 +1,7 @@
 #pragma once
-
 #include "Crestaph.hpp"
 #include "Renderer/Camera.hpp"
+#include "Renderer/Model.hpp"
 #include "Renderer/Texture.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -61,6 +61,26 @@ namespace Cresta {
 		}
 	};
 
+	struct MeshRenderer
+	{
+		char* path = new char[128]();
+		Ref<Model> model;
+		MeshRenderer() = default;
+		MeshRenderer(const MeshRenderer&) = default;
+
+		void PathChanged()
+		{
+			if (Model::s_ModelsLoaded.find(std::string(path)) != Model::s_ModelsLoaded.end())
+			{
+				model = Model::s_ModelsLoaded[std::string(path)];
+			}
+			else
+			{
+				model = Model::Create(path);
+			}
+		}
+	};
+
 	struct CameraComponent
 	{
 		Camera Camera;
@@ -77,5 +97,5 @@ namespace Cresta {
 	};
 
 	using AllComponents =
-		ComponentGroup < TransformComponent, SpriteRendererComponent, CameraComponent>;
+		ComponentGroup < TransformComponent, SpriteRendererComponent, CameraComponent, MeshRenderer>;
 }

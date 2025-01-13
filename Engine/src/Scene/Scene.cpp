@@ -1,9 +1,9 @@
 #include "Crestaph.hpp"
 #include "Scene.hpp"
 #include "Entity.hpp"
-
 #include "Components.hpp"
 #include "Renderer/Renderer.hpp"
+
 #include <glm/glm.hpp>
 
 namespace Cresta {
@@ -134,7 +134,7 @@ namespace Cresta {
 	template<>
 	void Scene::OnComponentAdded<MeshRenderer>(Entity entity, MeshRenderer& component)	
 	{
-		//component.model = CreateRef<Model>("assets/models/backpack/backpack.obj");	
+
 	}
 
 	template<>
