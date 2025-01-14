@@ -45,6 +45,11 @@ out vec4 FragColor;
 
 void main()
 {
+    if(TexCount == 0)
+    {
+        FragColor = vec4(1.0);
+        return;
+    }
     if(TexCount >= int8_t(0))
     {
         uint64_t textureHandle = textureHandles[TexIndex];

@@ -33,7 +33,6 @@ namespace Cresta {
 		void ShowScene();
 	private:
 
-		Ref<Texture2D> DragIcon;
 		ImVec2 previousWindowSize = ImVec2(0, 0);
 		
 		Ref<Scene> m_ActiveScene;
@@ -43,9 +42,6 @@ namespace Cresta {
 		
 		Ref<Shader> m_GridShader;
 		Ref<VertexArray> m_GridVertexArray;
-
-		Ref<Shader> m_Shader;
-		Ref<VertexArray> m_VertexArray;
 
 		Ref<EditorCamera> m_EditorCamera;
 		ImVec2 m_ViewportSize;

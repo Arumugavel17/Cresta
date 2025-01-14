@@ -7,16 +7,23 @@ namespace Cresta
 	
 	Application::Application() 
 	{
-		Log::Init();
 		Application::s_Instance = this;
 		m_Running = true;
 		m_Minimized = false;
-		m_Window = Window::Create();
 		m_ImGUILayer = new ImGUILayer();
-		PushOverlay(m_ImGUILayer);
-		m_Window->SetEventCallBack(CRESTA_BIND_EVENT_FN(Application::OnEvent));
+		m_Window = Window::Create();
+
 		Init();
 	}
+
+	void Application::Init()
+	{
+		Log::Init();
+		Renderer::Init();
+		m_Window->SetEventCallBack(CRESTA_BIND_EVENT_FN(Application::OnEvent)); 
+		PushOverlay(m_ImGUILayer);
+	}
+
 
 	Application::~Application()
 	{
@@ -79,10 +86,6 @@ namespace Cresta
 		}
 	}
 
-	void Application::Init()
-	{
-	}
-
 	bool Application::OnWindowClose(WindowCloseEvent& e) {
 		m_Running = false;
 		return true;
@@ -102,6 +105,6 @@ namespace Cresta
 
 	void Application::Close()
 	{
-			m_Running = false;
+		m_Running = false;
 	}
 }

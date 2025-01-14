@@ -43,7 +43,6 @@ namespace Cresta {
 		{
 			for (const auto& pair : *m_ShaderSrc) 
 			{
-				std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
 				const char* shaderSrc = pair.second.c_str();
 				
 				unsigned int shaderID = CompileShader(pair.first, shaderSrc);
