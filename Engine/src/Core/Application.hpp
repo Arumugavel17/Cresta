@@ -9,6 +9,7 @@
 #include "Core/LayerStack.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Core/ImGUILayer.hpp"
+#include "Physics/Physics.hpp"
 #include <iostream>
 #include <memory>
 

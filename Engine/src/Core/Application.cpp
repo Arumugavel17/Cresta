@@ -7,6 +7,8 @@ namespace Cresta
 	
 	Application::Application() 
 	{
+		Scope<Physics> t_Phys = CreateScope<Physics>();
+		t_Phys->Run();
 		Application::s_Instance = this;
 		m_Running = true;
 		m_Minimized = false;
