@@ -215,21 +215,21 @@ namespace Cresta
 				float availableWidth = ImGui::GetContentRegionAvail().x;  // Get available width for the current window
 				float dragWidth = availableWidth * 0.5f;
 				ImGui::PushItemWidth(dragWidth);  // Set width for DragFloat
-				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+				ImGui::DragFloat("Mix Factor", &component.MixFactor, 0.1f, 0.0f, 100.0f);
 				ImGui::ColorEdit4("Color (Inline)", glm::value_ptr(component.Color), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreview);
 
-				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+				ImGui::InputText("Texture", component.path, 128, ImGuiInputTextFlags_ReadOnly);
+
 				if (ImGui::BeginDragDropTarget())
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH");
+					if (payload != nullptr)
 					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath(path);
-						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
-						if (texture->IsLoaded())
-							component.Texture = texture;
-						else
-							CRESTA_WARN("Could not load texture {0}", texturePath.filename().string());
+						// Get the dropped file path
+						std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
+						std::copy(tempString.begin(), tempString.end(), component.path);
+						component.path[tempString.size()] = '\0'; // Null-terminate the 
+						component.PathChanged();
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -238,8 +238,10 @@ namespace Cresta
 
 		DrawComponent<MeshRenderer>("Mesh Renderer", m_SelectedEntity, [](auto& component)
 			{
-				ImGui::InputText("TextPath",component.path,128);
-				if (ImGui::BeginDragDropTarget())
+				
+				ImGui::InputText("TextPath", component.path, 128, ImGuiInputTextFlags_ReadOnly);
+				
+				if(ImGui::BeginDragDropTarget())
 				{
 					// Accept the drag payload
 					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH");
@@ -248,8 +250,7 @@ namespace Cresta
 						// Get the dropped file path
 						std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
 						std::copy(tempString.begin(), tempString.end(), component.path);
-						component.path[tempString.size()] = '\0'; // Null-terminate the string
-						std::cout << component.path;
+						component.path[tempString.size()] = '\0'; // Null-terminate the 
 						component.PathChanged();
 					}
 					ImGui::EndDragDropTarget();

@@ -1,4 +1,3 @@
-@ -0,0 +1,31 @@
 //type vertex
 #version 330 core
 layout(location = 0) in vec3 aPos;
@@ -28,5 +27,5 @@ uniform float u_Mixfactor = 0.0;
 void main()
 {
     vec4 frag = texture(u_Texture, TexCoord);
-    FragColor = vec4(mix(frag,u_Color,u_Mixfactor));
+    FragColor = vec4(mix(u_Color,frag,u_Mixfactor));
 }

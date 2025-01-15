@@ -55,8 +55,9 @@ namespace Cresta
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, bool flipTexture)
-		: m_Path(path)
 	{
+		m_Path = path;
+		CRESTA_CORE_INFO("{0} Texture Created ", path);
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(flipTexture);
 		stbi_uc* data = nullptr;
@@ -92,7 +93,7 @@ namespace Cresta
 			m_DataFormat = dataFormat;
 
 			CRESTA_ASSERT(!(m_InternalFormat & m_DataFormat), "Format not supported!");
-
+			
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
@@ -109,7 +110,6 @@ namespace Cresta
 		
 		CreateHandle();
 	}
-
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{

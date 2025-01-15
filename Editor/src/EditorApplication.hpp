@@ -5,12 +5,14 @@
 namespace Cresta {
 	class EditorApplication : public Application {
 	public:
-		EditorApplication::EditorApplication()
+		EditorApplication()
 		{
 			EditorLayer* t_EditorLayer = new EditorLayer();
 			PushLayer(t_EditorLayer);
 			Init();
 		}
+
+		~EditorApplication() = default;
 
 		void Init();
 	};

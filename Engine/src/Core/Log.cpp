@@ -8,6 +8,12 @@ namespace Cresta {
 	Ref<spdlog::logger> Log::s_CoreLogger;
 	Ref<spdlog::logger> Log::s_ClientLogger;
 
+	void Log::Shutdown()
+	{
+		std::cout << "Shutting down Log";
+		spdlog::shutdown();
+	}
+
 	void Log::Init()
 	{
 		std::vector<spdlog::sink_ptr> logSinks;

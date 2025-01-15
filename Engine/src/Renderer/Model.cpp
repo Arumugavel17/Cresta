@@ -26,6 +26,7 @@ namespace Cresta
 		CRESTA_ASSERT(condition,
 			"ERROR::ASSIMP::{0}",
 			importer.GetErrorString());
+
 		m_Directory = path.substr(0, path.find_last_of('/'));
 		if (path.substr(path.find_last_of('.'), path.length() - 1) == ".fbx")
 		{
@@ -40,7 +41,6 @@ namespace Cresta
 				aiTexture* texture = scene->mTextures[t];
 				if (texture->mHeight == 0)
 				{
-
 					std::string format(texture->achFormatHint);
 					std::string filename = texture->mFilename.C_Str();
 					filename = m_Directory + "/" + filename.substr(filename.find_last_of('/') + 1,filename.length() - 1);
@@ -66,6 +66,7 @@ namespace Cresta
 					}
 
 					m_TexIndex++;
+					m_TextureCounter++;
 					m_TexturesLoaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
 					m_TextureHandles.push_back(texture->GetTextureHandle());
 				}
@@ -75,6 +76,8 @@ namespace Cresta
 					unsigned char* data = reinterpret_cast<unsigned char*>(texture->pcData);
 
 					Ref<Texture2D> texture = Texture2D::Create( width, height, data);
+					m_TexIndex++;
+					m_TextureCounter++;
 					m_TexturesLoaded.push_back(texture);
 					m_TextureHandles.push_back(texture->GetTextureHandle());
 				}

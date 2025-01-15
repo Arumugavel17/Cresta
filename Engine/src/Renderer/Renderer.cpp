@@ -10,21 +10,21 @@ namespace Cresta
 
 	void Renderer::Init()
 	{
-		s_NoTexture = Texture2D::Create("assets/Textures/images.jpg");
+		s_NoTexture = Texture2D::Create("assets/models/Textures/test.jpg");
 		s_SpriteShader = Shader::Create("assets/shaders/SpriteShader.glsl");
 		s_SpriteVertexArray = VertexArray::Create();
 
 		float vertices[] = {
-			// Positions        // Texture Coords
-			-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // Bottom-left
-			 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // Bottom-right
-			 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // Top-right
-			-0.5f,  0.5f, 0.0f,  0.0f, 1.0f  // Top-left
+			 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,  // Top Right
+			 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,  // Bottom Right
+			-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,  // Bottom Left
+			-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,  // Top Left
 		};
 
-		uint32_t indices[] = {
-			0, 1, 2, // First triangle
-			0, 2, 3  // Second triangle
+		uint32_t indices[] = 
+		{
+			0, 1, 3, // First triangle
+			1, 2, 3  // Second triangle
 		};
 
 		Ref<VertexBuffer> VBO = VertexBuffer::Create(vertices, sizeof(vertices));
@@ -76,6 +76,7 @@ namespace Cresta
 		s_SpriteShader->SetVec3("u_CameraPosition", s_SceneData->CamerPosition);
 		s_SpriteShader->SetMat4("u_Model", transform);
 		s_SpriteShader->SetFloat("u_Mixfactor", Mixfactor);
+		s_SpriteShader->SetInt("u_Texture", 0);
 		if (texture)
 		{
 			texture->Bind();

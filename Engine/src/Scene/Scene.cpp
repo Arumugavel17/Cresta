@@ -1,5 +1,5 @@
-#include "Crestaph.hpp"
 #include "Scene.hpp"
+#include "Crestaph.hpp"
 #include "Entity.hpp"
 #include "Components.hpp"
 #include "Renderer/Renderer.hpp"
@@ -10,30 +10,6 @@ namespace Cresta {
 
 	Scene::Scene()
 	{
-		m_VertexArray = VertexArray::Create();
-		m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
-		m_ModelShader = Shader::Create("assets/shaders/FlatShader.glsl");
-		float Vertices[] = {
-			-0.5f, -0.5f, 0.0f, 
-			 0.5f, -0.5f, 0.0f, 
-			 0.5f,  0.5f, 0.0f, 
-			-0.5f,  0.5f, 0.0f  
-		};
-
-		unsigned int Indices[] = {
-			0, 1, 2, // First triangle
-			2, 3, 0  // Second triangle
-		};
-
-		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(Vertices, sizeof(Vertices));
-		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(Indices, 6);
-
-		vertexBuffer->SetLayout({
-				{ ShaderDataType::FVec3 , "aPos" }
-			});
-
-		m_VertexArray->AddVertexBuffer(vertexBuffer);
-		m_VertexArray->SetIndexBuffer(indexBuffer);
 	}
 
 	Scene::~Scene()
@@ -96,17 +72,30 @@ namespace Cresta {
 
 	void Scene::RenderScene()
 	{
-		// Draw sprites
+		RenderMeshes();
+		RenderSprits();
+	}
+
+	void Scene::RenderMeshes()
+	{
+		auto group = m_Registry.group<MeshRenderer>(entt::get<TransformComponent>);
+		for (auto entity : group)
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<MeshRenderer>);
-			for (auto entity : group)
+			auto [transform, Model] = group.get<TransformComponent, MeshRenderer>(entity);
+			if (Model.model)
 			{
-				auto [transform, Model] = group.get<TransformComponent, MeshRenderer>(entity);
-				if (Model.model) 
-				{
-					Model.model->Draw(transform.GetTransform());
-				}
+				Model.model->Draw(transform.GetTransform());
 			}
+		}
+	}
+
+	void Scene::RenderSprits()
+	{
+		auto group = m_Registry.group<SpriteRendererComponent>(entt::get<TransformComponent>);
+		for (auto entity : group)
+		{
+			auto [transform, Sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			Renderer::DrawSprite(Sprite.Color,Sprite.Texture,transform.GetTransform(),Sprite.MixFactor);
 		}
 	}
 

@@ -10,6 +10,7 @@ namespace Cresta {
 	{
 	public:
 		static void Init();
+		static void Shutdown();
 
 		static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
 		static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }

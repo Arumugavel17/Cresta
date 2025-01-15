@@ -1,6 +1,5 @@
 #include "Texture.hpp"
 #include "Crestaph.hpp"
-#include "Renderer/Texture.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Platform/OpenGL/OpenGLTexture.hpp"
 

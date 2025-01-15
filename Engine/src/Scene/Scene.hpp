@@ -39,16 +39,15 @@ namespace Cresta {
 			return m_Registry.view<Components...>();
 		}
 		void RenderScene();
+		void RenderMeshes();
+		void RenderSprits();
 
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
 
 	private:
-		Ref<Shader> m_Shader;
 		Ref<Shader> m_ModelShader;
-		Ref<VertexArray> m_VertexArray;
-
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		bool m_IsRunning = false;
 		bool m_IsPaused = false;

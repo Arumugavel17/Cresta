@@ -4,7 +4,8 @@
 #include "Renderer/Buffer.hpp"
 #include "Crestaph.hpp"
 
-namespace Cresta {
+namespace Cresta 
+{
 	void EditorApplication::Init()
 	{
 

@@ -24,9 +24,9 @@ namespace Cresta
 		PushOverlay(m_ImGUILayer);
 	}
 
-
 	Application::~Application()
 	{
+		Log::Shutdown();
 		Renderer::Shutdown();
 	}
 	
