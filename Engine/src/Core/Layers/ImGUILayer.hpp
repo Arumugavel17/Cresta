@@ -1,15 +1,16 @@
 #pragma once 
-#include "Core/Layer.hpp"
+#include "Core/Layers/Layer.hpp"
 
 namespace Cresta {
 	class ImGUILayer : public Layer 
 	{
 	public:
-
-		ImGUILayer() : Layer("ImGUI Layer"){}
+		ImGUILayer(Ref<Scene> scene) : Layer("ImGUI Layer",scene){}
 		virtual ~ImGUILayer() = default ;
 		virtual void OnEvent(Event& e) override;
 		
+		virtual void SceneCallBack() override;
+		virtual void OnFixedUpdate() override;
 		virtual void OnUpdate() override;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;

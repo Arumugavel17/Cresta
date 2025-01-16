@@ -20,7 +20,7 @@ namespace Cresta {
 		
 		static void EndScene();
 		static void Flush();
-		static void DrawSprite(const glm::vec3& color, const Ref<Texture2D>& texture, const glm::mat4& transform, float Mixfactor = 0);
+		static void DrawSprite(const glm::vec4& color, const Ref<Texture2D>& texture, const glm::mat4& transform, float Mixfactor = 0);
 		static void DrawTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount);
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer);
@@ -33,7 +33,6 @@ namespace Cresta {
 			glm::mat4 ViewProjectionMatrix;
 		};
 
-		static Ref<Texture2D> s_NoTexture;
 		static Ref<Shader> s_SpriteShader;
 		static Ref<VertexArray> s_SpriteVertexArray;
 		static Scope<SceneData> s_SceneData;

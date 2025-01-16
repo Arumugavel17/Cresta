@@ -21,11 +21,19 @@ in vec2 TexCoord;
 out vec4 FragColor;
 
 uniform sampler2D u_Texture;
+uniform int u_TextureSet = 0;
 uniform vec4 u_Color = vec4(1.0);
 uniform float u_Mixfactor = 0.0;
     
 void main()
 {
-    vec4 frag = texture(u_Texture, TexCoord);
-    FragColor = vec4(mix(u_Color,frag,u_Mixfactor));
+    if(u_TextureSet == 0)
+    {
+        FragColor = u_Color;
+    }
+    else if(u_TextureSet == 1)
+    {
+        vec4 frag = texture(u_Texture, TexCoord);
+        FragColor = vec4(mix(u_Color,frag,u_Mixfactor));
+    }
 }

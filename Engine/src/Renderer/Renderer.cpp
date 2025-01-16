@@ -6,11 +6,9 @@ namespace Cresta
 	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 	Ref<VertexArray> Renderer::s_SpriteVertexArray = nullptr;
 	Ref<Shader> Renderer::s_SpriteShader = nullptr;
-	Ref<Texture2D> Renderer::s_NoTexture = nullptr;
 
 	void Renderer::Init()
 	{
-		s_NoTexture = Texture2D::Create("assets/models/Textures/test.jpg");
 		s_SpriteShader = Shader::Create("assets/shaders/SpriteShader.glsl");
 		s_SpriteVertexArray = VertexArray::Create();
 
@@ -69,21 +67,19 @@ namespace Cresta
 
 	}
 
-	void Renderer::DrawSprite(const glm::vec3& color, const Ref<Texture2D>& texture, const glm::mat4& transform, float Mixfactor)
+	void Renderer::DrawSprite(const glm::vec4& color, const Ref<Texture2D>& texture, const glm::mat4& transform, float Mixfactor)
 	{
 		s_SpriteShader->Bind();
 		s_SpriteShader->SetMat4("u_ProjectionView", s_SceneData->ViewProjectionMatrix);
 		s_SpriteShader->SetVec3("u_CameraPosition", s_SceneData->CamerPosition);
+		s_SpriteShader->SetVec4("u_Color", color);
 		s_SpriteShader->SetMat4("u_Model", transform);
 		s_SpriteShader->SetFloat("u_Mixfactor", Mixfactor);
 		s_SpriteShader->SetInt("u_Texture", 0);
+		s_SpriteShader->SetInt("u_TextureSet", texture ? 1 : 0);
 		if (texture)
 		{
 			texture->Bind();
-		}
-		else
-		{
-			s_NoTexture->Bind(); 
 		}
 		s_SpriteVertexArray->Bind();
 		RenderCommand::DrawIndexed(s_SpriteVertexArray);

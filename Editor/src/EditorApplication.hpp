@@ -7,14 +7,16 @@ namespace Cresta {
 	public:
 		EditorApplication()
 		{
-			EditorLayer* t_EditorLayer = new EditorLayer();
-			PushLayer(t_EditorLayer);
+			m_EditorLayer = new EditorLayer(m_ActiveScene);
+			PushLayer(m_EditorLayer);
 			Init();
 		}
 
 		~EditorApplication() = default;
 
 		void Init();
+	private:
+		EditorLayer* m_EditorLayer;
 	};
 
 	Application* CreateApplication() {

@@ -1,4 +1,4 @@
-#include "Physics/Physics.hpp"
+#include "Physics.hpp"
 
 namespace Cresta
 {
@@ -26,7 +26,7 @@ namespace Cresta
 
 	Physics::Physics()
 	{
-
+		CRESTA_CORE_INFO("Initialized Physics Engine");
 		RegisterDefaultAllocator();
 		Trace = TraceImpl;
 		JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
@@ -46,6 +46,7 @@ namespace Cresta
 
 		delete Factory::sInstance;
 		Factory::sInstance = nullptr;
+		CRESTA_CORE_INFO("Destroied Physics Engine");
 	}
 		
 	void Physics::Init()
@@ -73,8 +74,8 @@ namespace Cresta
 
 		m_FloorSettings = CreateRef<BodyCreationSettings>(m_FloorShape, RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
 		m_Floor = m_BodyInterface->CreateBody(*m_FloorSettings); 
-
 		m_BodyInterface->AddBody(m_Floor->GetID(), EActivation::DontActivate);
+
 		m_SphereSettings = CreateRef<BodyCreationSettings>(new SphereShape(0.5f), RVec3(0.0_r, 2.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
 		m_SphereId = m_BodyInterface->CreateAndAddBody(*m_SphereSettings, EActivation::Activate);
 	}

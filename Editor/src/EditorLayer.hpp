@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Layer.hpp"
+#include "Core/Layers/Layer.hpp"
 #include "Renderer/Shader.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/FrameBuffer.hpp"
@@ -17,7 +17,10 @@
 namespace Cresta {
 	class EditorLayer : public Layer{
 	public:
-		EditorLayer();
+		EditorLayer(Ref<Scene> scene);
+
+		virtual void SceneCallBack() override;
+		virtual void OnFixedUpdate() override;
 		virtual void OnUpdate() override;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;

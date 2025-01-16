@@ -1,11 +1,13 @@
-#include "Core/ImGUILayer.hpp"
+#include "ImGUILayer.hpp"
+#include "ImGUILayer.hpp"
+#include "Core/Application.hpp"
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
-#include "ImGuizmo/ImGuizmo.h"
-#include "Core/Application.hpp"
-#include "glfw/glfw3.h"
+#include <ImGuizmo/ImGuizmo.h>
+#include <glfw/glfw3.h>
 
 namespace Cresta 
 {
@@ -37,7 +39,7 @@ namespace Cresta
 		SetDarkThemeColors();
 
 		Application& app = Application::GetApplication();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetWindowContext());
+		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow()->GetWindowContext());
 
 		// Setup Platform/Renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -84,6 +86,14 @@ namespace Cresta
 		ImGui::DestroyContext();
 	}
 
+	void ImGUILayer::SceneCallBack()
+	{
+	}
+
+	void ImGUILayer::OnFixedUpdate()
+	{
+	}
+
 	void ImGUILayer::OnUpdate()
 	{
 
@@ -114,7 +124,7 @@ namespace Cresta
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::GetApplication();
-		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2((float)app.GetWindow()->GetWidth(), (float)app.GetWindow()->GetHeight());
 		
 		// Rendering
 		ImGui::Render();

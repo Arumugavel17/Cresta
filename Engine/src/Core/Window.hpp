@@ -24,7 +24,7 @@ namespace Cresta {
 		
 		void ResizeViewPort();
 		
-		static Window* Create();
+		static Ref<Window> Create();
 
 		struct WindowData
 		{

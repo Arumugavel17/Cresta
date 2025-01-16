@@ -1,5 +1,4 @@
 #include "Scene.hpp"
-#include "Crestaph.hpp"
 #include "Entity.hpp"
 #include "Components.hpp"
 #include "Renderer/Renderer.hpp"
@@ -10,11 +9,11 @@ namespace Cresta {
 
 	Scene::Scene()
 	{
+
 	}
 
 	Scene::~Scene()
 	{
-		//delete m_PhysicsWorld;
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -23,12 +22,28 @@ namespace Cresta {
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+		InvokeSceneUpdateCallBacks();
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		InvokeSceneUpdateCallBacks();
+	}
+
+	void Scene::AddSceneUpdateCallBack(const std::function<void()>& func)
+	{
+		m_SceneUpdateCallBack.push_back(func);
+		std::cout << m_SceneUpdateCallBack.size() << "\n";
+	}
+
+	void Scene::InvokeSceneUpdateCallBacks()
+	{
+		for (int i = 0; i < m_SceneUpdateCallBack.size(); i++)
+		{
+			m_SceneUpdateCallBack[i]();
+		}
 	}
 
 	void Scene::OnRuntimeStart()

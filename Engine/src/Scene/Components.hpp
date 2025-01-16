@@ -98,6 +98,12 @@ namespace Cresta {
 		}
 	};
 
+	struct Rigidbody
+	{
+		float Mass;
+		bool UseGravity;
+	};
+
 	struct CameraComponent
 	{
 		Camera Camera;

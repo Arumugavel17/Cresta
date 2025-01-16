@@ -1,18 +1,18 @@
 #include "EditorLayer.hpp"
+#include "Core/Input.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Renderer.hpp"
-#include "Core/Input.hpp"
 #include "Renderer/Model.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Cresta 
 {
-    EditorLayer::EditorLayer() : Layer("Editor Layer")
+    EditorLayer::EditorLayer(Ref<Scene> scene) : Layer("Editor Layer",scene)
     {
         m_EditorCamera = CreateRef<EditorCamera>();
         
-        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene = scene;
         m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(m_ActiveScene);
 
         m_GridVertexArray = VertexArray::Create();
@@ -26,6 +26,14 @@ namespace Cresta
         fbSpec.Width = 1920;
         fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
+    }
+
+    void EditorLayer::SceneCallBack()
+    {
+    }
+
+    void EditorLayer::OnFixedUpdate()
+    {
     }
 
     void EditorLayer::OnUpdate()
@@ -56,13 +64,11 @@ namespace Cresta
                 m_ActiveScene->RenderScene();
                 
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
-
                 m_Framebuffer->Unbind();
             }
        
             Renderer::EndScene();
         }
-
     }
 
 	void EditorLayer::OnDetach()

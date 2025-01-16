@@ -76,7 +76,9 @@ namespace Cresta
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
+			{
 				entityDeleted = true;
+			}
 
 			ImGui::EndPopup();
 		}
@@ -94,7 +96,9 @@ namespace Cresta
 		{
 			m_Scene->DestroyEntity(entity);
 			if (m_SelectedEntity == entity)
+			{
 				m_SelectedEntity = {};
+			}
 		}
 	}
 

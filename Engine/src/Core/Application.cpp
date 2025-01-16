@@ -3,26 +3,26 @@
 
 namespace Cresta
 {
-	Cresta::Application* Cresta::Application::s_Instance = nullptr;
+	Application* Application::s_Instance = nullptr;
 	
-	Application::Application() 
+	Application::Application() : m_Running(true), m_Minimized(false)
 	{
-		Scope<Physics> t_Phys = CreateScope<Physics>();
-		t_Phys->Run();
 		Application::s_Instance = this;
-		m_Running = true;
-		m_Minimized = false;
-		m_ImGUILayer = new ImGUILayer();
 		m_Window = Window::Create();
+		m_Window->SetEventCallBack(CRESTA_BIND_EVENT_FN(Application::OnEvent));
 
+		Log::Init();
+		Renderer::Init();
 		Init();
 	}
 
 	void Application::Init()
 	{
-		Log::Init();
-		Renderer::Init();
-		m_Window->SetEventCallBack(CRESTA_BIND_EVENT_FN(Application::OnEvent)); 
+		m_ActiveScene = CreateRef<Scene>();
+		m_PhysicsLayer = new PhysicsLayer(m_ActiveScene);
+		m_ImGUILayer = new ImGUILayer(m_ActiveScene);
+
+		PushLayer(m_PhysicsLayer);
 		PushOverlay(m_ImGUILayer);
 	}
 
@@ -58,7 +58,6 @@ namespace Cresta
 			{
 				for (Layer* layer : m_LayerStack)
 				{
-
 					layer->OnUpdate();
 				}
 

@@ -9,8 +9,8 @@ namespace Cresta {
 
 	}
 
-	Window* Window::Create()
+	Ref<Window> Window::Create()
 	{
-		return new OpenGLWindow();
+		return CreateRef<OpenGLWindow>();
 	}
 }
