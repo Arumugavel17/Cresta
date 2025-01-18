@@ -1,8 +1,13 @@
 #pragma once
+
+#include "Components.hpp"
 #include "Crestaph.hpp"
+#include "UUID.hpp"
+
 #include "entt/entt.hpp"
 #include "Renderer/Camera.hpp"
 #include "Renderer/Shader.hpp"
+#include "Renderer/Renderer.hpp"
 #include "Renderer/VertexArray.hpp"
 
 namespace Cresta {
@@ -28,6 +33,7 @@ namespace Cresta {
 		void OnRuntimeStop();
 
 		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		Entity FindEntityByName(std::string name);
 		Entity GetPrimaryCameraEntity();
 
@@ -39,7 +45,6 @@ namespace Cresta {
 		void RenderMeshes();
 		void RenderSprits();
 
-		void Step(int frames = 1);
 		void DestroyEntity(Entity entity);
 		void AddSceneUpdateCallBack(const std::function<void()>& func);
 
@@ -47,14 +52,16 @@ namespace Cresta {
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
 		void InvokeSceneUpdateCallBacks();
-		std::vector<std::function<void()>> m_SceneUpdateCallBack;
-
+	
 	private:
 		Ref<Shader> m_ModelShader;
-		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
+		std::vector<std::function<void()>> m_SceneUpdateCallBack;
+
 		bool m_IsRunning = false;
 		bool m_IsPaused = false;
-		int m_StepFrames = 0;
+		uint32_t m_ViewportWidth = 0;
+		uint32_t m_ViewportHeight = 0;
 
 		friend class Entity;
 		friend class SceneSerializer;

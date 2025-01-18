@@ -88,10 +88,12 @@ SET_INTERPROCEDURAL_OPTIMIZATION()
 add_subdirectory(Engine/vendor/assimp)
 add_subdirectory(Engine/vendor/glfw)
 add_subdirectory(Engine/vendor/spdlog)
+add_subdirectory(Engine/vendor/yaml-cpp)
 
 include_directories(Engine/src/)
-include_directories(Engine/vendor/assimp/include)
 include_directories(Engine/vendor/entt)
+include_directories(Engine/vendor/assimp/include)
+include_directories(Engine/vendor/yaml-cpp/include)
 
 file(GLOB IMGUI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*.h")
 file(GLOB IMGUIZMO_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/ImGuizmo/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/ImGuizmo/*.h")
@@ -121,14 +123,15 @@ STATIC
 # Include directories for the Engine executable
 target_include_directories(Engine PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/glad
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/ImGuizmo
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/stbi_image
-    ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/assimp/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/glfw/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/glm
+    ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/assimp/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/spdlog/include  
+    ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/yaml-cpp/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/entt/entt/single_include
 	${JoltPhysics_SOURCE_DIR}/..
 )

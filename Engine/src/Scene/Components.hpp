@@ -3,6 +3,7 @@
 #include "Renderer/Camera.hpp"
 #include "Renderer/Model.hpp"
 #include "Renderer/Texture.hpp"
+#include "UUID.hpp"
 
 #include <exception>
 #include <glm/glm.hpp>
@@ -11,10 +12,19 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+
 namespace Cresta {
 
 	struct Component {
 
+	};
+
+	struct IDComponent
+	{
+		UUID ID;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
 	};
 
 	struct TagComponent
@@ -25,6 +35,11 @@ namespace Cresta {
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& tag)
 			: Tag(tag) {
+		}
+
+		std::string ToString()
+		{
+			return "Tag Component";
 		}
 	};
 
@@ -47,6 +62,11 @@ namespace Cresta {
 			return glm::translate(glm::mat4(1.0f), Translation)
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
+		}
+
+		std::string ToString()
+		{
+			return "Transform Component";
 		}
 	};
 
@@ -76,6 +96,11 @@ namespace Cresta {
 				CRESTA_CORE_ERROR(e.what());
 			}
 		}
+
+		std::string ToString()
+		{
+			return "Sprite Renderer Component";
+		}
 	};
 
 	struct MeshRenderer
@@ -96,6 +121,11 @@ namespace Cresta {
 				model = Model::Create(path);
 			}
 		}
+
+		std::string ToString()
+		{
+			return "Mesh Renderer";
+		}
 	};
 
 	struct Rigidbody
@@ -112,6 +142,11 @@ namespace Cresta {
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+
+		std::string ToString()
+		{
+			return "Camera Component";
+		}
 	};
 
 	template<typename... Component>

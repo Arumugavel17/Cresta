@@ -41,7 +41,6 @@ namespace Cresta
 				component.Translation.z = m_Physics->position.GetZ();
 			}
 		}
-
 	}
 
 	void PhysicsLayer::OnUpdate()

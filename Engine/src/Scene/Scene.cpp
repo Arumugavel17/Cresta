@@ -1,7 +1,5 @@
 #include "Scene.hpp"
 #include "Entity.hpp"
-#include "Components.hpp"
-#include "Renderer/Renderer.hpp"
 
 #include <glm/glm.hpp>
 
@@ -17,16 +15,25 @@ namespace Cresta {
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		return CreateEntityWithUUID(UUID(), name);
+	}
+
+	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+	{
 		Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
-		InvokeSceneUpdateCallBacks();
+
+		m_EntityMap[uuid] = entity;
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 		InvokeSceneUpdateCallBacks();
 	}
@@ -64,11 +71,6 @@ namespace Cresta {
 				return Entity{ entity, this };
 		}
 		return {};
-	}
-
-	void Scene::Step(int frames)
-	{
-		m_StepFrames = frames;
 	}
 
 	Entity Scene::FindEntityByName(std::string name)
@@ -116,6 +118,11 @@ namespace Cresta {
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
 		static_assert(sizeof(T) == 0);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
 	}
 
 	template<>
