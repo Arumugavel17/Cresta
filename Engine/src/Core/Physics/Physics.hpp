@@ -37,14 +37,14 @@ namespace Cresta
 		Ref<PhysicsSystem> m_PhysicsSystem;
 		Ref<MyBodyActivationListener> m_BodyActivationListener;
 		Ref<MyContactListener> m_ContactListener;
-		Ref<BoxShapeSettings> m_FloorShapeSettings;
-		Ref<BodyCreationSettings> m_FloorSettings;
 		Ref<BodyCreationSettings> m_SphereSettings;
 		
 		BodyInterface* m_BodyInterface;
 		ShapeSettings::ShapeResult m_FloorShapeResult; 
-		ShapeRefC m_FloorShape;
-		Body* m_Floor;
 		BodyID m_SphereId;
+
+	public:
+		RVec3 position;
+		Vec3 velocity;
 	};
 }

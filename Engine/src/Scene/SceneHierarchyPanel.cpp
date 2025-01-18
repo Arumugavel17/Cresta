@@ -202,6 +202,7 @@ namespace Cresta
 			DisplayAddComponentEntry<CameraComponent>("Camera");
 			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
 			DisplayAddComponentEntry<MeshRenderer>("Mesh Renderer");
+			DisplayAddComponentEntry<Rigidbody>("RigiBody");
 			ImGui::EndPopup();
 		}
 
@@ -259,6 +260,10 @@ namespace Cresta
 					}
 					ImGui::EndDragDropTarget();
 				}
+			});
+		DrawComponent<Rigidbody>("RigidBody", m_SelectedEntity, [](auto& component)
+			{
+				ImGui::Text("RigidBody");
 			});
 		ImGui::End();
 	}

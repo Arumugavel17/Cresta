@@ -31,7 +31,6 @@ namespace Cresta {
 		PhysicsLayer* m_PhysicsLayer;
 		ImGUILayer* m_ImGUILayer;
 		static Application* s_Instance; 
-
 		LayerStack m_LayerStack;
 	};
 

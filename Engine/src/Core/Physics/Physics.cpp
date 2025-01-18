@@ -39,9 +39,7 @@ namespace Cresta
 	{
 		m_BodyInterface->RemoveBody(m_SphereId);
 		m_BodyInterface->DestroyBody(m_SphereId);
-		m_BodyInterface->RemoveBody(m_Floor->GetID());
-		m_BodyInterface->DestroyBody(m_Floor->GetID());
-
+	
 		UnregisterTypes();
 
 		delete Factory::sInstance;
@@ -65,34 +63,21 @@ namespace Cresta
 		m_PhysicsSystem->SetContactListener(m_ContactListener.get());
 
 		m_BodyInterface = &m_PhysicsSystem->GetBodyInterface();
-
-		m_FloorShapeSettings = CreateRef<BoxShapeSettings>(Vec3(100.0f, 1.0f, 100.0f));
-		m_FloorShapeSettings->SetEmbedded();
-
-		m_FloorShapeResult = m_FloorShapeSettings->Create();
-		m_FloorShape = m_FloorShapeResult.Get();
-
-		m_FloorSettings = CreateRef<BodyCreationSettings>(m_FloorShape, RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		m_Floor = m_BodyInterface->CreateBody(*m_FloorSettings); 
-		m_BodyInterface->AddBody(m_Floor->GetID(), EActivation::DontActivate);
-
 		m_SphereSettings = CreateRef<BodyCreationSettings>(new SphereShape(0.5f), RVec3(0.0_r, 2.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
 		m_SphereId = m_BodyInterface->CreateAndAddBody(*m_SphereSettings, EActivation::Activate);
+
+		m_PhysicsSystem->OptimizeBroadPhase();
 	}
 
 	void Physics::Run()
 	{
-		m_PhysicsSystem->OptimizeBroadPhase();
-		while (m_BodyInterface->IsActive(m_SphereId)) 
-		{
-			++m_Step;
-			RVec3 position = m_BodyInterface->GetCenterOfMassPosition(m_SphereId);
-			Vec3 velocity = m_BodyInterface->GetLinearVelocity(m_SphereId);
-			std::cout << "Step " << m_Step << ": Position = (" << position.GetX() << ", " << position.GetY() << ", " << position.GetZ() << "), Velocity = (" << velocity.GetX() << ", " << velocity.GetY() << ", " << velocity.GetZ() << ")" << std::endl;
+		++m_Step;
+		position = m_BodyInterface->GetCenterOfMassPosition(m_SphereId);
+		velocity = m_BodyInterface->GetLinearVelocity(m_SphereId);
+		std::cout << "Step " << m_Step << ": Position = (" << position.GetX() << ", " << position.GetY() << ", " << position.GetZ() << "), Velocity = (" << velocity.GetX() << ", " << velocity.GetY() << ", " << velocity.GetZ() << ")" << std::endl;
 
-			const int cCollisionSteps = 1;
+		const int cCollisionSteps = 1;
 
-			m_PhysicsSystem->Update(c_DeltaTime, cCollisionSteps, m_TempAllocator.get(), m_JobSystem.get());
-		}
+		m_PhysicsSystem->Update(c_DeltaTime, cCollisionSteps, m_TempAllocator.get(), m_JobSystem.get());
 	}
 }

@@ -1,5 +1,7 @@
 #include "EditorLayer.hpp"
 #include "Core/Input.hpp"
+#include "Core/Application.hpp"
+
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Model.hpp"
@@ -160,6 +162,22 @@ namespace Cresta
 
         ShowScene();
         m_HierarchyPanel->OnImGuiRender();
+
+        ImGui::Begin("VSync");
+        if (ImGui::Checkbox("Set VSync Option", &m_VSync))
+        {
+            // Logic when the state of the checkbox changes
+            Application::GetApplication().GetWindow()->SetVSync(m_VSync);
+            if (m_VSync)
+            {
+                CRESTA_CORE_INFO("Enabled VSync");
+            }
+            else
+            {
+                CRESTA_CORE_INFO("Disabled VSync");
+            }
+        }
+        ImGui::End();
     }
     
     void EditorLayer::ShowScene()

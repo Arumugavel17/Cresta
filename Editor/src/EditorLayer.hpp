@@ -1,13 +1,15 @@
 #pragma once
 #include "Core/Layers/Layer.hpp"
+#include "EditorCamera.hpp"
+
 #include "Renderer/Shader.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/FrameBuffer.hpp"
-#include "EditorCamera.hpp"
+#include "Renderer/Model.hpp"
+
 #include "Scene/Scene.hpp"
 #include "Scene/Entity.hpp"
 #include "Scene/SceneHierarchyPanel.hpp"
-#include "Renderer/Model.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      
@@ -36,6 +38,7 @@ namespace Cresta {
 		void ShowScene();
 	private:
 
+		bool m_VSync = true;
 		ImVec2 previousWindowSize = ImVec2(0, 0);
 		
 		Ref<Scene> m_ActiveScene;

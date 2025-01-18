@@ -9,7 +9,6 @@ namespace Cresta {
 
 	Scene::Scene()
 	{
-
 	}
 
 	Scene::~Scene()
@@ -35,14 +34,13 @@ namespace Cresta {
 	void Scene::AddSceneUpdateCallBack(const std::function<void()>& func)
 	{
 		m_SceneUpdateCallBack.push_back(func);
-		std::cout << m_SceneUpdateCallBack.size() << "\n";
 	}
 
 	void Scene::InvokeSceneUpdateCallBacks()
 	{
-		for (int i = 0; i < m_SceneUpdateCallBack.size(); i++)
+		for (auto CallBackFunc : m_SceneUpdateCallBack)
 		{
-			m_SceneUpdateCallBack[i]();
+			CallBackFunc();
 		}
 	}
 
@@ -143,6 +141,11 @@ namespace Cresta {
 
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<Rigidbody>(Entity entity, Rigidbody& component)
 	{
 	}
 }

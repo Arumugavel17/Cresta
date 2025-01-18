@@ -1,4 +1,5 @@
 #include "PhysicsLayer.hpp"
+#include "Scene/Components.hpp"
 
 namespace Cresta
 {
@@ -15,7 +16,6 @@ namespace Cresta
 
 	void PhysicsLayer::Init()
 	{
-
 	}
 
 	void PhysicsLayer::OnEvent(Event& e)
@@ -28,6 +28,20 @@ namespace Cresta
 
 	void PhysicsLayer::OnFixedUpdate()
 	{
+		m_RigidbodyView = &m_ActiveScene->m_Registry.view<TransformComponent, Rigidbody>();
+		if (m_RigidbodyView && m_RigidbodyView->size() > 0) 
+		{
+			m_Physics->Run();
+
+			for (auto entity : *m_RigidbodyView)
+			{
+				auto& component = m_RigidbodyView->get<TransformComponent>(entity);
+				component.Translation.x = m_Physics->position.GetX();
+				component.Translation.y = m_Physics->position.GetY();
+				component.Translation.z = m_Physics->position.GetZ();
+			}
+		}
+
 	}
 
 	void PhysicsLayer::OnUpdate()
