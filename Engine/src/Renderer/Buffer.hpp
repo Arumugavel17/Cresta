@@ -134,7 +134,7 @@ namespace Cresta {
 		static Ref<VertexBuffer> Create(void* vertices, uint32_t size);
 	};
 
-	// Currently Hazel only supports 32-bit index buffers
+	// Currently Cresta only supports 32-bit index buffers
 	class IndexBuffer
 	{
 	public:

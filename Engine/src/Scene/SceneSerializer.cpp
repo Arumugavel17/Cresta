@@ -2,7 +2,7 @@
 #include "SceneSerializer.hpp"
 #include "Components.hpp"
 #include "UUID.hpp"
-
+#include "Entity.hpp"
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 
@@ -105,14 +105,125 @@ namespace YAML
 
 namespace Cresta
 {
-	SceneSerializer::SceneSerializer(const Ref<Scene>& scene) 
+#define WRITE_SCRIPT_FIELD(FieldType, Type)           \
+			case ScriptFieldType::FieldType:          \
+				out << scriptField.GetValue<Type>();  \
+				break
+
+#define READ_SCRIPT_FIELD(FieldType, Type)             \
+	case ScriptFieldType::FieldType:                   \
+	{                                                  \
+		Type data = scriptField["Data"].as<Type>();    \
+		fieldInstance.SetValue(data);                  \
+		break;                                         \
+	}
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+		return out;
+	}
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
+		return out;
+	}
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
+		return out;
+	}
+
+	static void SerializeEntity(YAML::Emitter& out, Entity entity)
+	{
+		CRESTA_ASSERT(!entity.HasComponent<IDComponent>());
+
+		out << YAML::BeginMap; // Entity
+		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
+
+		if (entity.HasComponent<TagComponent>())
+		{
+			out << YAML::Key << "TagComponent";
+			out << YAML::BeginMap; // TagComponent
+
+			auto& tag = entity.GetComponent<TagComponent>().Tag;
+			out << YAML::Key << "Tag" << YAML::Value << tag;
+
+			out << YAML::EndMap; // TagComponent
+		}
+
+		if (entity.HasComponent<TransformComponent>())
+		{
+			out << YAML::Key << "TransformComponent";
+			out << YAML::BeginMap; // TransformComponent
+
+			auto& tc = entity.GetComponent<TransformComponent>();
+			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
+			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
+			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
+
+			out << YAML::EndMap; // TransformComponent
+		}
+
+		if (entity.HasComponent<SpriteRendererComponent>())
+		{
+			out << YAML::Key << "SpriteRendererComponent";
+			out << YAML::BeginMap; // SpriteRendererComponent
+
+			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
+			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			if (spriteRendererComponent.Texture)
+				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
+
+			out << YAML::Key << "MixFactor " << YAML::Value << spriteRendererComponent.MixFactor ;
+
+			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+		if (entity.HasComponent<MeshRenderer>())
+		{
+			out << YAML::Key << "MeshRenderer";
+			out << YAML::BeginMap; // MeshRendererComponent
+
+			auto& spriteRendererComponent = entity.GetComponent<MeshRenderer>();
+			out << YAML::Key << "path" << YAML::Value << spriteRendererComponent.path;
+			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+		out << YAML::EndMap; // Entity
+	}
+
+
+	SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
+		: m_Scene(scene)
 	{
 
 	}
 
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+		m_Scene->m_Registry->each([&](auto entityID)
+			{
+				Entity entity = { entityID, m_Scene.get() };
+				if (!entity)
+					return;
 
+				SerializeEntity(out, entity);
+			});
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		std::ofstream fout(filepath);
+		fout << out.c_str();
 	}
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
@@ -122,7 +233,74 @@ namespace Cresta
 
 	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
-		return false;
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(filepath);
+		}
+		catch (YAML::ParserException e)
+		{
+			CRESTA_CORE_ERROR("Failed to load .cresta file '{0}'\n     {1}", filepath, e.what());
+			return false;
+		}
+
+		if (!data["Scene"])
+			return false;
+
+		std::string sceneName = data["Scene"].as<std::string>();
+		CRESTA_CORE_TRACE("Deserializing scene '{0}'", sceneName);
+
+		auto entities = data["Entities"];
+		if (entities)
+		{
+			for (auto entity : entities)
+			{
+				uint64_t uuid = entity["Entity"].as<uint64_t>();
+
+				std::string name;
+				auto tagComponent = entity["TagComponent"];
+				if (tagComponent)
+					name = tagComponent["Tag"].as<std::string>();
+
+				CRESTA_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+
+				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
+
+				auto transformComponent = entity["TransformComponent"];
+				if (transformComponent)
+				{
+					// Entities always have transforms
+					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
+					tc.Translation = transformComponent["Translation"].as<glm::vec3>();
+					tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
+					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
+				}
+
+				auto spriteRendererComponent = entity["SpriteRendererComponent"];
+				if (spriteRendererComponent)
+				{
+					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
+					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+					if (spriteRendererComponent["TexturePath"])
+					{
+						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
+						src.Texture = Texture2D::Create(texturePath);
+					}
+
+					if (spriteRendererComponent["MixFactor "])
+						src.MixFactor = spriteRendererComponent["MixFactor "].as<float>();
+				}
+
+				auto MeshRendererComponenet = entity["MeshRenderer"];
+				if (MeshRendererComponenet)
+				{
+					std::string path = MeshRendererComponenet["path"].as<std::string>();
+					auto& src = deserializedEntity.AddComponent<MeshRenderer>(path);
+				}
+			}
+		}
+
+		return true;
 	}
 
 	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)

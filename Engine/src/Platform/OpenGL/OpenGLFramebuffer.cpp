@@ -133,7 +133,7 @@ namespace Cresta {
 
         auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
         glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
-        Utils::HazelFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
+        Utils::CrestaFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
     }
 
     uint32_t OpenGLFramebuffer::GetColorAttachmentRendererID(uint32_t index) const

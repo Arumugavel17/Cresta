@@ -1,9 +1,30 @@
 #pragma once
+
+#include "Core/Application.hpp"
+#include "Renderer/FrameBuffer.hpp"
+
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <commdlg.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
 
-namespace Cresta {
-	namespace Utils {
 
+namespace Cresta 
+{
+	namespace Utils 
+	{
+		class FileDialogs
+		{
+		public:
+			// These return empty strings if cancelled
+			static std::string OpenFile(const char* filter);
+			static std::string SaveFile(const char* filter);
+			static std::string SelectFolder();
+
+		};
+
+		
 		static GLenum TextureTarget(bool multisampled)
 		{
 			return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
@@ -71,7 +92,7 @@ namespace Cresta {
 			return false;
 		}
 
-		static GLenum HazelFBTextureFormatToGL(FramebufferTextureFormat format)
+		static GLenum CrestaFBTextureFormatToGL(FramebufferTextureFormat format)
 		{
 			switch (format)
 			{

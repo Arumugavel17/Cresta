@@ -28,7 +28,7 @@ namespace Cresta
 
 		if (m_Scene)
 		{
-			m_Scene->m_Registry.each([&](auto entityID)
+			m_Scene->m_Registry->each([&](auto entityID)
 				{
 					Entity entity{ entityID , m_Scene.get() };
 					DrawEntityNode(entity);
@@ -36,13 +36,17 @@ namespace Cresta
 
 			// Deselect entity when clicking on blank space
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
+			{
 				m_SelectedEntity = {};
+			}
 
 			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow("SceneHierarchyBlankContext", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
+				{
 					m_Scene->CreateEntity("Empty Entity");
+				}
 
 				ImGui::EndPopup();
 			}

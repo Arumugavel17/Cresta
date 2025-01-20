@@ -17,7 +17,7 @@ namespace Cresta {
 	class Scene
 	{
 	public:
-		entt::registry m_Registry;
+		Ref<entt::registry> m_Registry;
 
 	public:
 		template<typename... Components>
@@ -28,6 +28,8 @@ namespace Cresta {
 
 		Scene();
 		~Scene();
+
+		static Ref<Scene> Clone(Ref<Scene> other);
 
 		void OnRuntimeStart();
 		void OnRuntimeStop();
@@ -52,7 +54,7 @@ namespace Cresta {
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
 		void InvokeSceneUpdateCallBacks();
-	
+
 	private:
 		Ref<Shader> m_ModelShader;
 		std::unordered_map<UUID, entt::entity> m_EntityMap;

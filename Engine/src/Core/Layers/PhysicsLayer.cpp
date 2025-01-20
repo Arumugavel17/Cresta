@@ -28,7 +28,7 @@ namespace Cresta
 
 	void PhysicsLayer::OnFixedUpdate()
 	{
-		m_RigidbodyView = &m_ActiveScene->m_Registry.view<TransformComponent, Rigidbody>();
+		m_RigidbodyView = &m_ActiveScene->m_Registry->view<TransformComponent, Rigidbody>();
 		if (m_RigidbodyView && m_RigidbodyView->size() > 0) 
 		{
 			m_Physics->Run();

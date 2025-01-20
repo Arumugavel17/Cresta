@@ -19,7 +19,7 @@ namespace Cresta {
 		T& AddComponent(Args&&... args)
 		{
 			CRESTA_ASSERT(HasComponent<T>(), "Entity already has component!");
-			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			T& component = m_Scene->m_Registry->emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
 		}
@@ -28,20 +28,20 @@ namespace Cresta {
 		T& GetComponent()
 		{
 			CRESTA_ASSERT(!HasComponent<T>(), "Entity does not have component!");
-			return m_Scene->m_Registry.get<T>(m_EntityHandle);
+			return m_Scene->m_Registry->get<T>(m_EntityHandle);
 		}
 
 		template<typename T>
 		bool HasComponent()
 		{
-			return m_Scene->m_Registry.has<T>(m_EntityHandle);
+			return m_Scene->m_Registry->has<T>(m_EntityHandle);
 		}
 
 		template<typename T>
 		void RemoveComponent()
 		{
 			CRESTA_ASSERT(!HasComponent<T>(), "Entity does not have component!");
-			m_Scene->m_Registry.remove<T>(m_EntityHandle);
+			m_Scene->m_Registry->remove<T>(m_EntityHandle);
 		}
 
 		operator bool() const { return m_EntityHandle != entt::null; }

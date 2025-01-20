@@ -98,13 +98,21 @@ include_directories(Engine/vendor/yaml-cpp/include)
 file(GLOB IMGUI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*.h")
 file(GLOB IMGUIZMO_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/ImGuizmo/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/ImGuizmo/*.h")
 
-file(GLOB_RECURSE ENGINE_SRC_SOURCES ${PROJECT_SOURCE_DIR}/Engine/src/*.cpp)
+file(GLOB_RECURSE ENGINE_SRC_SOURCES 
+    ${PROJECT_SOURCE_DIR}/Engine/src/*.cpp)
 
-file(GLOB_RECURSE ENGINE_SRC_HEADERS ${PROJECT_SOURCE_DIR}/Engine/src/*.hpp)
+file(GLOB_RECURSE ENGINE_SRC_HEADERS 
+    ${PROJECT_SOURCE_DIR}/Engine/src/*.hpp)
 
-file(GLOB_RECURSE ENGINE_VENDOR_SOURCES ${PROJECT_SOURCE_DIR}/Engine/vendor/glad/*.cpp ${PROJECT_SOURCE_DIR}/Engine/vendor/imgui/*.cpp ${PROJECT_SOURCE_DIR}/Engine/vendor/stbi_image/*.cpp)
+file(GLOB_RECURSE ENGINE_VENDOR_SOURCES 
+    ${PROJECT_SOURCE_DIR}/Engine/vendor/glad/*.cpp 
+    ${PROJECT_SOURCE_DIR}/Engine/vendor/imgui/*.cpp 
+    ${PROJECT_SOURCE_DIR}/Engine/vendor/stbi_image/*.cpp)
 
-file(GLOB_RECURSE ENGINE_VENDOR_HEADERS ${PROJECT_SOURCE_DIR}/Engine/vendor/glad/*.hpp ${PROJECT_SOURCE_DIR}/Engine/vendor/imgui/*.hpp ${PROJECT_SOURCE_DIR}/Engine/vendor/stbi_image/*.hpp)
+file(GLOB_RECURSE ENGINE_VENDOR_HEADERS 
+    ${PROJECT_SOURCE_DIR}/Engine/vendor/glad/*.hpp 
+    ${PROJECT_SOURCE_DIR}/Engine/vendor/imgui/*.hpp 
+    ${PROJECT_SOURCE_DIR}/Engine/vendor/stbi_image/*.hpp)
 
 message(STATUS "UTF-8 Unicode support is enabled")
 
@@ -142,6 +150,7 @@ target_link_libraries(Engine
         glfw
 		assimp
 		Jolt
+        yaml-cpp
 )
 
 target_compile_definitions(Engine PRIVATE 

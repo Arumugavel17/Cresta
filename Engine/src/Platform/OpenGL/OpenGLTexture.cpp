@@ -6,7 +6,7 @@ namespace Cresta
 {
 	namespace Utils {
 
-		static GLenum HazelImageFormatToGLDataFormat(ImageFormat format)
+		static GLenum CrestaImageFormatToGLDataFormat(ImageFormat format)
 		{
 			switch (format)
 			{
@@ -18,7 +18,7 @@ namespace Cresta
 			return 0;
 		}
 
-		static GLenum HazelImageFormatToGLInternalFormat(ImageFormat format)
+		static GLenum CrestaImageFormatToGLInternalFormat(ImageFormat format)
 		{
 			switch (format)
 			{
@@ -40,8 +40,8 @@ namespace Cresta
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& specification)
 		: m_Specification(specification), m_Width(m_Specification.Width), m_Height(m_Specification.Height)
 	{
-		m_InternalFormat = Utils::HazelImageFormatToGLInternalFormat(m_Specification.Format);
-		m_DataFormat = Utils::HazelImageFormatToGLDataFormat(m_Specification.Format);
+		m_InternalFormat = Utils::CrestaImageFormatToGLInternalFormat(m_Specification.Format);
+		m_DataFormat = Utils::CrestaImageFormatToGLDataFormat(m_Specification.Format);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);

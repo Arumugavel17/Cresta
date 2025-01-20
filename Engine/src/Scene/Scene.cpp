@@ -1,4 +1,5 @@
 #include "Scene.hpp"
+#include "Scene.hpp"
 #include "Entity.hpp"
 
 #include <glm/glm.hpp>
@@ -7,10 +8,35 @@ namespace Cresta {
 
 	Scene::Scene()
 	{
+		m_Registry = CreateRef<entt::registry>();
 	}
 
 	Scene::~Scene()
 	{
+	}
+
+	Ref<Scene> Scene::Clone(Ref<Scene> other)
+	{
+		// Create a new scene and copy all necessary members.
+		auto sceneCopy = std::make_shared<Scene>();
+
+		// Copy basic attributes (you may add more based on your needs).
+		sceneCopy->m_IsRunning = other->m_IsRunning;
+		sceneCopy->m_IsPaused = other->m_IsPaused;
+		sceneCopy->m_ViewportWidth = other->m_ViewportWidth;
+		sceneCopy->m_ViewportHeight = other->m_ViewportHeight;
+
+		// Deep copy the entity map (if needed).
+		sceneCopy->m_EntityMap = other->m_EntityMap;
+
+		// Clone the components registry (or any other necessary internal state).
+		sceneCopy->m_Registry = other->m_Registry;
+
+		// Clone shaders, callbacks, and other resources.
+		sceneCopy->m_ModelShader = other->m_ModelShader;
+		sceneCopy->m_SceneUpdateCallBack = other->m_SceneUpdateCallBack;
+
+		return sceneCopy;
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -20,21 +46,20 @@ namespace Cresta {
 
 	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
-		Entity entity = { m_Registry.create(), this };
+		Entity entity = { m_Registry->create(), this };
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
-
 		m_EntityMap[uuid] = entity;
-
+		InvokeSceneUpdateCallBacks();
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_EntityMap.erase(entity.GetUUID());
-		m_Registry.destroy(entity);
+		m_Registry->destroy(entity);
 		InvokeSceneUpdateCallBacks();
 	}
 
@@ -63,7 +88,7 @@ namespace Cresta {
 
 	Entity Scene::GetPrimaryCameraEntity()
 	{
-		auto view = m_Registry.view<CameraComponent>();
+		auto view = m_Registry->view<CameraComponent>();
 		for (auto entity : view)
 		{
 			const auto& camera = view.get<CameraComponent>(entity);
@@ -75,7 +100,7 @@ namespace Cresta {
 
 	Entity Scene::FindEntityByName(std::string name)
 	{
-		auto view = m_Registry.view<TagComponent>();
+		auto view = m_Registry->view<TagComponent>();
 		for (auto entity : view)
 		{
 			const TagComponent& tc = view.get<TagComponent>(entity);
@@ -93,7 +118,7 @@ namespace Cresta {
 
 	void Scene::RenderMeshes()
 	{
-		auto group = m_Registry.group<MeshRenderer>(entt::get<TransformComponent>);
+		auto group = m_Registry->group<MeshRenderer>(entt::get<TransformComponent>);
 		for (auto entity : group)
 		{
 			auto [transform, Model] = group.get<TransformComponent, MeshRenderer>(entity);
@@ -106,7 +131,7 @@ namespace Cresta {
 
 	void Scene::RenderSprits()
 	{
-		auto group = m_Registry.group<SpriteRendererComponent>(entt::get<TransformComponent>);
+		auto group = m_Registry->group<SpriteRendererComponent>(entt::get<TransformComponent>);
 		for (auto entity : group)
 		{
 			auto [transform, Sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);

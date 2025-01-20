@@ -1,4 +1,5 @@
 #include "EditorLayer.hpp"
+
 #include "Core/Input.hpp"
 #include "Core/Application.hpp"
 
@@ -6,6 +7,10 @@
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Model.hpp"
 
+#include "Scene/SceneSerializer.hpp"
+#include "Platform/OpenGL/Utils.hpp"
+
+#include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Cresta 
@@ -14,8 +19,8 @@ namespace Cresta
     {
         m_EditorCamera = CreateRef<EditorCamera>();
         
-        m_ActiveScene = scene;
-        m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(m_ActiveScene);
+        m_EditorScene = scene;
+        m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(m_EditorScene);
 
         m_GridVertexArray = VertexArray::Create();
         m_GridShader = Shader::Create("assets/shaders/GridShader.glsl");
@@ -23,6 +28,12 @@ namespace Cresta
 
     void EditorLayer::OnAttach()
 	{
+        m_IconPlay = Texture2D::Create("assets/Icons/PlayButton.png");
+        m_IconPause = Texture2D::Create("assets/Icons/PauseButton.png");
+        m_IconSimulate = Texture2D::Create("assets/Icons/SimulateButton.png");
+        m_IconStep = Texture2D::Create("assets/Icons/StepButton.png");
+        m_IconStop = Texture2D::Create("assets/Icons/StopButton.png");
+
         FramebufferSpecification fbSpec;
         fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
         fbSpec.Width = 1920;
@@ -63,7 +74,7 @@ namespace Cresta
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
             {
-                m_ActiveScene->RenderScene();
+                m_EditorScene->RenderScene();
                 
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
                 m_Framebuffer->Unbind();
@@ -81,47 +92,6 @@ namespace Cresta
 	{
         m_EditorCamera->OnEvent(e);
 	}
-
-    void EditorLayer::SetupDockSpace()
-    {
-        ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;
-
-        // Set the window flags for the main window
-        ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
-        ImGui::SetNextWindowViewport(viewport->ID);
-
-        windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-        // Main docking window
-        ImGui::Begin("DockSpace Demo", nullptr, windowFlags);
-        ImGuiID dockSpaceID = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), dockSpaceFlags);
-        ImGui::End();
-
-        // Remove any existing layout
-        ImGui::DockBuilderRemoveNode(dockSpaceID); // Clear existing layout
-        ImGui::DockBuilderAddNode(dockSpaceID, ImGuiDockNodeFlags_DockSpace);
-        ImGui::DockBuilderSetNodeSize(dockSpaceID, ImGui::GetMainViewport()->WorkSize);
-
-        // Split the dock space into regions
-        ImGuiID dockLeft = ImGui::DockBuilderSplitNode(dockSpaceID, ImGuiDir_Left, 0.25f, nullptr, &dockSpaceID);
-        ImGuiID dockRight = ImGui::DockBuilderSplitNode(dockSpaceID, ImGuiDir_Right, 0.25f, nullptr, &dockSpaceID);
-        ImGuiID dockBottom = ImGui::DockBuilderSplitNode(dockSpaceID, ImGuiDir_Down, 0.25f, nullptr, &dockSpaceID);
-        ImGuiID dockUp = ImGui::DockBuilderSplitNode(dockSpaceID, ImGuiDir_Up, 0.25f, nullptr, &dockSpaceID);
-        
-        // Dock windows to regions
-        ImGui::DockBuilderDockWindow("Hierarchy", dockLeft);
-        ImGui::DockBuilderDockWindow("Components", dockRight);
-        ImGui::DockBuilderDockWindow("Project", dockBottom);
-        ImGui::DockBuilderDockWindow("Scene", dockUp);
-
-        // Complete the layout
-        ImGui::DockBuilderFinish(dockSpaceID);
-    }
 
     void EditorLayer::CreateDockSpace()
     {
@@ -146,10 +116,65 @@ namespace Cresta
 
         windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
         windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-        // Main docking window
+        // Begin DockSpace
         ImGui::Begin("DockSpace Demo", &dockSpaceOpen, windowFlags);
+
+        // Add a menu bar
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+
+                if (ImGui::MenuItem("New Scene"))
+                {
+                    NewScene();
+                }
+                if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
+                {
+                    OpenScene();
+                }
+                if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+                {
+                    SaveScene();
+                }
+            
+                if (ImGui::MenuItem("Exit"))
+                {
+                    Application::GetApplication().Close();
+                }
+                ImGui::EndMenu();
+            }
+
+
+            if (ImGui::BeginMenu("Edit"))
+            {
+                if (ImGui::MenuItem("Undo", "Ctrl+Z")) 
+                { 
+                    /* Handle Undo action */ 
+                }
+                if (ImGui::MenuItem("Redo", "Ctrl+Y")) 
+                { 
+                    /* Handle Redo action */ 
+                }
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Help"))
+            {
+                if (ImGui::MenuItem("About")) 
+                { 
+                    /* Handle About action */ 
+                }
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMenuBar();
+        }
+
+        // Add the dock space
         ImGui::DockSpace(ImGui::GetID("MyDockSpace"), ImVec2(0.0f, 0.0f), dockSpaceFlags);
+
+        // End DockSpace
         ImGui::End();
 
     }
@@ -157,29 +182,25 @@ namespace Cresta
     void EditorLayer::OnImGUIRender()
     {
         CreateDockSpace();
-        
-        ShowFileManager("assets","assets");
-
+        UI_Toolbar();
+        ShowFileManager("assets", "assets");
         ShowScene();
         m_HierarchyPanel->OnImGuiRender();
 
+        // VSync settings
         ImGui::Begin("VSync");
-        if (ImGui::Checkbox("Set VSync Option", &m_VSync))
-        {
-            // Logic when the state of the checkbox changes
+        if (ImGui::Checkbox("Set VSync Option", &m_VSync)) {
             Application::GetApplication().GetWindow()->SetVSync(m_VSync);
-            if (m_VSync)
-            {
+            if (m_VSync) {
                 CRESTA_CORE_INFO("Enabled VSync");
             }
-            else
-            {
+            else {
                 CRESTA_CORE_INFO("Disabled VSync");
             }
         }
         ImGui::End();
     }
-    
+
     void EditorLayer::ShowScene()
     {
         ImGui::Begin("Scene");
@@ -230,5 +251,248 @@ namespace Cresta
         }
 
         ImGui::End();
+    }
+
+    void EditorLayer::SetupDockSpace()
+    {
+        ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;
+
+        // Set the window flags for the main window
+        ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+
+        windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+        // Main docking window
+        ImGui::Begin("DockSpace Demo", nullptr, windowFlags);
+        ImGuiID dockSpaceID = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), dockSpaceFlags);
+        ImGui::End();
+
+        // Remove any existing layout
+        ImGui::DockBuilderRemoveNode(dockSpaceID); // Clear existing layout
+        ImGui::DockBuilderAddNode(dockSpaceID, ImGuiDockNodeFlags_DockSpace);
+        ImGui::DockBuilderSetNodeSize(dockSpaceID, ImGui::GetMainViewport()->WorkSize);
+
+        // Split the dock space into regions
+        ImGuiID dockLeft = ImGui::DockBuilderSplitNode(dockSpaceID, ImGuiDir_Left, 0.25f, nullptr, &dockSpaceID);
+        ImGuiID dockRight = ImGui::DockBuilderSplitNode(dockSpaceID, ImGuiDir_Right, 0.25f, nullptr, &dockSpaceID);
+        ImGuiID dockBottom = ImGui::DockBuilderSplitNode(dockSpaceID, ImGuiDir_Down, 0.25f, nullptr, &dockSpaceID);
+        ImGuiID dockUp = ImGui::DockBuilderSplitNode(dockSpaceID, ImGuiDir_Up, 0.25f, nullptr, &dockSpaceID);
+
+        // Dock windows to regions
+        ImGui::DockBuilderDockWindow("Hierarchy", dockLeft);
+        ImGui::DockBuilderDockWindow("Components", dockRight);
+        ImGui::DockBuilderDockWindow("Project", dockBottom);
+        ImGui::DockBuilderDockWindow("Scene", dockUp);
+
+        // Complete the layout
+        ImGui::DockBuilderFinish(dockSpaceID);
+    }
+
+    void EditorLayer::UI_Toolbar()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        auto& colors = ImGui::GetStyle().Colors;
+        const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+        const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+        ImGui::Begin("toolbar" , 0 , ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoTitleBar);
+        ImGui::BeginChild("##tools",ImVec2(0,0),ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoTitleBar);
+
+        // Bottom padding value
+        float bottomPadding = 10.0f;
+
+        bool toolbarEnabled = (bool)m_EditorScene;
+        ImVec4 tintColor = ImVec4(1, 1, 1, 1);
+        if (!toolbarEnabled)
+            tintColor.w = 0.5f;
+
+        // Button size
+        float buttonSize = ImGui::GetWindowHeight() - 4.0f - bottomPadding; // Adjusted for padding
+
+        // Total button count (depending on conditions)
+        int buttonCount = 0;
+        if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
+        {
+            buttonCount++; // Play button
+        }
+        if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+        {
+            buttonCount++; // Simulate button
+        }
+        if (m_SceneState != SceneState::Edit)
+        {
+            buttonCount++; // Pause button
+        }
+        if (m_EditorScene->IsPaused())
+        {
+            buttonCount++; // Step button
+        }
+
+        // Calculate spacing and center offset
+        float windowWidth = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
+        float totalWidth = (buttonSize + ImGui::GetStyle().ItemSpacing.x) * buttonCount - ImGui::GetStyle().ItemSpacing.x;
+        float startX = (windowWidth - totalWidth) / 2.0f;
+
+        ImGui::SetCursorPosX(ImGui::GetWindowContentRegionMin().x + startX);
+
+        Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
+        if (ImGui::ImageButton("PlayButton", (ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+        {
+            if (m_SceneState == SceneState::Edit)
+            {
+                OnScenePlay();
+            }
+            else if (m_SceneState == SceneState::Play)
+            {
+                OnSceneStop();
+            }
+        }
+
+        // Pause button
+        if (m_SceneState != SceneState::Edit)
+        {
+            bool isPaused = m_EditorScene->IsPaused();
+            Ref<Texture2D> icon = m_IconPause;
+            if (ImGui::ImageButton("Pause", (ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+            {
+                m_EditorScene->SetPaused(!isPaused);
+            }
+            ImGui::SameLine();
+        }
+
+        // Add bottom padding
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + bottomPadding);
+
+        ImGui::PopStyleVar(2);
+        ImGui::PopStyleColor(3);
+
+        ImGui::EndChild();
+        ImGui::End();
+
+    }
+
+    void EditorLayer::NewProject()
+    {
+    }
+
+    bool EditorLayer::OpenProject()
+    {
+        std::string filepath = Utils::FileDialogs::OpenFile("Cresta Project (*.Cproj)\0*.Cproj\0");
+        if (filepath.empty())
+        {
+            return false;
+        }
+
+        OpenProject(filepath);
+        return true;
+    }
+
+    void EditorLayer::OpenProject(const std::filesystem::path& path)
+    {
+    }
+
+    void EditorLayer::SaveProject()
+    {
+        m_EditorScenePath = Utils::FileDialogs::SelectFolder();
+        SerializeScene(m_EditorScene, m_EditorScenePath);
+    }
+
+    void EditorLayer::NewScene()
+    {
+        m_EditorScene = CreateRef<Scene>();
+        m_HierarchyPanel->SetScene(m_EditorScene);
+        m_EditorScenePath = std::filesystem::path();
+    }
+
+    void EditorLayer::OpenScene()
+    {
+        std::string filepath = Utils::FileDialogs::OpenFile("Cresta Scene (*.cresta)\0*.cresta\0");
+        if (!filepath.empty())
+        {
+            OpenScene(filepath);
+        }
+    }
+
+    void EditorLayer::OpenScene(const std::filesystem::path& path)
+    {
+        if (path.extension().string() != ".cresta")
+        {
+            CRESTA_CORE_WARN("Could not load {0} - not a scene file", path.filename().string());
+            return;
+        }
+
+        Ref<Scene> newScene = CreateRef<Scene>();
+        SceneSerializer serializer(newScene);
+        if (serializer.Deserialize(path.string()))
+        {
+            m_EditorScene = newScene;
+            m_HierarchyPanel->SetScene(m_EditorScene);
+            m_EditorScenePath = path;
+        }
+    }
+
+    void EditorLayer::SaveScene()
+    {
+        if (!m_EditorScenePath.empty())
+        {
+            SerializeScene(m_EditorScene, m_EditorScenePath);
+        }
+        else
+        {
+            SaveSceneAs();
+        }
+    }
+
+    void EditorLayer::SaveSceneAs()
+    {
+        std::string filepath = Utils::FileDialogs::SaveFile("Cresta Scene (*.cresta)\0*.cresta\0");
+        if (!filepath.empty())
+        {
+            SerializeScene(m_EditorScene, filepath);
+            m_EditorScenePath = filepath;
+        }
+    }
+
+    void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
+    {
+        SceneSerializer serializer(scene);
+        serializer.Serialize(path.string());
+    }
+
+    void EditorLayer::OnScenePlay()
+    {
+        CRESTA_CORE_INFO("OnScenePlay");
+        m_SceneState = SceneState::Play;
+        m_ActiveScene = Scene::Clone(m_EditorScene);
+    }
+
+    void EditorLayer::OnSceneSimulate()
+    {
+        CRESTA_CORE_INFO("OnSceneSimulate");
+    }
+
+    void EditorLayer::OnSceneStop()
+    {
+        CRESTA_CORE_INFO("OnSceneStop");
+        m_SceneState = SceneState::Edit;
+
+    }
+
+    void EditorLayer::OnScenePause()
+    {
+        CRESTA_CORE_INFO("OnScenePause");
+    }
+
+    void EditorLayer::OnDuplicateEntity()
+    {
     }
 }

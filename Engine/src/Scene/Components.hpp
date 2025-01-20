@@ -108,6 +108,11 @@ namespace Cresta {
 		char* path = new char[128]();
 		Ref<Model> model;
 		MeshRenderer() = default;
+		MeshRenderer(std::string v_path)
+		{
+			path = v_path.data();
+			PathChanged(); 
+		}
 		MeshRenderer(const MeshRenderer&) = default;
 
 		void PathChanged()
