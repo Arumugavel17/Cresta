@@ -2,9 +2,10 @@
 #include "Crestaph.hpp"
 #include "Renderer/FrameBuffer.hpp"
 
-namespace Cresta {
-
-    class OpenGLFramebuffer : public Framebuffer {
+namespace Cresta 
+{
+    class OpenGLFramebuffer : public Framebuffer 
+	{
 	public:
 		OpenGLFramebuffer(const FramebufferSpecification& spec);
 		~OpenGLFramebuffer() = default;
@@ -21,6 +22,7 @@ namespace Cresta {
 		virtual uint32_t GetDepthAttachement() const override;
 
 		const FramebufferSpecification& GetSpecification() const override { return m_Specification; };
+
 	private:
 		FramebufferSpecification m_Specification;
 	};

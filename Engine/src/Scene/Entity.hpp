@@ -4,8 +4,8 @@
 #include "Components.hpp"
 #include "entt/entt.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	class Entity
 	{
 	public:
@@ -68,5 +68,4 @@ namespace Cresta {
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;
 	};
-
 }

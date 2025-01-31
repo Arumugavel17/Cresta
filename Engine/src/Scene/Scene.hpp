@@ -11,8 +11,8 @@
 #include "Renderer/VertexArray.hpp"
 #include "Core/Physics/Physics.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	class Entity;
 
 	class Scene
@@ -58,8 +58,7 @@ namespace Cresta {
 		void InvokeSceneUpdateCallBacks();
 
 	private:
-		Ref<Physics> m_Physics;
-		Ref<Shader> m_ModelShader;
+		Scope<Physics> m_Physics;
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 		std::vector<std::function<void()>> m_SceneUpdateCallBack;
 
@@ -68,11 +67,10 @@ namespace Cresta {
 		uint32_t m_ViewportWidth = 0;
 		uint32_t m_ViewportHeight = 0;
 
-		static int s_Count;
+		static int sm_Count;
 
 		friend class Entity;
 		friend class SceneSerializer;
 		friend class SceneHierarchyPanel;
 	};
-
 }

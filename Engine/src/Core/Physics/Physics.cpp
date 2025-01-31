@@ -50,10 +50,10 @@ namespace Cresta
 		m_BodyInterface = &m_PhysicsSystem->GetBodyInterface();
 		
 		m_PhysicsSystem->Init(
-			c_NumBodies, 
-			c_NumBodyMutexes, 
-			c_MaxBodyPairs, 
-			c_MaxContactConstraints,
+			cm_NumBodies, 
+			cm_NumBodyMutexes, 
+			cm_MaxBodyPairs, 
+			cm_MaxContactConstraints,
 			m_BroadPhaseLayerInterface, 
 			m_ObjectVsBroadPhaseLayerFilter, 
 			m_ObjectVsObjectLayerFilter);
@@ -61,7 +61,7 @@ namespace Cresta
 		//m_DebugRenderer = CreateScope<DebugRenderer>();
 	}
 
-	void Physics::MakeBodyStatic(entt::entity EntityID)
+	void Physics::MakeBodyStatic(const UUID& EntityID)
 	{
 		m_BodyInterface->SetMotionType(m_EntityToBody[EntityID], EMotionType::Static, EActivation::Activate);
 		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(m_EntityToBody[EntityID]);
@@ -74,10 +74,9 @@ namespace Cresta
 		{
 			m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::NON_MOVING);
 		}
-
 	}
 
-	void Physics::RemoveCollider(entt::entity EntityID)
+	void Physics::RemoveCollider(const UUID& EntityID)
 	{
 		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::NoCollision);
 	}
@@ -91,7 +90,7 @@ namespace Cresta
 		m_EntityToBody.clear();
 	}
 
-	void Physics::AddRigidBody(BodyID& ID)
+	void Physics::AddRigidBody(const BodyID& ID)
 	{
 		m_BodyInterface->SetMotionType(ID,EMotionType::Dynamic, EActivation::Activate);
 		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(ID);
@@ -104,7 +103,7 @@ namespace Cresta
 		m_BodyInterface->SetObjectLayer(ID,Layers::MOVING);
 	}
 
-	void Physics::CreateBody(entt::entity EntityID, BodyID& ID)
+	void Physics::CreateBody(const UUID& EntityID, BodyID& ID)
 	{
 		BodyCreationSettings settings(new SphereShape(1.0f),
 			RVec3(0, 0, 0),
@@ -131,20 +130,20 @@ namespace Cresta
 			switch (shape)
 			{
 			case ColliderShape::BoxCollider:
-					body.SetShapeInternal(new BoxShape(c_HalfExtents), true);
+					body.SetShapeInternal(new BoxShape(cm_HalfExtents), true);
 				break;
 			case ColliderShape::SphereCollider:
-					body.SetShapeInternal(new SphereShape(c_Radius), true);
+					body.SetShapeInternal(new SphereShape(cm_Radius), true);
 				break;
 			case ColliderShape::CapsuleCollider:
-					body.SetShapeInternal(new CapsuleShape(c_CapsuleHalfHeight, c_Radius), true);
+					body.SetShapeInternal(new CapsuleShape(cm_CapsuleHalfHeight, cm_Radius), true);
 				break;
 			}
 			lock.ReleaseLock();
 		}
 	}
 
-	void Physics::GetBodyPosition(entt::entity EntityID, glm::vec3& position)
+	void Physics::GetBodyPosition(const UUID& EntityID, glm::vec3& position)
 	{
 		RVec3 bodyPosition = m_BodyInterface->GetCenterOfMassPosition(m_EntityToBody[EntityID]);
 		position.x = bodyPosition.GetX();
@@ -152,12 +151,12 @@ namespace Cresta
 		position.z = bodyPosition.GetZ();
 	}
 
-	void Physics::SetBodyPosition(entt::entity EntityID, const glm::vec3& position)
+	void Physics::SetBodyPosition(const UUID& EntityID, const glm::vec3& position)
 	{
 		m_BodyInterface->SetPosition(m_EntityToBody[EntityID], { position.x, position.y, position.z }, EActivation::Activate);
 	}
 
-	void Physics::GetBodyRotation(entt::entity EntityID, glm::quat& rotation)
+	void Physics::GetBodyRotation(const UUID& EntityID, glm::quat& rotation)
 	{
 		Quat bodyRotation = m_BodyInterface->GetRotation(m_EntityToBody[EntityID]);
 		rotation.x = bodyRotation.GetX();
@@ -166,7 +165,7 @@ namespace Cresta
 		rotation.w = bodyRotation.GetW();
 	}
 
-	void Physics::SetBodyRotation(entt::entity EntityID, const glm::quat& rotation)
+	void Physics::SetBodyRotation(const UUID& EntityID, const glm::quat& rotation)
 	{
 		m_BodyInterface->SetRotation(m_EntityToBody[EntityID], { rotation.x, rotation.y, rotation.z , rotation.w}, EActivation::Activate);
 	}
@@ -201,7 +200,7 @@ namespace Cresta
 	void Physics::Step()
 	{	
 		const int cCollisionSteps = 1;
-		m_PhysicsSystem->Update(c_DeltaTime, cCollisionSteps, m_TempAllocator.get(), m_JobSystem.get());
+		m_PhysicsSystem->Update(cm_DeltaTime, cCollisionSteps, m_TempAllocator.get(), m_JobSystem.get());
 	}
 
 	void Physics::Start()

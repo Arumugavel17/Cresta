@@ -3,8 +3,10 @@
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
 
-namespace Cresta {
-	class OpenGLRenderAPI : public RendererAPI {
+namespace Cresta 
+{
+	class OpenGLRenderAPI : public RendererAPI 
+	{
 	public:
 		~OpenGLRenderAPI() = default;
 

@@ -4,8 +4,8 @@
 
 namespace Cresta 
 {
-	namespace Utils {
-
+	namespace Utils 
+	{
 		static GLenum CrestaImageFormatToGLDataFormat(ImageFormat format)
 		{
 			switch (format)

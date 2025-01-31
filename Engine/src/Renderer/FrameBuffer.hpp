@@ -3,8 +3,8 @@
 #include "Base.hpp"
 #include "Crestaph.hpp"
 
-namespace Cresta{
-
+namespace Cresta
+{
 	enum class FramebufferTextureFormat
 	{
 		None = 0,
@@ -69,14 +69,14 @@ namespace Cresta{
 		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
 
 	protected:
-		unsigned int m_RendererID;
-		FramebufferSpecification m_Specification;
+		uint32_t p_RendererID = 0;
+		FramebufferSpecification p_Specification;
 
-		std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecifications;
-		std::vector<uint32_t> m_ColorAttachments;
+		std::vector<FramebufferTextureSpecification> p_ColorAttachmentSpecifications;
+		std::vector<uint32_t> p_ColorAttachments;
 		
-		FramebufferTextureSpecification m_DepthAttachmentSpecification = FramebufferTextureFormat::None;
-		uint32_t m_DepthAttachment = 0;
+		FramebufferTextureSpecification p_DepthAttachmentSpecification = FramebufferTextureFormat::None;
+		uint32_t p_DepthAttachment = 0;
 
 	};
 }

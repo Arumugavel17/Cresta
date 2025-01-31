@@ -36,7 +36,7 @@ namespace Cresta {
 		virtual void SetVec4(const std::string& name, const glm::vec4& value) = 0;
 		virtual void SetMat4(const std::string& name, const glm::mat4& value) = 0;
 
-		const std::string& GetFilePath() const { return m_filepath; };
+		const std::string& GetFilePath() const { return p_filepath; };
 
 		std::string ReadFile(const std::string& filepath);
 		Ref<std::unordered_map<GLenum, std::string>> PreProcess(const std::string& source);
@@ -45,8 +45,8 @@ namespace Cresta {
 		static Ref<Shader> Create(const std::string filepath);
 		static Ref<Shader> Create(const std::string filepath, const std::string& vertexSrc, const std::string& fragmentSrc);
 	protected:
-		std::string m_filepath;
-		Ref<std::unordered_map<GLenum, std::string>> m_ShaderSrc;
+		std::string p_filepath;
+		Ref<std::unordered_map<GLenum, std::string>> p_ShaderSrc;
 	};
 
 	class ShaderLibrary

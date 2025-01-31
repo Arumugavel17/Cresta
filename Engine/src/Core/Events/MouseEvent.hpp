@@ -4,13 +4,15 @@
 #include "Core/MouseCode.hpp"
 
 
-namespace Cresta {
+namespace Cresta 
+{
 
 	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(const float x, const float y)
-			: m_MouseX(x), m_MouseY(y) {
+			: m_MouseX(x), m_MouseY(y) 
+		{
 		}
 
 		float GetX() const { return m_MouseX; }
@@ -34,7 +36,8 @@ namespace Cresta {
 	{
 	public:
 		MouseScrolledEvent(const float xOffset, const float yOffset)
-			: m_XOffset(xOffset), m_YOffset(yOffset) {
+			: m_XOffset(xOffset), m_YOffset(yOffset) 
+		{
 		}
 
 		float GetXOffset() const { return m_XOffset; }
@@ -63,7 +66,8 @@ namespace Cresta {
 		
 	protected:
 		MouseButtonEvent(const MouseCode button)
-			: m_Button(button) {
+			: m_Button(button) 
+		{
 		}
 
 		MouseCode m_Button;
@@ -89,7 +93,8 @@ namespace Cresta {
 	{
 	public:
 		MouseButtonReleasedEvent(const MouseCode button)
-			: MouseButtonEvent(button) {
+			: MouseButtonEvent(button) 
+		{
 		}
 
 		std::string ToString() const override

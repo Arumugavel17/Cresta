@@ -16,7 +16,8 @@ namespace Cresta
 	};
 }
 
-namespace std {
+namespace std 
+{
 	template <typename T> struct hash;
 
 	template<>
@@ -27,5 +28,4 @@ namespace std {
 			return (uint64_t)uuid;
 		}
 	};
-
 }

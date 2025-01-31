@@ -5,7 +5,8 @@
 namespace Cresta {
 
 	Camera::Camera(const glm::vec3& CameraPosition, CameraMode cameramode ) 
-		: m_CameraFront(CameraPosition), m_CameraMode(CameraMode::Perspective)
+		: m_CameraFront(CameraPosition), 
+		  m_CameraMode(CameraMode::Perspective)
 	{
 
 	}
@@ -14,7 +15,9 @@ namespace Cresta {
 	//sets the variables for Orthographic projection///////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////
 
-	void Camera::SetOrthoGraphicView(float left, float right, float bottom, float top, 
+	void Camera::SetOrthoGraphicView(
+		float left, float right, 
+		float bottom, float top, 
 		float nearplane, float farplane)
 	{
 		m_OrthographicData = new OrthographicData(left, right, bottom, top, nearplane, farplane);
@@ -29,7 +32,10 @@ namespace Cresta {
 	//sets the variables for Perspective projection////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////
 
-	void Camera::SetPerspectiveView(float FOV, float screenwidth, float screenheight, float nearplane, float farplane)
+	void Camera::SetPerspectiveView(
+		float FOV, 
+		float screenwidth, float screenheight, 
+		float nearplane, float farplane)
 	{
 		m_PerspectiveData = new PerspectiveData(FOV, screenwidth, screenheight, nearplane, farplane);
 	}

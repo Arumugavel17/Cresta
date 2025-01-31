@@ -23,7 +23,8 @@ namespace Cresta
 
 		bool condition = !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode;
 
-		CRESTA_ASSERT(condition,
+		CRESTA_ASSERT(
+			condition,
 			"ERROR::ASSIMP::{0}",
 			importer.GetErrorString());
 
@@ -197,10 +198,12 @@ namespace Cresta
 		{
 			m_VAOs.push_back(VertexArray::Create());
 			m_VAOs[i]->Bind();
+			 
 			int VerticesSize = m_Meshes[i].m_Vertices.size();
 			void* Vertices = m_Meshes[i].m_Vertices.data();
 			int IndicesSize = m_Meshes[i].m_Indices.size();
 			uint32_t* Indices = m_Meshes[i].m_Indices.data();
+			
 			Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(Vertices, sizeof(Vertex) * VerticesSize);
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(Indices, IndicesSize);
 
@@ -225,7 +228,7 @@ namespace Cresta
 		m_UniformBuffer->Bind();
 		for (int i = 0;i < m_Meshes.size();i++)
 		{
-			Renderer::Submit(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
+			Renderer::DrawIndexed(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
 		}
 	}
 
@@ -239,7 +242,7 @@ namespace Cresta
 		m_UniformBuffer->Bind();
 		for (int i = 0;i < m_Meshes.size();i++)
 		{
-			Renderer::Submit(m_Shader, m_VAOs[i], transform);	
+			Renderer::DrawIndexed(m_Shader, m_VAOs[i], transform);	
 		}
 	}
 

@@ -4,11 +4,12 @@
 #include <memory>
 #include <functional>
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	using EventCallBackFn = std::function<void(Event&)>;
 
-	class Window {
+	class Window 
+	{
 	public:
 		Window() = default;
 		virtual ~Window() = default;
@@ -35,6 +36,6 @@ namespace Cresta {
 		};
 
 	protected:
-		WindowData m_Data;
+		WindowData p_Data;
 	};
 }

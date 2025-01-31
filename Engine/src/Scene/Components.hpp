@@ -30,7 +30,8 @@ namespace Cresta
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& tag)
-			: Tag(tag) {
+			: Tag(tag) 
+		{
 		}
 
 		std::string ToString()
@@ -93,9 +94,10 @@ namespace Cresta
 
 	struct SpriteRenderer
 	{
-		char* path = new char[128]();
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<Texture2D> Texture; 
+
+		char* path = new char[128]();
 		float MixFactor = 1.0f;
 
 		SpriteRenderer() = default;
@@ -126,10 +128,10 @@ namespace Cresta
 
 	struct MeshRenderer
 	{
-		std::string path;
-		Ref<Model> model;
+		std::string Path;
+		Ref<Model> Model;
 		MeshRenderer() = default;
-		MeshRenderer(std::string v_path) : path(v_path)
+		MeshRenderer(std::string v_path) : Path(v_path)
 		{
 			PathChanged(); 
 		}
@@ -137,13 +139,13 @@ namespace Cresta
 
 		void PathChanged()
 		{
-			if (Model::s_ModelsLoaded.find(std::string(path)) != Model::s_ModelsLoaded.end())
+			if (Model::s_ModelsLoaded.find(std::string(Path)) != Model::s_ModelsLoaded.end())
 			{
-				model = Model::s_ModelsLoaded[std::string(path)];
+				Model = Model::s_ModelsLoaded[std::string(Path)];
 			}
 			else
 			{
-				model = Model::Create(path);
+				Model = Model::Create(Path);
 			}
 			}
 
@@ -170,7 +172,7 @@ namespace Cresta
 
 	struct PhysicsComponent
 	{
-		JPH::BodyID m_BodyID; // Physics Body ID 
+		JPH::BodyID BodyID; // Physics Body ID 
 
 		std::string ToString()
 		{

@@ -18,7 +18,7 @@ namespace Cresta
 
 		void SaveScene();
 		void SaveSceneAs();
-		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
+		void SerializeScene(const Ref<Scene>& scene, const std::filesystem::path& path);
 		void SetSceneForLayers();
 
 		void Init();
@@ -28,21 +28,22 @@ namespace Cresta
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 		
-		Ref<Window> GetWindow() { return m_Window; }
-		static Application& GetApplication() { return *Application::s_Instance; }
+		Ref<Window> GetWindow() { return p_Window; }
+		static Application& GetApplication() { return *Application::sp_Instance; }
 
 	protected:
-		float m_LastFrameTime = 0.0f;
-		bool m_Running;
-		bool m_Minimized;
+		float p_LastFrameTime = 0.0f;
+		bool p_Running;
+		bool p_Minimized;
 		
-		std::filesystem::path m_ActiveScenePath;
+		std::filesystem::path p_ActiveScenePath;
 
-		static Ref<Scene> s_ActiveScene;
-		Ref<Window> m_Window;
-		ImGUILayer* m_ImGUILayer;
-		static Application* s_Instance; 
-		LayerStack m_LayerStack;
+		static Ref<Scene> sp_ActiveScene;
+		static Application* sp_Instance; 
+
+		Ref<Window> p_Window;
+		ImGUILayer* p_ImGUILayer;
+		LayerStack p_LayerStack;
 	};
 
 	Application* CreateApplication();

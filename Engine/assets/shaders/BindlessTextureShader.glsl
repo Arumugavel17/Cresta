@@ -6,8 +6,6 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoords;
 layout (location = 2) in int16_t aTexIndex;
-layout (location = 3) in vec3 aTangent;
-layout (location = 4) in float aBitTangenet;
 
 flat out int8_t TexCount;   
 flat out int16_t TexIndex;
@@ -41,7 +39,8 @@ sampler2D Specular;
 flat in int8_t TexCount;
 flat in int16_t TexIndex;
 in vec2 TexCoords;
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 o_color;
 
 void main()
 {
@@ -62,4 +61,5 @@ void main()
     }
     vec4 color = texture(Diffuse, TexCoords); // Example: accumulate colors    
     FragColor = color;
+    o_color = color;
 }

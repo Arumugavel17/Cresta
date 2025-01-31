@@ -1,7 +1,7 @@
 #include "OpenGLRendererAPI.hpp"
 
-
-namespace Cresta {
+namespace Cresta 
+{
 	void OpenGLMessageCallback(
 		unsigned source,
 		unsigned type,
@@ -81,5 +81,4 @@ namespace Cresta {
 	{
 		glLineWidth(width);
 	}
-
 }

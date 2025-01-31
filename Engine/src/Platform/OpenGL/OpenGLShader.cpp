@@ -1,7 +1,7 @@
 #include "Platform/OpenGL/OpenGLShader.hpp"
 
-namespace Cresta {
-	
+namespace Cresta 
+{	
 	OpenGLShader::OpenGLShader(const std::string& filepath, 
 							   const const std::string& vertexSrc, 
 							   const std::string& fragmentSrc) 
@@ -39,9 +39,9 @@ namespace Cresta {
 	void OpenGLShader::CreateProgram()
 	{
 		m_ProgramID = glCreateProgram();
-		if (m_ShaderSrc) 
+		if (p_ShaderSrc) 
 		{
-			for (const auto& pair : *m_ShaderSrc) 
+			for (const auto& pair : *p_ShaderSrc) 
 			{
 				const char* shaderSrc = pair.second.c_str();
 				

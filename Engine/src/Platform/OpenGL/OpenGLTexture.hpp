@@ -34,15 +34,17 @@ namespace Cresta
 		{
 			return m_RendererID == other.GetRendererID();
 		}
+
 	private:
 		TextureSpecification m_Specification;
-
-		uint64_t m_Handle;
-		std::string m_Path;
+		
 		bool m_IsLoaded = false;
+		
+		uint64_t m_Handle;
 		uint32_t m_Width, m_Height;
 		uint32_t m_RendererID;
+		
 		GLenum m_InternalFormat, m_DataFormat;
+		std::string m_Path;
 	};
-
 }

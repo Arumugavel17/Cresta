@@ -20,8 +20,6 @@ namespace Cresta
 		glm::vec3 position;
 		glm::vec2 texCoords;
 		int index;
-
-
 	};
 
 	struct Mesh

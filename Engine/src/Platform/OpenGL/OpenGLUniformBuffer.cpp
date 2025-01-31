@@ -2,8 +2,8 @@
 #include "OpenGLUniformBuffer.hpp"
 #include <glad/glad.h>
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	OpenGLUniformBuffer::OpenGLUniformBuffer(uint32_t size, uint32_t binding)
 	{
 		glCreateBuffers(1, &m_RendererID);
@@ -23,7 +23,6 @@ namespace Cresta {
 		glDeleteBuffers(1, &m_RendererID);
 	}
 
-
 	void OpenGLUniformBuffer::Bind()
 	{
 		glBindBufferBase(GL_UNIFORM_BUFFER, m_Binding, m_RendererID);
@@ -33,5 +32,4 @@ namespace Cresta {
 	{
 		glNamedBufferSubData(m_RendererID, offset, size, data);
 	}
-
 }

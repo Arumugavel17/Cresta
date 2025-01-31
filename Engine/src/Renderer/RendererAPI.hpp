@@ -3,8 +3,8 @@
 #include "Renderer/VertexArray.hpp"
 #include <glm/glm.hpp>
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	class RendererAPI
 	{
 	public:
@@ -29,10 +29,10 @@ namespace Cresta {
 
 		virtual void SetLineWidth(float width) = 0;
 
-		static API GetAPI() { return s_API; }
+		static API GetAPI() { return sm_API; }
 		static Scope<RendererAPI> Create();
 	private:
-		static API s_API;
+		static API sm_API;
 	};
 
 }

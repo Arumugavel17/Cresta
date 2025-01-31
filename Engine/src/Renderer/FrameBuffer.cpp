@@ -2,8 +2,8 @@
 #include "Renderer/Renderer.hpp"
 #include "Platform/OpenGL/OpenGLFramebuffer.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
 	{
 		switch (Renderer::GetAPI())

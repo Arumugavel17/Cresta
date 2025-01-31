@@ -7,14 +7,14 @@
 
 namespace Cresta
 {
-	Application* Application::s_Instance = nullptr;
-	Ref<Scene> Application::s_ActiveScene = nullptr;
+	Application* Application::sp_Instance = nullptr;
+	Ref<Scene> Application::sp_ActiveScene = nullptr;
 	
-	Application::Application() : m_Running(true), m_Minimized(false)
+	Application::Application() : p_Running(true), p_Minimized(false)
 	{
-		Application::s_Instance = this;
-		m_Window = Window::Create();
-		m_Window->SetEventCallBack(CRESTA_BIND_EVENT_FN(Application::OnEvent));
+		Application::sp_Instance = this;
+		p_Window = Window::Create();
+		p_Window->SetEventCallBack(CRESTA_BIND_EVENT_FN(Application::OnEvent));
 
 		Log::Init();
 		Renderer::Init();
@@ -23,10 +23,10 @@ namespace Cresta
 
 	void Application::Init()
 	{
-		s_ActiveScene = CreateRef<Scene>();
-		m_ImGUILayer = new ImGUILayer(s_ActiveScene);
+		sp_ActiveScene = CreateRef<Scene>();
+		p_ImGUILayer = new ImGUILayer(sp_ActiveScene);
 
-		PushOverlay(m_ImGUILayer);
+		PushOverlay(p_ImGUILayer);
 	}
 
 	Application::~Application()
@@ -37,13 +37,13 @@ namespace Cresta
 	
 	void Application::PushLayer(Layer* layer)
 	{
-		m_LayerStack.PushLayer(layer);
+		p_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
-		m_LayerStack.PushOverlay(layer);
+		p_LayerStack.PushOverlay(layer);
 		layer->OnAttach();
 	}
 
@@ -58,11 +58,11 @@ namespace Cresta
 
 		int fixedUpdateCount = 0;       
 
-		while (m_Running)
+		while (p_Running)
 		{
 			float time = RenderCommand::GetTime();	 
-			float timestep = time - m_LastFrameTime; 
-			m_LastFrameTime = time;
+			float timestep = time - p_LastFrameTime; 
+			p_LastFrameTime = time;
 
 			accumulatedTime += timestep;
 			fpsTimer += timestep;       
@@ -71,6 +71,8 @@ namespace Cresta
 			// Update FPS every second
 			if (fpsTimer >= 1.0f)
 			{
+				CRESTA_INFO("Update Count: {0} || Fixed Update Count: {1}", frameCount, fixedUpdateCount);
+
 				currentFPS = frameCount;           
 				frameCount = 0;                    
 				fpsTimer = 0.0f;                   
@@ -81,7 +83,7 @@ namespace Cresta
 
 			while (accumulatedTime >= fixedTimestep)
 			{
-				for (Layer* layer : m_LayerStack)
+				for (Layer* layer : p_LayerStack)
 				{
 					layer->OnFixedUpdate();
 				}
@@ -89,26 +91,26 @@ namespace Cresta
 				fixedUpdateCount++;
 			}
 
-			m_Window->Begin();
+			p_Window->Begin();
 
-			if (!m_Minimized)
+			if (!p_Minimized)
 			{
-				for (Layer* layer : m_LayerStack)
+				for (Layer* layer : p_LayerStack)
 				{
 					layer->OnUpdate();
 				}
 
-				m_ImGUILayer->Begin();
+				p_ImGUILayer->Begin();
 				{
-					for (Layer* layer : m_LayerStack)
+					for (Layer* layer : p_LayerStack)
 					{
 						layer->OnImGUIRender();
 					}
 				}
-				m_ImGUILayer->End();
+				p_ImGUILayer->End();
 			}
 
-			m_Window->End();
+			p_Window->End();
 		}
 	}
 
@@ -117,7 +119,7 @@ namespace Cresta
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(CRESTA_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(CRESTA_BIND_EVENT_FN(Application::OnWindowResize));
-		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
+		for (auto it = p_LayerStack.rbegin(); it != p_LayerStack.rend(); ++it)
 		{
 			if (e.Handled)
 				break;
@@ -127,7 +129,7 @@ namespace Cresta
 
 	void Application::NewScene()
 	{
-		s_ActiveScene = CreateRef<Scene>();
+		sp_ActiveScene = CreateRef<Scene>();
 		SetSceneForLayers();
 	}
 
@@ -152,20 +154,17 @@ namespace Cresta
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			Ref<Scene> temp = s_ActiveScene;
-			CRESTA_INFO("Scene Reference Before {0}", temp.use_count());
-			s_ActiveScene = newScene;
-			m_ActiveScenePath = path;
+			Ref<Scene> temp = sp_ActiveScene;
+			sp_ActiveScene = newScene;
+			p_ActiveScenePath = path;
 			SetSceneForLayers();
-			CRESTA_INFO("Scene Reference After {0}", temp.use_count());
 			return;
 		}
 
 		CRESTA_CORE_WARN("Could not load {0} - not a scene file", path.filename().string());
-		return;
 	}
 
-	void Application::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
+	void Application::SerializeScene(const Ref<Scene>& scene, const std::filesystem::path& path)
 	{
 		SceneSerializer serializer(scene);
 		serializer.Serialize(path.string());
@@ -173,17 +172,17 @@ namespace Cresta
 
 	void Application::SetSceneForLayers()
 	{
-		for (Layer* layer : m_LayerStack)
+		for (Layer* layer : p_LayerStack)
 		{
-			layer->SetScene(s_ActiveScene);
+			layer->SetScene(sp_ActiveScene);
 		}
 	}
 
 	void Application::SaveScene()
 	{
-		if (!m_ActiveScenePath.empty())
+		if (!p_ActiveScenePath.empty())
 		{
-			SerializeScene(s_ActiveScene, m_ActiveScenePath);
+			SerializeScene(sp_ActiveScene, p_ActiveScenePath);
 		}
 		else
 		{
@@ -196,14 +195,14 @@ namespace Cresta
 		std::string filepath = Utils::FileDialogs::SaveFile("Cresta Scene (*.cresta)\0*.cresta\0");
 		if (!filepath.empty())
 		{
-			SerializeScene(s_ActiveScene, filepath);
-			m_ActiveScenePath = filepath;
+			SerializeScene(sp_ActiveScene, filepath);
+			p_ActiveScenePath = filepath;
 		}
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e) 
 	{
-		m_Running = false;
+		p_Running = false;
 		return true;
 	}
 
@@ -211,16 +210,16 @@ namespace Cresta
 	{
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
-			m_Minimized = true;
+			p_Minimized = true;
 			return false;
 		}
-		m_Minimized = false;
+		p_Minimized = false;
 		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 		return true;	
 	}
 
 	void Application::Close()
 	{
-		m_Running = false;
+		p_Running = false;
 	}
 }

@@ -3,8 +3,10 @@
 #include "Core/KeyCode.hpp"
 #include "Core/MouseCode.hpp"
 
-namespace Cresta {
-	class Input {
+namespace Cresta 
+{
+	class Input 
+	{
 	public:
 		static Input* Create();
 
@@ -24,7 +26,7 @@ namespace Cresta {
 
 		virtual std::pair<float, float> GetMousePositionImp() = 0;
 	private:
-		static Input* s_InputClass;
+		static Input* sm_InputClass;
 	};
 }
 

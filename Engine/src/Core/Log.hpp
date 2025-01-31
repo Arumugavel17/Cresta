@@ -1,22 +1,23 @@
 #pragma once
 #include <spdlog/spdlog.h>
 #include <glm/glm.hpp>
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	class Log
 	{
 	public:
 		static void Init();
 		static void Shutdown();
 
-		static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
-		static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+		static Ref<spdlog::logger>& GetCoreLogger() { return sm_CoreLogger; }
+		static Ref<spdlog::logger>& GetClientLogger() { return sm_ClientLogger; }
 	private:
-		static Ref<spdlog::logger> s_CoreLogger;
-		static Ref<spdlog::logger> s_ClientLogger;
+		static Ref<spdlog::logger> sm_CoreLogger;
+		static Ref<spdlog::logger> sm_ClientLogger;
 	};
 
 }
@@ -57,19 +58,5 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 #define CRESTA_LOG_WITH_TIME(...) \
     ::Cresta::Log::GetClientLogger()->info("[{}] {}", std::chrono::system_clock::now(), fmt::format(__VA_ARGS__))
 
-#ifdef DEBUG
-	#define CRESTA_DEBUG(...) ::Cresta::Log::GetCoreLogger()->debug(__VA_ARGS__)
-#else
-	#define CRESTA_DEBUG(...)
-#endif
-
 #define CRESTA_ASSERT(x, ...) \
     if (x) { CRESTA_ERROR("Assertion Failed: " __VA_ARGS__); __debugbreak(); }
-
-#define CRESTA_CORE_SCOPE_LOG(message) \
-    CRESTA_CORE_INFO("Entering: {}", message); \
-    auto _scope_guard = std::make_shared<ScopeGuard>([&]() { CRESTA_CORE_INFO("Exiting: {}", message); });
-
-#define CRESTA_SCOPE_LOG(message) \
-    CRESTA_INFO("Entering: {}", message); \
-    auto _scope_guard = std::make_shared<ScopeGuard>([&]() { CRESTA_INFO("Exiting: {}", message); });

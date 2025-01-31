@@ -1,6 +1,7 @@
 #include "OpenGLVertexArray.hpp"
 
-namespace Cresta {
+namespace Cresta 
+{
 	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
 	{
 		switch (type)

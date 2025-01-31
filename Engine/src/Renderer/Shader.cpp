@@ -4,14 +4,18 @@
 #include "Renderer/RendererAPI.hpp"
 #include "Platform/OpenGL/OpenGLShader.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	GLenum Shader::ShaderTypeFromString(const std::string& type)
 	{
 		if (type == "vertex")
+		{
 			return GL_VERTEX_SHADER;
+		}
 		if (type == "fragment" || type == "pixel")
+		{
 			return GL_FRAGMENT_SHADER;
+		}
 
 		CRESTA_ASSERT(true, "Unknown shader type!");
 		return 0;
@@ -70,20 +74,20 @@ namespace Cresta {
 	}
 
 	Shader::Shader(const std::string& filepath) 
-		: m_filepath (filepath)
+		: p_filepath (filepath)
 	{
 		std::string& source = ReadFile(filepath);
 
-		m_ShaderSrc = PreProcess(source);
+		p_ShaderSrc = PreProcess(source);
 	}
 	
 	Shader::Shader(const std::string& filepath, 
 				   const std::string& vertexSrc, 
 				   const std::string& fragmentSrc) 
-		: m_filepath(filepath)
+		: p_filepath(filepath)
 	{
-		(*m_ShaderSrc)[GL_VERTEX_SHADER] = vertexSrc;
-		(*m_ShaderSrc)[GL_FRAGMENT_SHADER] = fragmentSrc;
+		(*p_ShaderSrc)[GL_VERTEX_SHADER] = vertexSrc;
+		(*p_ShaderSrc)[GL_FRAGMENT_SHADER] = fragmentSrc;
 	}
 
 

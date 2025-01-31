@@ -2,6 +2,8 @@
 #include "Scene/Components.hpp"
 #include "Scene/ComponentUI.hpp"
 
+#include "Core/Input.hpp"
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)
 #include <imgui/imgui_impl_glfw.h>   // Platform-specific (GLFW example)
@@ -38,6 +40,11 @@ namespace Cresta
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
 			{
 				m_SelectedEntity = {};
+			}
+
+			if (Input::GetKeyDown(Key::LeftControl) && Input::GetKeyDown(Key::N))
+			{
+				m_Scene->CreateEntity("Empty Entity"); 
 			}
 
 			// Right-click on blank space

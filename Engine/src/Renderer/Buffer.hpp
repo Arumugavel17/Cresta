@@ -1,8 +1,8 @@
 #pragma once
 #include "Crestaph.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	enum class ShaderDataType
 	{
 		None = 0,
@@ -147,5 +147,4 @@ namespace Cresta {
 
 		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	};
-
 }

@@ -3,8 +3,8 @@
 #include "Renderer/RendererAPI.hpp"
 #include "Platform/OpenGL/OpenGLBuffer.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
     Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
     {
         switch (Renderer::GetAPI())

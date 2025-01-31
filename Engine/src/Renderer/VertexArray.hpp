@@ -3,7 +3,8 @@
 #include "Renderer/Buffer.hpp"
 #include <memory>
 
-namespace Cresta {
+namespace Cresta 
+{
 
 	class VertexArray
 	{

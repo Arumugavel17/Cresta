@@ -1,10 +1,10 @@
 #pragma once
 #include "core/Layers/Layer.hpp"
-#include "Crestaph.hpp"
-#include "Core/Events/Event.hpp"
 
-namespace Cresta {
-	class LayerStack {
+namespace Cresta 
+{
+	class LayerStack 
+	{
 	public:
 
 		LayerStack() = default;

@@ -2,7 +2,8 @@
 #include "Platform/OpenGL/OpenGLVertexArray.hpp"
 #include "Renderer/Renderer.hpp"
 
-namespace Cresta {
+namespace Cresta 
+{
     Ref<VertexArray> Cresta::VertexArray::Create()
     {
         switch (Renderer::GetAPI())

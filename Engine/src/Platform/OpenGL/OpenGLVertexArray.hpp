@@ -2,7 +2,8 @@
 #include "Renderer/VertexArray.hpp"
 #include <glad/glad.h>
 
-namespace Cresta {
+namespace Cresta 
+{
 	class OpenGLVertexArray : public VertexArray
 	{
 	public:

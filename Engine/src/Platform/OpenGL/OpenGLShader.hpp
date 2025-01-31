@@ -5,10 +5,10 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
-
-namespace Cresta {
-
-	class OpenGLShader : public Shader {
+namespace Cresta 
+{
+	class OpenGLShader : public Shader 
+	{
 	public:
 		OpenGLShader(const std::string& filepath);
 		OpenGLShader(const std::string& filepath, const const std::string& vertexSrc, const std::string& fragmentSrc);

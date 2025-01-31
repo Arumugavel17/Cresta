@@ -3,14 +3,16 @@
 #include "Core/Events/Event.hpp"
 #include "Scene/Scene.hpp"
 
-namespace Cresta {
-	class Layer {
+namespace Cresta 
+{
+	class Layer 
+	{
 	public:
 		Layer(std::string layername, Ref<Scene> scene) 
 			: m_LayerName(layername), 
-			  m_ActiveScene(scene)
+			  p_ActiveScene(scene)
 		{
-			m_ActiveScene->AddSceneUpdateCallBack([this]() { this->SceneCallBack();});
+			p_ActiveScene->AddSceneUpdateCallBack([this]() { this->SceneCallBack();});
 		}
 
 		virtual ~Layer() = default;
@@ -25,12 +27,12 @@ namespace Cresta {
 
 		virtual void OnImGUIRender() = 0;
 
-		void SetScene(Ref<Scene> scene) { m_ActiveScene = scene; }
-		Ref<Scene> GetScene() { return m_ActiveScene; }
+		void SetScene(Ref<Scene> scene) { p_ActiveScene = scene; }
+		Ref<Scene> GetScene() { return p_ActiveScene; }
 
 		virtual std::string toString() { return m_LayerName; }
 	protected:
-		Ref<Scene> m_ActiveScene;
+		Ref<Scene> p_ActiveScene;
 	private:
 		std::string m_LayerName;
 	};

@@ -23,9 +23,9 @@ namespace Cresta {
 
 	void OpenGLWindow::Init()
 	{
-		m_Data.Title = "Cresta";
-		m_Data.Width = 1920;
-		m_Data.Height = 1080;
+		p_Data.Title = "Cresta";
+		p_Data.Width = 1920;
+		p_Data.Height = 1080;
 
 		bool status = glfwInit();	
 		CRESTA_ASSERT(!status,"Failed to Initalize GLFW");
@@ -33,7 +33,7 @@ namespace Cresta {
 
 		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
-		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
+		m_Window = glfwCreateWindow(p_Data.Width, p_Data.Height, p_Data.Title.c_str(), NULL, NULL);
 		glfwSetWindowAttrib(m_Window, GLFW_MAXIMIZED, GLFW_TRUE);
 
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -46,7 +46,7 @@ namespace Cresta {
 			return;
 		}
 		
-		glfwSetWindowUserPointer(m_Window, &m_Data);
+		glfwSetWindowUserPointer(m_Window, &p_Data);
 
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
@@ -140,7 +140,7 @@ namespace Cresta {
 
 	void OpenGLWindow::SetEventCallBack(EventCallBackFn fn)
 	{
-		m_Data.CallBackFunction = fn;
+		p_Data.CallBackFunction = fn;
 	}
 
 	void OpenGLWindow::Begin() 
@@ -174,10 +174,10 @@ namespace Cresta {
 	}
 	uint32_t OpenGLWindow::GetWidth() const
 	{
-		return m_Data.Width;
+		return p_Data.Width;
 	}
 	uint32_t OpenGLWindow::GetHeight() const
 	{
-		return m_Data.Height;
+		return p_Data.Height;
 	}
 }

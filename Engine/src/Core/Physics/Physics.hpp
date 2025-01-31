@@ -2,6 +2,7 @@
 #include "Crestaph.hpp"
 #include "PhysicsUtils.hpp"
 #include "entt/entt.hpp"
+#include "Scene/UUID.hpp"
 #include <Jolt/Physics/StateRecorder.h>
 #include <Jolt/Physics/StateRecorderImpl.h>
 
@@ -33,19 +34,19 @@ namespace Cresta
 
 		void ClearBodies();
 		
-		void MakeBodyStatic(entt::entity EntityID);
+		void MakeBodyStatic(const UUID& EntityID);
 
-		void RemoveCollider(entt::entity EntityID);
+		void RemoveCollider(const UUID& EntityID);
 
-		void AddRigidBody(BodyID& ID);
+		void AddRigidBody(const BodyID& ID);
 
-		void CreateBody(entt::entity EntityID, BodyID& ID);
+		void CreateBody(const UUID& EntityID,BodyID& ID);
 		void AddCollider(const BodyID& ID, ColliderShape shape);
 
-		void GetBodyPosition(entt::entity EntityID, glm::vec3& position);
-		void GetBodyRotation(entt::entity EntityID, glm::quat& rotation);
-		void SetBodyPosition(entt::entity EntityID, const glm::vec3& position);
-		void SetBodyRotation(entt::entity EntityID, const glm::quat& rotation);
+		void GetBodyPosition(const UUID& EntityID, glm::vec3& position);
+		void GetBodyRotation(const UUID& EntityID, glm::quat& rotation);
+		void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
+		void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
 
 		void GetBodyPosition(const BodyID& ID, glm::vec3& position);
 		void GetBodyRotation(const BodyID& ID, glm::quat& rotation);
@@ -65,19 +66,19 @@ namespace Cresta
 
 	private:
 		// Constants for physics simulation
-		static constexpr uint c_NumBodies = 10240;
-		static constexpr uint c_NumBodyMutexes = 0; // Auto-detect
-		static constexpr uint c_MaxBodyPairs = 65536;
-		static constexpr uint c_MaxContactConstraints = 20480;
+		static constexpr uint cm_NumBodies = 10240;
+		static constexpr uint cm_NumBodyMutexes = 0; // Auto-detect
+		static constexpr uint cm_MaxBodyPairs = 65536;
+		static constexpr uint cm_MaxContactConstraints = 20480;
 
-		const RVec3 c_Position = RVec3(0.0_r, 0.0_r, 0.0_r);
-		const RVec3 c_HalfExtents = RVec3(1.0f, 1.0f, 1.0f);
+		const RVec3 cm_Position = RVec3(0.0_r, 0.0_r, 0.0_r);
+		const RVec3 cm_HalfExtents = RVec3(1.0f, 1.0f, 1.0f);
 
-		const Quat c_IdentityRotation = Quat::sIdentity();
+		const Quat cm_IdentityRotation = Quat::sIdentity();
 
-		const float c_CapsuleHalfHeight = 1.0f; // Half the distance between the hemispherical ends
-		const float c_Radius = 0.5f;     // Radius of the capsule
-		const float c_DeltaTime = 1.0f / 60.0f;
+		const float cm_CapsuleHalfHeight = 1.0f; // Half the distance between the hemispherical ends
+		const float cm_Radius = 0.5f;     // Radius of the capsule
+		const float cm_DeltaTime = 1.0f / 60.0f;
 
 		// Jolt components
 
@@ -95,7 +96,7 @@ namespace Cresta
 		ObjectVsBroadPhaseLayerFilterImpl m_ObjectVsBroadPhaseLayerFilter;
 
 		// Entity-to-Body map
-		std::unordered_map<entt::entity, JPH::BodyID> m_EntityToBody;
+		std::unordered_map<UUID, JPH::BodyID> m_EntityToBody;
 
 		//Scope<DebugRenderer> m_DebugRenderer;
 	};

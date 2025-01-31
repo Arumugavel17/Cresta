@@ -3,5 +3,5 @@
 
 namespace Cresta
 {
-	Ref<RendererAPI> RenderCommand::s_RendererAPI = RendererAPI::Create();
+	Ref<RendererAPI> RenderCommand::sm_RendererAPI = RendererAPI::Create();
 }

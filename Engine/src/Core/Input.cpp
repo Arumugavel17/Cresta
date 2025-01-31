@@ -1,8 +1,9 @@
 #include "Core/Input.hpp"
 #include "Platform/OpenGL/OpenGLInput.hpp"
 
-namespace Cresta {
-	Cresta::Input* Cresta::Input::s_InputClass = Input::Create();
+namespace Cresta 
+{
+	Input* Input::sm_InputClass = Input::Create();
 
 	Input* Input::Create()
 	{
@@ -11,22 +12,26 @@ namespace Cresta {
 
 	bool Input::GetKeyDown(KeyCode key)
 	{
-		return s_InputClass->GetKeyDownImpl(key);
+		return sm_InputClass->GetKeyDownImpl(key);
 	}
+
 	bool Input::GetKeyUp(KeyCode key)
 	{
-		return s_InputClass->GetKeyUpImpl(key);
+		return sm_InputClass->GetKeyUpImpl(key);
 	}
+
 	bool Input::GetMouseDown(MouseCode Code)
 	{
-		return s_InputClass->GetMouseDownImpl(Code);
+		return sm_InputClass->GetMouseDownImpl(Code);
 	}
+
 	bool Input::GetMouseUp(MouseCode Code)
 	{
-		return s_InputClass->GetMouseUp(Code);
+		return sm_InputClass->GetMouseUp(Code);
 	}
+
 	std::pair<float, float> Input::GetMousePosition()
 	{
-		return s_InputClass->GetMousePositionImp();
+		return sm_InputClass->GetMousePositionImp();
 	}
 }

@@ -7,7 +7,7 @@ namespace Cresta {
 	public:
 		EditorApplication()
 		{
-			m_EditorLayer = new EditorLayer(s_ActiveScene);
+			m_EditorLayer = new EditorLayer(sp_ActiveScene);
 			PushLayer(m_EditorLayer);
 			Init();
 		}

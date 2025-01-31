@@ -12,7 +12,8 @@ namespace Cresta {
 		EVENT_CLASS_CATEGORY(EventCategory::Keyboard_EventCategory)
 	protected:
 		KeyEvent(const KeyCode keycode)
-			: m_KeyCode(keycode) {
+			: m_KeyCode(keycode) 
+		{
 		}
 
 		KeyCode m_KeyCode;
@@ -22,7 +23,8 @@ namespace Cresta {
 	{
 	public:
 		KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
-			: KeyEvent(keycode), m_IsRepeat(isRepeat) {
+			: KeyEvent(keycode), m_IsRepeat(isRepeat) 
+		{
 		}
 
 		bool IsRepeat() const { return m_IsRepeat; }
@@ -44,7 +46,8 @@ namespace Cresta {
 	{
 	public:
 		KeyReleasedEvent(const KeyCode keycode)
-			: KeyEvent(keycode) {
+			: KeyEvent(keycode) 
+		{
 		}
 
 		std::string ToString() const override
@@ -61,7 +64,8 @@ namespace Cresta {
 	{
 	public:
 		KeyTypedEvent(const KeyCode keycode)
-			: KeyEvent(keycode) {
+			: KeyEvent(keycode) 
+		{
 		}
 
 		std::string ToString() const override

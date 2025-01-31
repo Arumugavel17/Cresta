@@ -5,17 +5,17 @@
 
 namespace Cresta 
 {
-	int Scene::s_Count = 0;
+	int Scene::sm_Count = 0;
 
 	Scene::Scene()
 	{
-		m_Physics = CreateRef<Physics>();
+		m_Physics = CreateScope<Physics>();
 		m_Registry = CreateRef<entt::registry>();
 	}
 
 	Scene::~Scene()
 	{
-		s_Count--;
+		sm_Count--;
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -116,7 +116,7 @@ namespace Cresta
 		for (auto entity : m_EntityMap)
 		{
 			auto transform = m_Registry->get<Transform>(entity.second);
-			m_Physics->SetBodyPosition(entity.second, transform.Translation);
+			m_Physics->SetBodyPosition(entity.first, transform.Translation);
 		}
 		m_Physics->Start();
 		m_Running = true;
@@ -146,18 +146,18 @@ namespace Cresta
 				if (m_Registry->has<PhysicsComponent>(entity.second))
 				{
 					auto physicsComponent = m_Registry->get<PhysicsComponent>(entity.second); 
-					m_Physics->GetBodyPosition(physicsComponent.m_BodyID, transform.Translation);
+					m_Physics->GetBodyPosition(physicsComponent.BodyID, transform.Translation);
 					glm::quat Rotation;
-					m_Physics->GetBodyRotation(physicsComponent.m_BodyID, Rotation);
+					m_Physics->GetBodyRotation(physicsComponent.BodyID, Rotation);
 					transform.SetRotation(Rotation);
 				}
 			}
 			if (m_Registry->has<MeshRenderer>(entity.second))
 			{
 				auto meshRenderer = m_Registry->get<MeshRenderer>(entity.second);
-				if (meshRenderer.model)
+				if (meshRenderer.Model)
 				{
-					meshRenderer.model->Draw(transform.GetTransform());
+					meshRenderer.Model->Draw(transform.GetTransform());
 				}
 			}
 			if (m_Registry->has<SpriteRenderer>(entity.second))
@@ -225,35 +225,35 @@ namespace Cresta
 	template<>
 	void Scene::OnComponentAdded<PhysicsComponent>(Entity entity, PhysicsComponent& component)
 	{
-		m_Physics->CreateBody(entity, component.m_BodyID);
+		m_Physics->CreateBody(entity.GetComponent<IDComponent>().ID, component.BodyID);
 	}
 
 	template<>
 	void Scene::OnComponentAdded<Rigidbody>(Entity entity, Rigidbody& component)
 	{
 		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-		m_Physics->AddRigidBody(PhysicsComponent_.m_BodyID);
+		m_Physics->AddRigidBody(PhysicsComponent_.BodyID);
 	}
 
 	template<>
 	void Scene::OnComponentAdded<BoxCollider>(Entity entity, BoxCollider& component)
 	{
 		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-		m_Physics->AddCollider(PhysicsComponent_.m_BodyID, ColliderShape::BoxCollider);
+		m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::BoxCollider);
 	}
 
 	template<>
 	void Scene::OnComponentAdded<SphereCollider>(Entity entity, SphereCollider& component)
 	{
 		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-		m_Physics->AddCollider(PhysicsComponent_.m_BodyID, ColliderShape::SphereCollider);
+		m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::SphereCollider);
 	}
 
 	template<>
 	void Scene::OnComponentAdded<CapsuleCollider>(Entity entity, CapsuleCollider& component)
 	{
 		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-		m_Physics->AddCollider(PhysicsComponent_.m_BodyID, ColliderShape::CapsuleCollider);
+		m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::CapsuleCollider);
 	}
 
 	template<>
@@ -309,30 +309,30 @@ namespace Cresta
 	template<>
 	void Scene::OnComponentRemoved<Rigidbody>(Entity entity, Rigidbody& component)
 	{
-		m_Physics->MakeBodyStatic(entity);
+		m_Physics->MakeBodyStatic(entity.GetComponent<IDComponent>().ID);
 	}
 
 	template<>
 	void Scene::OnComponentRemoved<BoxCollider>(Entity entity, BoxCollider& component)
 	{
-		m_Physics->RemoveCollider(entity);
+		m_Physics->RemoveCollider(entity.GetComponent<IDComponent>().ID);
 	}
 
 	template<>
 	void Scene::OnComponentRemoved<SphereCollider>(Entity entity, SphereCollider& component)
 	{
-		m_Physics->RemoveCollider(entity);
+		m_Physics->RemoveCollider(entity.GetComponent<IDComponent>().ID);
 	}
 
 	template<>
 	void Scene::OnComponentRemoved<CapsuleCollider>(Entity entity, CapsuleCollider& component)
 	{
-		m_Physics->RemoveCollider(entity);
+		m_Physics->RemoveCollider(entity.GetComponent<IDComponent>().ID);
 	}
 
 	template<>
 	void Scene::OnComponentRemoved<MeshCollider>(Entity entity, MeshCollider& component)
 	{
-		m_Physics->RemoveCollider(entity);
+		m_Physics->RemoveCollider(entity.GetComponent<IDComponent>().ID);
 	}
 }

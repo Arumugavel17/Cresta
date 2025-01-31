@@ -2,11 +2,14 @@
 #include "Core/Events/Event.hpp"
 #include "Crestaph.hpp"
 
-namespace Cresta {
-	class WindowResizeEvent : public Event{
+namespace Cresta 
+{
+	class WindowResizeEvent : public Event
+	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
-			: m_Width(width), m_Height(height) {
+			: m_Width(width), m_Height(height) 
+		{
 		}
 
 		EVENT_CLASS_CATEGORY(EventCategory::Window_EventCategory);

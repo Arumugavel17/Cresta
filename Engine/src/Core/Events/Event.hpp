@@ -2,8 +2,8 @@
 #include "Crestaph.hpp"
 #include <string>
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	enum class EventType
 	{
 		None = 0,

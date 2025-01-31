@@ -1,5 +1,4 @@
 #include "EditorLayer.hpp"
-#include "EditorLayer.hpp"
 
 #include "Core/Input.hpp"
 #include "Core/Application.hpp"
@@ -17,8 +16,8 @@ namespace Cresta
     {
         m_EditorCamera = CreateRef<EditorCamera>();
         
-        m_ActiveScene = scene;
-        m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(m_ActiveScene);
+        p_ActiveScene = scene;
+        m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(p_ActiveScene);
 
         m_GridVertexArray = VertexArray::Create();
         m_GridShader = Shader::Create("assets/shaders/GridShader.glsl");
@@ -33,7 +32,11 @@ namespace Cresta
         m_IconStop = Texture2D::Create("assets/Icons/StopButton.png");
 
         FramebufferSpecification fbSpec;
-        fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+        fbSpec.Attachments = { 
+            FramebufferTextureFormat::RGBA8,
+            FramebufferTextureFormat::RED_INTEGER,
+            FramebufferTextureFormat::Depth 
+        };
         fbSpec.Width = 1920;
         fbSpec.Height = 1080;
         m_Framebuffer = Framebuffer::Create(fbSpec);
@@ -45,7 +48,7 @@ namespace Cresta
 
     void EditorLayer::OnFixedUpdate()
     {
-        m_ActiveScene->FixedUpate();
+        p_ActiveScene->FixedUpate();
     }
 
     void EditorLayer::OnUpdate()
@@ -73,7 +76,7 @@ namespace Cresta
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
             {
-                m_ActiveScene->RenderScene();
+                p_ActiveScene->RenderScene();
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
                 m_Framebuffer->Unbind();
             }
@@ -211,9 +214,14 @@ namespace Cresta
     void EditorLayer::ShowScene()
     {
         ImGui::Begin("Scene");
+        
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
         uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+
+        m_ViewportSize = { 
+            viewportPanelSize.x, 
+            viewportPanelSize.y };
+        
         m_SceneActive = ImGui::IsWindowFocused(ImGuiFocusedFlags_None);
         m_EditorCamera->SetCameraMovementEnabled(m_SceneActive);
 
@@ -317,7 +325,7 @@ namespace Cresta
         // Bottom padding value
         float bottomPadding = 10.0f;
 
-        bool toolbarEnabled = (bool)m_ActiveScene;
+        bool toolbarEnabled = (bool)p_ActiveScene;
         ImVec4 tintColor = ImVec4(1, 1, 1, 1);
         if (!toolbarEnabled)
             tintColor.w = 0.5f;
@@ -339,7 +347,7 @@ namespace Cresta
         {
             buttonCount++; // Pause button
         }
-        if (m_ActiveScene->IsPaused())
+        if (p_ActiveScene->IsPaused())
         {
             buttonCount++; // Step button
         }
@@ -367,11 +375,11 @@ namespace Cresta
         // Pause button
         if (m_EditorState != EditorState::Edit)
         {
-            bool isPaused = m_ActiveScene->IsPaused();
+            bool isPaused = p_ActiveScene->IsPaused();
             Ref<Texture2D> icon = m_IconPause;
             if (ImGui::ImageButton("Pause", (ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
             {
-                m_ActiveScene->SetPaused(!isPaused);
+                p_ActiveScene->SetPaused(!isPaused);
             }
             ImGui::SameLine();
         }
@@ -390,13 +398,13 @@ namespace Cresta
     void EditorLayer::NewScene()
     {
         Application::GetApplication().NewScene();
-        m_HierarchyPanel->SetScene(m_ActiveScene);
+        m_HierarchyPanel->SetScene(p_ActiveScene);
     }
 
     void EditorLayer::OpenScene()
     {
         Application::GetApplication().OpenScene();
-        m_HierarchyPanel->SetScene(m_ActiveScene); 
+        m_HierarchyPanel->SetScene(p_ActiveScene); 
     }
 
     void EditorLayer::SaveScene()
@@ -408,7 +416,7 @@ namespace Cresta
     {
         CRESTA_CORE_INFO("OnScenePlay");
         m_EditorState = EditorState::Play;
-        m_ActiveScene->OnRuntimeStart();
+        p_ActiveScene->OnRuntimeStart();
     }
 
     void EditorLayer::OnSceneSimulate()
@@ -420,7 +428,7 @@ namespace Cresta
     {
         CRESTA_CORE_INFO("OnSceneStop");
         m_EditorState = EditorState::Edit;
-        m_ActiveScene->OnRuntimeStop();
+        p_ActiveScene->OnRuntimeStop();
     }
 
     void EditorLayer::OnScenePause()

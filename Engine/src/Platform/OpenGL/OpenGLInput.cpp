@@ -1,8 +1,8 @@
 #include "OpenGLInput.hpp"
 #include "Core/Application.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
     bool OpenGLInput::GetKeyDownImpl(KeyCode key)
     {
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::GetApplication().GetWindow()->GetWindowContext());

@@ -191,7 +191,7 @@ namespace Cresta
 			out << YAML::BeginMap; // MeshRendererComponent
 
 			auto& MeshRendererComponent = entity.GetComponent<MeshRenderer>();
-			out << YAML::Key << "path" << YAML::Value << MeshRendererComponent.path;
+			out << YAML::Key << "path" << YAML::Value << MeshRendererComponent.Path;
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 

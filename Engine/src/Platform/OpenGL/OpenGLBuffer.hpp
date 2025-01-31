@@ -1,9 +1,8 @@
 #pragma once
-
 #include "Renderer/Buffer.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
@@ -38,5 +37,4 @@ namespace Cresta {
 		uint32_t m_RendererID;
 		uint32_t m_Count;
 	};
-
 }
