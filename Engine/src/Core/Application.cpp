@@ -49,6 +49,7 @@ namespace Cresta
 
 	void Application::Run()
 	{
+		CRESTA_PROFILE_FUNCTION();
 		const float fixedTimestep = 1.0f / 60.0f; 
 		float accumulatedTime = 0.0f;
 
