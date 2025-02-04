@@ -18,7 +18,9 @@ void main()
 #version 330 core
 
 in vec2 TexCoord;
-out vec4 FragColor;
+
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out int o_color;
 
 uniform sampler2D u_Texture;
 uniform int u_TextureSet = 0;
@@ -36,4 +38,5 @@ void main()
         vec4 frag = texture(u_Texture, TexCoord);
         FragColor = vec4(mix(u_Color,frag,u_Mixfactor));
     }
+    o_color = 60;
 }

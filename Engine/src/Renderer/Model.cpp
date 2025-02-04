@@ -1,24 +1,45 @@
 #include "Model.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Shader.hpp"
+#include <future>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 namespace Cresta
 {
-	std::unordered_map<std::string, Ref<Model>> Model::s_ModelsLoaded;
+	std::unordered_map<std::string, std::pair<std::vector<Ref<VertexArray>>, Ref<UniformBuffer>>> Model::s_ModelsLoaded;
+
+	Model::Model(int entityID) 
+	{
+		CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
+		m_Shader = Shader::Create("assets/shaders/BindlessTextureShader.glsl");
+	}
 
 	Model::Model(const std::string& Path)
 	{
-		CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
-		LoadModel(Path);
 		m_Shader = Shader::Create("assets/shaders/BindlessTextureShader.glsl");
-		SetupVAO();
+
+		if (s_ModelsLoaded.find(Path) == s_ModelsLoaded.end())
+		{
+			CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
+			LoadModel(Path);
+			SetupVAO();
+			s_ModelsLoaded[Path] = std::pair<std::vector<Ref<VertexArray>>, Ref<UniformBuffer>>(m_VAOs, m_UniformBuffer);
+		}
+		else
+		{
+			m_VAOs = s_ModelsLoaded.at(Path).first;
+			m_UniformBuffer = s_ModelsLoaded.at(Path).second;
+		}
 	}
 
 	void Model::LoadModel(std::string path)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path,
-			aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs |
+		const aiScene* scene = importer.ReadFile(path, aiProcess_JoinIdenticalVertices | aiProcess_GlobalScale |
+			aiProcess_Triangulate | aiProcess_GenSmoothNormals | 
 			aiProcess_CalcTangentSpace | aiProcess_ConvertToLeftHanded);
 
 		bool condition = !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode;
@@ -37,7 +58,7 @@ namespace Cresta
 		if (scene->HasTextures())
 		{
 			m_EmbeddedTexture = true;
-			for (unsigned int t = 0; t < scene->mNumTextures; ++t)
+			for (uint32_t t = 0; t < scene->mNumTextures; ++t)
 			{
 				aiTexture* texture = scene->mTextures[t];
 				if (texture->mHeight == 0)
@@ -63,7 +84,7 @@ namespace Cresta
 					}
 					else if (filename.find("_normal") != -1)
 					{
-						texture->SetTextureType(TextureType::Normals);
+						texture->SetTextureType(TextureType::Normals);	
 					}
 
 					m_TexIndex++;
@@ -71,7 +92,8 @@ namespace Cresta
 					m_TexturesLoaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
 					m_TextureHandles.push_back(texture->GetTextureHandle());
 				}
-				if (texture->mHeight > 0) {
+				if (texture->mHeight > 0) 
+				{
 					int width = texture->mWidth;
 					int height = texture->mHeight;
 					unsigned char* data = reinterpret_cast<unsigned char*>(texture->pcData);
@@ -89,14 +111,14 @@ namespace Cresta
 
 	void Model::ProcessNode(const aiNode* node, const aiScene* scene) 
 	{
-		for (unsigned int i = 0; i < node->mNumMeshes; i++)
+		for (uint32_t i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			m_Meshes.push_back(ProcessMesh(mesh, scene));
 			m_TexIndex++;
 		}
 
-		for (unsigned int i = 0; i < node->mNumChildren; i++)
+		for (uint32_t i = 0; i < node->mNumChildren; i++)
 		{
 			m_NodeCount++;
 			CRESTA_INFO("Processing Node {0}", m_NodeCount);
@@ -107,7 +129,7 @@ namespace Cresta
 	Mesh Model::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
 	{
 		std::vector<Vertex> vertices;
-		std::vector<unsigned int> indices;
+		std::vector<uint32_t> indices;
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
@@ -146,12 +168,11 @@ namespace Cresta
 			}
 		}
 
-
-		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+		for (uint32_t i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace face = mesh->mFaces[i];
 
-			for (unsigned int j = 0; j < face.mNumIndices; j++)
+			for (uint32_t j = 0; j < face.mNumIndices; j++)
 			{
 				indices.push_back(face.mIndices[j]);
 			}
@@ -162,14 +183,14 @@ namespace Cresta
 
 	void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type)
 	{
-		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+		for (uint32_t i = 0; i < mat->GetTextureCount(type); i++)
 		{
 			m_TextureCounter++;
 			aiString str;
 			mat->GetTexture(type, i, &str);
 			// check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
 			bool skip = false;
-			for (unsigned int j = 0; j < m_TexturesLoaded.size(); j++)
+			for (uint32_t j = 0; j < m_TexturesLoaded.size(); j++)
 			{
 				std::string textureName = m_TexturesLoaded[j]->GetPath().data();
 				textureName = textureName.substr(textureName.find_last_of('/') + 1);
@@ -198,9 +219,10 @@ namespace Cresta
 		{
 			m_VAOs.push_back(VertexArray::Create());
 			m_VAOs[i]->Bind();
-			 
+
 			int VerticesSize = m_Meshes[i].m_Vertices.size();
 			void* Vertices = m_Meshes[i].m_Vertices.data();
+
 			int IndicesSize = m_Meshes[i].m_Indices.size();
 			uint32_t* Indices = m_Meshes[i].m_Indices.data();
 			
@@ -208,9 +230,9 @@ namespace Cresta
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(Indices, IndicesSize);
 
 			vertexBuffer->SetLayout({
-					{ ShaderDataType::FVec3 , "aPos" },
-					{ ShaderDataType::FVec2 , "aTexCoords" },
-					{ ShaderDataType::Int , "aTexIndex" }
+					{ ShaderDataType::FVec3, "aPos" },
+					{ ShaderDataType::FVec2, "aTexCoords" },
+					{ ShaderDataType::Int, "aTexIndex" }
 				});
 
 			m_VAOs[i]->AddVertexBuffer(vertexBuffer);
@@ -219,36 +241,37 @@ namespace Cresta
 		m_UniformBuffer = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(), 0, m_TextureHandles.data());
 	}
 
-	void Model::Draw(const glm::vec3& position)
+	void Model::Draw(const glm::vec3& position, int EntityID)
 	{
-		if (m_IsStatic)
+		if (!m_UniformBuffer || m_VAOs.size() <= 0 || m_IsStatic)
 		{
 			return;
 		}
 		m_UniformBuffer->Bind();
-		for (int i = 0;i < m_Meshes.size();i++)
+
+		for (int i = 0;i < m_VAOs.size();i++)
 		{
 			Renderer::DrawIndexed(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
 		}
 	}
 
-	void Model::Draw(const glm::mat4& transform)
+	void Model::Draw(const glm::mat4& transform, int m_EntityID)
 	{
 		if (m_IsStatic)
 		{
 			return;
 		}
-
 		m_UniformBuffer->Bind();
-		for (int i = 0;i < m_Meshes.size();i++)
+		for (int i = 0;i < m_VAOs.size();i++)
 		{
+			m_Shader->Bind();
+			m_Shader->SetInt("o_EntityID",m_EntityID);
 			Renderer::DrawIndexed(m_Shader, m_VAOs[i], transform);	
 		}
 	}
 
 	Ref<Model> Model::Create(const std::string& Path)
 	{
-		Model::s_ModelsLoaded[Path] = CreateRef<Model>(Path);
-		return Model::s_ModelsLoaded[Path];
+		return CreateRef<Model>(Path);
 	}
 }

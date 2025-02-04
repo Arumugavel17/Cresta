@@ -322,7 +322,8 @@ namespace Cresta
 				if (MeshRendererComponenet)
 				{
 					std::string path = MeshRendererComponenet["path"].as<std::string>();
-					auto comp = deserializedEntity.AddComponent<MeshRenderer>(path);
+
+					auto comp = deserializedEntity.AddComponent<MeshRenderer>(path, (int)(entt::entity)deserializedEntity);
 				}
 
 				auto RigibodyComponent = entity["Rigidbody"];

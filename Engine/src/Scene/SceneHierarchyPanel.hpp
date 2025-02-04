@@ -2,6 +2,7 @@
 #include "Crestaph.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/Entity.hpp"
+#include "Renderer/Camera.hpp"
 
 namespace Cresta
 {
@@ -10,6 +11,8 @@ namespace Cresta
 	public:
 		SceneHierarchyPanel() = default;
 		SceneHierarchyPanel(const Ref<Scene>& scene);
+		void SetEditorCamera(Ref<Camera> EditorCamera) { m_Camera = EditorCamera; }
+		void PrepareEntity();
 
 		void SetScene(const Ref<Scene>& scene);
 
@@ -17,14 +20,16 @@ namespace Cresta
 
 		Entity GetSelectedEntity() const;
 		void SetSelectedEntity(Entity entity);
+		void SetSelectedEntity(entt::entity entity);
 	
 	private:
+		Ref<Camera> m_Camera;
 		void DrawEntityNode(Entity entity);
 		void DrawInspectorWindow();
 	private:
 		Ref<Scene> m_Scene;
+		std::vector<Entity*> m_EntityList;
 		Entity m_SelectedEntity;
-
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
 	};

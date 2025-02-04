@@ -8,6 +8,7 @@
 #include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)
 #include <imgui/imgui_impl_glfw.h>   // Platform-specific (GLFW example)
 #include <imgui/imgui_impl_opengl3.h> // Renderer-specific (OpenGL example)
+#include <ImGuizmo/ImGuizmo.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -18,10 +19,24 @@ namespace Cresta
 		SetScene(scene);
 	}
 
+	void SceneHierarchyPanel::PrepareEntity()
+	{
+		m_SelectedEntity = {};
+		m_EntityList.clear();
+
+		m_Scene->m_Registry->each([&](auto entityID)
+			{
+				m_EntityList.push_back(new Entity{ entityID , m_Scene.get() });
+			});
+	}
+
 	void SceneHierarchyPanel::SetScene(const Ref<Scene>& scene)
 	{
+		scene->AddSceneUpdateCallBack([this]() { this->PrepareEntity();});
+
 		m_Scene = scene;
-		m_SelectedEntity = {};
+		PrepareEntity();
+		m_Scene->AddSceneUpdateCallBack([this]() { this->PrepareEntity();});
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
@@ -30,11 +45,11 @@ namespace Cresta
 
 		if (m_Scene)
 		{
-			m_Scene->m_Registry->each([&](auto entityID)
-				{
-					Entity entity{ entityID , m_Scene.get() };
-					DrawEntityNode(entity);
-				});
+
+			for (Entity* i : m_EntityList)
+			{
+				DrawEntityNode(*i);
+			}
 
 			// Deselect entity when clicking on blank space
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
@@ -73,10 +88,51 @@ namespace Cresta
 		m_SelectedEntity = entity;
 	}
 
+	void SceneHierarchyPanel::SetSelectedEntity(entt::entity entity)
+	{
+		for (Entity* i : m_EntityList)
+		{
+			entt::entity k = (entt::entity)*i;
+			if (k == entity)
+			{
+				m_SelectedEntity = *i;
+			}
+		}
+	}
+	
+	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
+	void EditTransform(float* cameraView, float* cameraProjection, float* matrix)
+	{
+		ImGuizmo::BeginFrame();
+		if (ImGuizmo::IsUsing())
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			float windowWidth = (float)ImGui::GetWindowWidth();
+			float windowHeight = (float)ImGui::GetWindowHeight();
+			ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
+		}	
+	}
+
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
-		ImGuiTreeNodeFlags flags = ((m_SelectedEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+
+		ImGuiTreeNodeFlags flags;
+		if (m_SelectedEntity == entity)
+		{
+
+			flags = ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_OpenOnArrow;
+			glm::mat4 camView = m_Camera->GetViewMatrix();
+			glm::mat4 camProj = m_Camera->GetProjectionMatrix();
+			EditTransform(&camView[0][0], &camProj[0][0], &entity.GetComponent<Transform>().GetTransform()[0][0]);
+		}
+		else
+		{
+			flags =  ImGuiTreeNodeFlags_OpenOnArrow;
+		}
+
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
 		if (ImGui::IsItemClicked())

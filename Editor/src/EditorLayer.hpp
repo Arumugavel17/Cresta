@@ -33,6 +33,8 @@ namespace Cresta
 		
 		virtual void OnEvent(Event& e) override;
 		virtual void OnImGUIRender() override;
+
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		
 		void ShowFileManager(const std::filesystem::path& directory, const std::string& currentPath);
 		void SetupDockSpace();
@@ -51,7 +53,6 @@ namespace Cresta
 
 		// UI Panels
 		void UI_Toolbar();
-
 	private:
 		void CreateDockSpace();
 		void ShowScene();
@@ -68,16 +69,20 @@ namespace Cresta
 		
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 		Ref<SceneHierarchyPanel> m_HierarchyPanel;
+		Ref<EditorCamera> m_EditorCamera;
+
+		int m_EntityID = -1;
 
 		Ref<Framebuffer> m_Framebuffer;
 		
 		Ref<Shader> m_GridShader;
 		Ref<VertexArray> m_GridVertexArray;
 
-		Ref<EditorCamera> m_EditorCamera;
 		ImVec2 m_ViewportSize;
 		bool m_SceneActive = false;
 
 		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconStep, m_IconSimulate, m_IconStop;
+
+		float m_MouseX, m_MouseY;
 	};
 }

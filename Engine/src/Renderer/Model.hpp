@@ -39,14 +39,16 @@ namespace Cresta
 	{
 	public:
 		std::vector<Ref<VertexArray>> m_VAOs;
-		static std::unordered_map<std::string, Ref<Model>> s_ModelsLoaded;
+		static std::unordered_map<std::string, std::pair<std::vector<Ref<VertexArray>>, Ref<UniformBuffer>>> s_ModelsLoaded;
 
 	public:
-		Model();
+		Model(int EntityID);
 		Model(const std::string& Path);
-		void Draw(const glm::vec3& position = glm::vec3(1.0f));
-		void Draw(const glm::mat4& transform = glm::mat4(1.0f));
+		void Draw(const glm::vec3& position = glm::vec3(1.0f) , int m_EntityID = 0);
+		void Draw(const glm::mat4& transform = glm::mat4(1.0f), int m_EntityID = 0);
 		static Ref<Model> Create(const std::string& Path);
+
+		
 	private:
 		
 		void SetupVAO();
@@ -57,22 +59,24 @@ namespace Cresta
 
 		void LoadMaterialTextures(	aiMaterial* mat, aiTextureType type);
 	private:
+		
 		std::string m_Path = "";
 
-		bool m_IsStatic = false; // To know if the model is static if yes then it can be batched else draw it individually.
 		uint16_t m_TexIndex = 0;
 		uint8_t m_TextureCounter = 0;
 
 		int m_NodeCount = 0;
 		bool m_FBXModel = false;
 		bool m_EmbeddedTexture = false;
+		bool m_IsStatic = false; // To know if the model is static if yes then it can be batched else draw it individually.
 		
 		Ref<Shader> m_Shader;
+		Ref<UniformBuffer> m_UniformBuffer;
+
 		glm::vec3 m_GlobalScaling;
 		std::string m_Directory;
 		std::vector<Mesh> m_Meshes;
 		std::vector<Ref<Texture2D>> m_TexturesLoaded;
 		std::vector<uint64_t> m_TextureHandles;
-		Ref<UniformBuffer> m_UniformBuffer;
 	};
 }

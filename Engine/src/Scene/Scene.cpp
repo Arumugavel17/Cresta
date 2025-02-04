@@ -1,4 +1,6 @@
 #include "Scene.hpp"
+#include "Scene.hpp"
+#include "Scene.hpp"
 #include "Entity.hpp"
 
 #include <glm/glm.hpp>
@@ -46,6 +48,11 @@ namespace Cresta
 	void Scene::AddSceneUpdateCallBack(const std::function<void()>& func)
 	{
 		m_SceneUpdateCallBack.push_back(func);
+	}
+
+	void Scene::RemoveSceneUpdateCallBack(const std::function<void()>& func)
+	{
+
 	}
 
 	void Scene::InvokeSceneUpdateCallBacks()
@@ -110,6 +117,20 @@ namespace Cresta
 		return {};
 	}
 
+	Entity* Scene::FindEntityByID(entt::entity entitiyID)
+	{
+		auto view = m_Registry->view<TagComponent>();
+		for (auto entity : view)
+		{
+			if (entity == entitiyID)
+			{
+				return new Entity(entity, this);
+			}
+		}
+
+		return {};
+	}
+
 	void Scene::OnRuntimeStart()
 	{
 		Save();
@@ -154,10 +175,12 @@ namespace Cresta
 			}
 			if (m_Registry->has<MeshRenderer>(entity.second))
 			{
+
 				auto meshRenderer = m_Registry->get<MeshRenderer>(entity.second);
 				if (meshRenderer.Model)
 				{
-					meshRenderer.Model->Draw(transform.GetTransform());
+
+					meshRenderer.Model->Draw(transform.GetTransform(),meshRenderer.ID);
 				}
 			}
 			if (m_Registry->has<SpriteRenderer>(entity.second))
@@ -198,7 +221,7 @@ namespace Cresta
 	template<>
 	void Scene::OnComponentAdded<MeshRenderer>(Entity entity, MeshRenderer& component)	
 	{
-
+		component.ID = (int)(entt::entity)entity;
 	}
 
 	PhysicsComponent AddPhysicsComponent(Entity entity)

@@ -12,11 +12,15 @@ void main()
 
 //type fragment
 #version 330 core
-out vec4 FragColor;
+
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out int o_color;
 
 uniform vec4 u_Color;
 
 void main()
 {
     FragColor = u_Color;
+    o_color = 50;
+
 }

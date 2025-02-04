@@ -17,7 +17,9 @@ namespace Cresta
         m_EditorCamera = CreateRef<EditorCamera>();
         
         p_ActiveScene = scene;
+        
         m_HierarchyPanel = CreateRef<SceneHierarchyPanel>(p_ActiveScene);
+        m_HierarchyPanel->SetEditorCamera(m_EditorCamera);
 
         m_GridVertexArray = VertexArray::Create();
         m_GridShader = Shader::Create("assets/shaders/GridShader.glsl");
@@ -78,11 +80,37 @@ namespace Cresta
             {
                 p_ActiveScene->RenderScene();
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
+                m_EntityID = m_Framebuffer->ReadPixel(1, m_MouseX, m_MouseY);
                 m_Framebuffer->Unbind();
             }
-       
             Renderer::EndScene();
         }
+    }
+
+    void EditorLayer::ShowScene()
+    {
+        ImGui::Begin("Scene");
+
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+
+        m_ViewportSize = {
+            viewportPanelSize.x,
+            viewportPanelSize.y };
+
+        auto& [mouseX, mouseY] = Input::GetMousePosition();
+
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+
+        m_MouseX = mouseX - windowPos.x;
+        m_MouseY = mouseY - windowPos.y;
+
+        m_SceneActive = ImGui::IsWindowFocused(ImGuiFocusedFlags_None);
+        m_EditorCamera->SetCameraMovementEnabled(m_SceneActive);
+
+        ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        ImGui::End();
     }
 
 	void EditorLayer::OnDetach()
@@ -92,7 +120,24 @@ namespace Cresta
 	void EditorLayer::OnEvent(Event& e)
 	{
         m_EditorCamera->OnEvent(e);
+
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<MouseButtonPressedEvent>(CRESTA_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 	}
+
+    bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        if (e.GetMouseButton() == Mouse::ButtonLeft)
+        {
+            if (m_EntityID >= 0)
+            {
+                m_HierarchyPanel->SetSelectedEntity((entt::entity)m_EntityID);
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     void EditorLayer::CreateDockSpace()
     {
@@ -198,6 +243,7 @@ namespace Cresta
         m_HierarchyPanel->OnImGuiRender();
 
         // VSync settings
+        ImGuizmo::BeginFrame();
         ImGui::Begin("VSync");
         if (ImGui::Checkbox("Set VSync Option", &m_VSync)) {
             Application::GetApplication().GetWindow()->SetVSync(m_VSync);
@@ -208,24 +254,6 @@ namespace Cresta
                 CRESTA_CORE_INFO("Disabled VSync");
             }
         }
-        ImGui::End();
-    }
-
-    void EditorLayer::ShowScene()
-    {
-        ImGui::Begin("Scene");
-        
-        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-
-        m_ViewportSize = { 
-            viewportPanelSize.x, 
-            viewportPanelSize.y };
-        
-        m_SceneActive = ImGui::IsWindowFocused(ImGuiFocusedFlags_None);
-        m_EditorCamera->SetCameraMovementEnabled(m_SceneActive);
-
-        ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         ImGui::End();
     }
 

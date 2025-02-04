@@ -17,7 +17,7 @@ namespace Cresta
 		static bool GetMouseUp(MouseCode Code);
 
 		static std::pair<float,float> GetMousePosition();
-
+	protected:
 		virtual bool GetKeyDownImpl(KeyCode key) = 0;
 		virtual bool GetKeyUpImpl(KeyCode key) = 0;
 

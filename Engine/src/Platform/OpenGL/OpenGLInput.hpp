@@ -5,7 +5,7 @@ namespace Cresta
 {
 	class OpenGLInput : public Input 
 	{
-	public:
+	protected:
 		bool GetKeyDownImpl(KeyCode key);
 		bool GetKeyUpImpl(KeyCode key);
 

@@ -38,6 +38,8 @@ namespace Cresta
 		Entity CreateEntity(const std::string& name = std::string());
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		Entity FindEntityByName(std::string name);
+		Entity* FindEntityByID(entt::entity entitiyID);
+
 		Entity GetPrimaryCameraEntity();
 
 		bool IsRunning() const { return m_Running; }
@@ -47,8 +49,10 @@ namespace Cresta
 		void FixedUpate();
 		void RenderScene();
 
+
 		void DestroyEntity(Entity entity);
 		void AddSceneUpdateCallBack(const std::function<void()>& func);
+		void RemoveSceneUpdateCallBack(const std::function<void()>& func);
 
 	private:
 		template<typename T>

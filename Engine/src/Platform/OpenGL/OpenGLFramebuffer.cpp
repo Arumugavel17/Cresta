@@ -26,11 +26,18 @@ namespace Cresta
 
     void OpenGLFramebuffer::Bind()
     {
+
+		//ClearAttachment(1, 42);
         glBindFramebuffer(GL_FRAMEBUFFER, p_RendererID);
         glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		RenderCommand::Clear();
 		RenderCommand::Enable();
+
+		for (int i = 0; i < p_ColorAttachments.size(); i++)
+		{
+			ClearAttachment(i, -1);
+		}
     }
 
     void OpenGLFramebuffer::Unbind()
@@ -123,10 +130,14 @@ namespace Cresta
 
     int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
     {
+		if (x > m_Specification.Width || y > m_Specification.Height)
+		{
+			return -1;
+		}
         CRESTA_ASSERT(attachmentIndex > p_ColorAttachments.size());
-
         glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
         int pixelData;
+		y = m_Specification.Height - y;
         glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
         return pixelData;
     }
@@ -136,8 +147,7 @@ namespace Cresta
         CRESTA_ASSERT(attachmentIndex > p_ColorAttachments.size());
 
         auto& spec = p_ColorAttachmentSpecifications[attachmentIndex];
-        glClearTexImage(p_ColorAttachments[attachmentIndex], 0,
-        Utils::CrestaFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
+        glClearTexImage(p_ColorAttachments[attachmentIndex], 0,Utils::CrestaFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
     }
 
     uint32_t OpenGLFramebuffer::GetColorAttachmentRendererID(uint32_t index) const

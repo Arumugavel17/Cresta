@@ -38,15 +38,18 @@ sampler2D Specular;
 
 flat in int8_t TexCount;
 flat in int16_t TexIndex;
+uniform int o_EntityID;
 in vec2 TexCoords;
+
 layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec4 o_color;
+layout (location = 1) out int o_color;
 
 void main()
 {
     if(TexCount == 0)
     {
         FragColor = vec4(1.0);
+        o_color = o_EntityID;
         return;
     }
     if(TexCount >= int8_t(0))
@@ -60,6 +63,7 @@ void main()
         Specular = sampler2D(textureHandle);
     }
     vec4 color = texture(Diffuse, TexCoords); // Example: accumulate colors    
+
     FragColor = color;
-    o_color = color;
+    o_color = o_EntityID;
 }

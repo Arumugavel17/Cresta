@@ -37,7 +37,8 @@ void main()
 
 in vec3 WorldPos;
 
-layout(location = 0) out vec4 FragColor;
+
+layout (location = 0) out vec4 FragColor;
 
 uniform vec3 u_CameraPosition;
 uniform float u_GridSize = 100.0;
@@ -105,4 +106,4 @@ void main() {
     gradientColor.a *= (1.0 - gradient);
 
     FragColor = gradientColor;
-}
+  }

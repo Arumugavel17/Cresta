@@ -1,5 +1,4 @@
 #include "ModelLoader.h"
-#include "ModelLoader.hpp"
 
 ModelLoader::ModelLoader() :
         dev_(nullptr),

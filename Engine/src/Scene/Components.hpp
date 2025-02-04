@@ -128,26 +128,23 @@ namespace Cresta
 
 	struct MeshRenderer
 	{
+		int ID;
 		std::string Path;
 		Ref<Model> Model;
 		MeshRenderer() = default;
-		MeshRenderer(std::string v_path) : Path(v_path)
+		MeshRenderer(std::string v_path,int id) : Path(v_path), ID(id)
 		{
-			PathChanged(); 
+			PathChanged();
 		}
 		MeshRenderer(const MeshRenderer&) = default;
 
 		void PathChanged()
 		{
-			if (Model::s_ModelsLoaded.find(std::string(Path)) != Model::s_ModelsLoaded.end())
-			{
-				Model = Model::s_ModelsLoaded[std::string(Path)];
-			}
-			else
+			if (Path != "")
 			{
 				Model = Model::Create(Path);
 			}
-			}
+		}
 
 		std::string ToString()
 		{
