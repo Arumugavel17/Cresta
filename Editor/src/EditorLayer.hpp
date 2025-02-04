@@ -34,6 +34,7 @@ namespace Cresta
 		virtual void OnEvent(Event& e) override;
 		virtual void OnImGUIRender() override;
 
+		bool OnKeyPressedEvent(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		
 		void ShowFileManager(const std::filesystem::path& directory, const std::string& currentPath);
@@ -74,12 +75,15 @@ namespace Cresta
 		int m_EntityID = -1;
 
 		Ref<Framebuffer> m_Framebuffer;
-		
+		int m_GizmoType = -1;
+
 		Ref<Shader> m_GridShader;
 		Ref<VertexArray> m_GridVertexArray;
 
 		ImVec2 m_ViewportSize;
 		bool m_SceneActive = false;
+
+		ImVec2 m_ViewportBounds[2];
 
 		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconStep, m_IconSimulate, m_IconStop;
 

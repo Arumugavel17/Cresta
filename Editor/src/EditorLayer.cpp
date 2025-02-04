@@ -10,6 +10,9 @@
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/matrix_decompose.hpp>
+
 namespace Cresta 
 {
     EditorLayer::EditorLayer(Ref<Scene> scene) : Layer("Editor Layer",scene)
@@ -87,6 +90,79 @@ namespace Cresta
         }
     }
 
+
+    bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
+    {
+        // From glm::decompose in matrix_decompose.inl
+
+        using namespace glm;
+        using T = float;
+
+        mat4 LocalMatrix(transform);
+
+        // Normalize the matrix.
+        if (epsilonEqual(LocalMatrix[3][3], static_cast<float>(0), epsilon<T>()))
+            return false;
+
+        // First, isolate perspective.  This is the messiest.
+        if (
+            epsilonNotEqual(LocalMatrix[0][3], static_cast<T>(0), epsilon<T>()) ||
+            epsilonNotEqual(LocalMatrix[1][3], static_cast<T>(0), epsilon<T>()) ||
+            epsilonNotEqual(LocalMatrix[2][3], static_cast<T>(0), epsilon<T>()))
+        {
+            // Clear the perspective partition
+            LocalMatrix[0][3] = LocalMatrix[1][3] = LocalMatrix[2][3] = static_cast<T>(0);
+            LocalMatrix[3][3] = static_cast<T>(1);
+        }
+
+        // Next take care of translation (easy).
+        translation = vec3(LocalMatrix[3]);
+        LocalMatrix[3] = vec4(0, 0, 0, LocalMatrix[3].w);
+
+        vec3 Row[3], Pdum3;
+
+        // Now get scale and shear.
+        for (length_t i = 0; i < 3; ++i)
+            for (length_t j = 0; j < 3; ++j)
+                Row[i][j] = LocalMatrix[i][j];
+
+        // Compute X scale factor and normalize first row.
+        scale.x = length(Row[0]);
+        Row[0] = detail::scale(Row[0], static_cast<T>(1));
+        scale.y = length(Row[1]);
+        Row[1] = detail::scale(Row[1], static_cast<T>(1));
+        scale.z = length(Row[2]);
+        Row[2] = detail::scale(Row[2], static_cast<T>(1));
+
+        // At this point, the matrix (in rows[]) is orthonormal.
+        // Check for a coordinate system flip.  If the determinant
+        // is -1, then negate the matrix and the scaling factors.
+#if 0
+        Pdum3 = cross(Row[1], Row[2]); // v3Cross(row[1], row[2], Pdum3);
+        if (dot(Row[0], Pdum3) < 0)
+        {
+            for (length_t i = 0; i < 3; i++)
+            {
+                scale[i] *= static_cast<T>(-1);
+                Row[i] *= static_cast<T>(-1);
+            }
+        }
+#endif
+
+        rotation.y = asin(-Row[0][2]);
+        if (cos(rotation.y) != 0) {
+            rotation.x = atan2(Row[1][2], Row[2][2]);
+            rotation.z = atan2(Row[0][1], Row[0][0]);
+        }
+        else {
+            rotation.x = atan2(-Row[2][0], Row[1][1]);
+            rotation.z = 0;
+        }
+
+
+        return true;
+    }
+
     void EditorLayer::ShowScene()
     {
         ImGui::Begin("Scene");
@@ -110,6 +186,41 @@ namespace Cresta
         m_EditorCamera->SetCameraMovementEnabled(m_SceneActive);
 
         ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+        ImVec2 viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        ImVec2 viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        ImVec2 viewportOffset = ImGui::GetWindowPos();
+        ImVec2 m_ViewportBoundsMin = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+        ImVec2 m_ViewportBoundsMax = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+        Entity selectedEntity = m_HierarchyPanel->GetSelectedEntity();
+        if (selectedEntity && m_GizmoType != -1)
+        {
+            ImGuizmo::SetDrawlist();
+            ImGuizmo::SetRect(m_ViewportBoundsMin.x, m_ViewportBoundsMin.y, m_ViewportBoundsMax.x - m_ViewportBoundsMin.x, m_ViewportBoundsMax.y - m_ViewportBoundsMin.y);
+
+            const glm::mat4& cameraProjection = m_EditorCamera->GetProjectionMatrix();
+            glm::mat4 cameraView = m_EditorCamera->GetViewMatrix();
+
+            auto& tc = selectedEntity.GetComponent<Transform>();
+            glm::mat4 transform = tc.GetTransform();
+
+            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+                (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+                nullptr, nullptr);
+
+            if (ImGuizmo::IsUsing())
+            {
+                glm::vec3 translation, rotation, scale;
+                DecomposeTransform(transform, translation, rotation, scale);
+
+                glm::vec3 deltaRotation = rotation - tc.Rotation;
+                tc.Translation = translation;
+                tc.Rotation += deltaRotation;
+                tc.Scale = scale;
+            }
+        }
+
         ImGui::End();
     }
 
@@ -122,8 +233,56 @@ namespace Cresta
         m_EditorCamera->OnEvent(e);
 
         EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<KeyPressedEvent>(CRESTA_BIND_EVENT_FN(EditorLayer::OnKeyPressedEvent));
         dispatcher.Dispatch<MouseButtonPressedEvent>(CRESTA_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 	}
+
+    bool EditorLayer::OnKeyPressedEvent(KeyPressedEvent& e)
+    {
+        if (e.IsRepeat())
+        {
+            return false;
+        }
+
+        switch (e.GetKeyCode())
+        {
+        default:
+            break;
+        case Key::Q:
+        {
+            if (!ImGuizmo::IsUsing())
+            {
+                m_GizmoType = -1;
+            }
+            break;
+        }
+        case Key::W:
+        {
+            if (!ImGuizmo::IsUsing())
+            {
+                m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+            }
+            break;
+        }
+        case Key::E:
+        {
+            if (!ImGuizmo::IsUsing())
+            {
+                m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+            }
+            break;
+        }
+        case Key::R:
+        {
+            if (!ImGuizmo::IsUsing())
+            {
+                m_GizmoType = ImGuizmo::OPERATION::SCALE;
+            }
+            break;
+        }
+        }
+        return false;
+    }
 
     bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
     {

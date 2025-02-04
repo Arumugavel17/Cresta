@@ -18,7 +18,7 @@ namespace Cresta {
 
 	void EditorCamera::OnUpdate()
 	{
-        if(m_CameraMovementEnabled)
+        if(m_CameraMovementEnabled && Input::GetKeyDown(Key::LeftAlt))
         {
             CameraMovement();
             CameraRotation();

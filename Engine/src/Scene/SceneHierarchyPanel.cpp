@@ -122,11 +122,23 @@ namespace Cresta
 		ImGuiTreeNodeFlags flags;
 		if (m_SelectedEntity == entity)
 		{
+			//ImVec2 viewportMinRegion = ImGui::GetWindowContentRegionMin();
+			//ImVec2 viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+			//ImVec2 viewportOffset = ImGui::GetWindowPos();
+
+			//ImVec2 ViewportBoundsMin = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+			//ImVec2 ViewportBoundsMax = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+			//ImGuizmo::SetOrthographic(false);
+			//ImGuizmo::SetDrawlist();
+
+			//ImGuizmo::SetRect(ViewportBoundsMin.x, ViewportBoundsMin.y, ViewportBoundsMax.x - ViewportBoundsMin.x, ViewportBoundsMin.y - ViewportBoundsMin.y);
+			//glm::mat4 camView = m_Camera->GetViewMatrix();
+			//glm::mat4 camProj = m_Camera->GetProjectionMatrix();
+			//EditTransform(&camView[0][0], &camProj[0][0], &entity.GetComponent<Transform>().GetTransform()[0][0]);
 
 			flags = ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_OpenOnArrow;
-			glm::mat4 camView = m_Camera->GetViewMatrix();
-			glm::mat4 camProj = m_Camera->GetProjectionMatrix();
-			EditTransform(&camView[0][0], &camProj[0][0], &entity.GetComponent<Transform>().GetTransform()[0][0]);
+
 		}
 		else
 		{

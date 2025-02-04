@@ -48,7 +48,7 @@ void main()
 {
     if(TexCount == 0)
     {
-        FragColor = vec4(1.0);
+        FragColor = vec4(vec3(0.7),1.0);
         o_color = o_EntityID;
         return;
     }
