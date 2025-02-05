@@ -1,6 +1,7 @@
 #pragma once
 #include <spdlog/spdlog.h>
 #include <glm/glm.hpp>
+#include <set>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
@@ -20,6 +21,39 @@ namespace Cresta
 		static Ref<spdlog::logger> sm_ClientLogger;
 	};
 
+}
+
+template<typename OStream, typename T>
+inline OStream& operator<<(OStream& os, const std::vector<T> vec)
+{
+	for (auto& i : vec)
+	{
+		os << "[" << i << "] ";
+	}
+	os << "\n";
+	return os;
+}
+
+template<typename OStream, typename T>
+inline OStream& operator<<(OStream& os, const std::set<T> vec)
+{
+	for (auto& i : vec)
+	{
+		os << "[" << i << "] ";
+	}
+	os << "\n";
+	return os;
+}
+
+template<typename OStream, typename T>
+inline OStream& operator<<(OStream& os, const std::unordered_set<T> vec)
+{
+	for (auto& i : vec)
+	{
+		os << "[" << i << "] ";
+	}
+	os << "\n";
+	return os;
 }
 
 template<typename OStream, glm::length_t L, typename T, glm::qualifier Q>

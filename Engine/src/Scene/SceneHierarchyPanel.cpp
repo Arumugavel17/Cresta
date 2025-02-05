@@ -57,11 +57,6 @@ namespace Cresta
 				m_SelectedEntity = {};
 			}
 
-			if (Input::GetKeyDown(Key::LeftControl) && Input::GetKeyDown(Key::N))
-			{
-				m_Scene->CreateEntity("Empty Entity"); 
-			}
-
 			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow("SceneHierarchyBlankContext", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
 			{

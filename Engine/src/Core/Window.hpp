@@ -1,8 +1,11 @@
 #pragma once
 #include "Crestaph.hpp"
 #include "Core/Events/Event.hpp"
+#include "Core/KeyCode.hpp"
+#include <set>
 #include <memory>
 #include <functional>
+
 
 namespace Cresta 
 {
@@ -29,6 +32,8 @@ namespace Cresta
 
 		struct WindowData
 		{
+			std::unordered_set<KeyCode> PressedKeys;
+			std::unordered_set<KeyCode> ReleasedKeys;
 			std::string Title;
 			unsigned int Width, Height;
 			bool VSync;

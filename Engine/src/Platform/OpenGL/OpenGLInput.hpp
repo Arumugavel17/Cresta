@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Input.hpp"
+#include "Core/KeyCode.hpp"
 
 namespace Cresta 
 {
@@ -13,5 +14,7 @@ namespace Cresta
 		bool GetMouseUpImpl(MouseCode Code);
 
 		std::pair<float, float> GetMousePositionImp();
+	private:
+		std::map<KeyCode, int> m_KeyState;
 	};
 }

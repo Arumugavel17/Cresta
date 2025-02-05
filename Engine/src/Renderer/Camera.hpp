@@ -28,7 +28,6 @@ namespace Cresta {
 			m_Top		= other.m_Top; 
 			m_NearPlane = other.m_NearPlane;
 			m_FarPlane	= other.m_FarPlane;
-
 		}
 	};
 
@@ -37,7 +36,7 @@ namespace Cresta {
 		float m_FOV, m_Width, m_Height, m_NearPlane, m_FarPlane;
 
 		// FOV in degress
-		PerspectiveData(float FOV = 45, float Width = 1920, float Height = 1080, float nearplane = 0.1f, float farplane = 1000.0f) {
+		PerspectiveData(float FOV = 45, float Width = 1920, float Height = 1080, float nearplane = 0.01f, float farplane = 1000.0f) {
 			m_FOV		= glm::radians(FOV);
 			m_Width		= Width;
 			m_Height	= Height;

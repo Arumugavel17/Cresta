@@ -50,10 +50,6 @@ namespace Cresta
 			importer.GetErrorString());
 
 		m_Directory = path.substr(0, path.find_last_of('/'));
-		if (path.substr(path.find_last_of('.'), path.length() - 1) == ".fbx")
-		{
-			m_FBXModel = true;
-		}
 
 		if (scene->HasTextures())
 		{
@@ -150,22 +146,11 @@ namespace Cresta
 
 			aiVector3D position = mesh->mVertices[i];
 			aiVector3D texture = mesh->mTextureCoords[0] ? mesh->mTextureCoords[0][i] : aiVector3D(0.0f, 0.0f, 0.0f); 
-			if (m_FBXModel)
-			{
-				vertices.push_back({
-					{ position.x / 100,position.y / 100,position.z / 100 },
-					{ texture.x,texture.y},
-					TextureIndex
-					});
-			}
-			else 
-			{
-				vertices.push_back({
+			vertices.push_back({
 					{ position.x,position.y,position.z },
 					{ texture.x,texture.y },
 					TextureIndex
-					});
-			}
+				});
 		}
 
 		for (uint32_t i = 0; i < mesh->mNumFaces; i++)

@@ -1,38 +1,50 @@
 #pragma once
 #include "Core/Events/Event.hpp"
 #include "Core/KeyCode.hpp"
+#include "Core/Log.hpp"
 
 namespace Cresta {
 
 	class KeyEvent : public Event
 	{
 	public:
-		KeyCode GetKeyCode() const { return m_KeyCode; }
+		const std::unordered_set<KeyCode>& GetKeyCode() const { return m_KeyCodes; }
 
 		EVENT_CLASS_CATEGORY(EventCategory::Keyboard_EventCategory)
 	protected:
-		KeyEvent(const KeyCode keycode)
-			: m_KeyCode(keycode) 
+		KeyEvent(const std::unordered_set<KeyCode>& keycode)
+			: m_KeyCodes(keycode)
 		{
+
 		}
 
-		KeyCode m_KeyCode;
+		const std::unordered_set<KeyCode>& m_KeyCodes;
 	};
 
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
+		KeyPressedEvent(const std::unordered_set<KeyCode>& keycode, bool isRepeat = false)
 			: KeyEvent(keycode), m_IsRepeat(isRepeat) 
 		{
 		}
 
+		bool IsKeyPressed(KeyCode code) 
+		{
+			return m_KeyCodes.find(code) != m_KeyCodes.end();
+		}
+		template <typename... KeyCodes>
+		bool Has(KeyCode first, KeyCodes... rest)
+		{
+			return (IsKeyPressed(first) && ... && IsKeyPressed(rest));
+		}
 		bool IsRepeat() const { return m_IsRepeat; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_KeyCode << " (repeat = " << m_IsRepeat << ")";
+			ss << "KeyPressedEvent: " << m_KeyCodes << " (repeat = " << m_IsRepeat << ")";
+
 			return ss.str();
 		}
 
@@ -45,7 +57,7 @@ namespace Cresta {
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(const KeyCode keycode)
+		KeyReleasedEvent(const std::unordered_set<KeyCode>& keycode)
 			: KeyEvent(keycode) 
 		{
 		}
@@ -53,7 +65,7 @@ namespace Cresta {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << m_KeyCode;
+			ss << "KeyReleasedEvent: " << m_KeyCodes << "\n";
 			return ss.str();
 		}
 
@@ -63,7 +75,7 @@ namespace Cresta {
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(const KeyCode keycode)
+		KeyTypedEvent(const std::unordered_set<KeyCode>& keycode)
 			: KeyEvent(keycode) 
 		{
 		}
@@ -71,7 +83,7 @@ namespace Cresta {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyTypedEvent: " << m_KeyCode;
+			ss << "KeyTypedEvent: " << m_KeyCodes << "\n";
 			return ss.str();
 		}
 

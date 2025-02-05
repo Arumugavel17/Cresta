@@ -17,6 +17,8 @@ namespace Cresta
 {
     EditorLayer::EditorLayer(Ref<Scene> scene) : Layer("Editor Layer",scene)
     {
+        m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+
         m_EditorCamera = CreateRef<EditorCamera>();
         
         p_ActiveScene = scene;
@@ -239,47 +241,33 @@ namespace Cresta
 
     bool EditorLayer::OnKeyPressedEvent(KeyPressedEvent& e)
     {
-        if (e.IsRepeat())
+        if (e.Has(Key::LeftControl, Key::O))
         {
-            return false;
+            OpenScene();
+        }
+        if (e.Has(Key::LeftControl,Key::S))
+        {
+            SaveScene();
         }
 
-        switch (e.GetKeyCode())
+        if (!e.Has(Key::LeftAlt) && !ImGuizmo::IsUsing())
         {
-        default:
-            break;
-        case Key::Q:
-        {
-            if (!ImGuizmo::IsUsing())
+            if (e.Has(Key::Q))
             {
                 m_GizmoType = -1;
             }
-            break;
-        }
-        case Key::W:
-        {
-            if (!ImGuizmo::IsUsing())
+            if (e.Has(Key::W))
             {
                 m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
             }
-            break;
-        }
-        case Key::E:
-        {
-            if (!ImGuizmo::IsUsing())
+            if (e.Has(Key::E))
             {
                 m_GizmoType = ImGuizmo::OPERATION::ROTATE;
             }
-            break;
-        }
-        case Key::R:
-        {
-            if (!ImGuizmo::IsUsing())
+            if (e.Has(Key::R))
             {
                 m_GizmoType = ImGuizmo::OPERATION::SCALE;
             }
-            break;
-        }
         }
         return false;
     }
@@ -324,15 +312,6 @@ namespace Cresta
         windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         // Begin DockSpace
         ImGui::Begin("DockSpace Demo", &dockSpaceOpen, windowFlags);
-
-        if (Input::GetKeyDown(Key::LeftControl) && Input::GetKeyDown(Key::O))
-        {
-            OpenScene();
-        }
-        if (Input::GetKeyDown(Key::LeftControl) && Input::GetKeyDown(Key::S))
-        {
-            SaveScene(); 
-        }
         // Add a menu bar
         if (ImGui::BeginMenuBar())
         {

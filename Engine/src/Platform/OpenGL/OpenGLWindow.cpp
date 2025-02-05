@@ -69,23 +69,45 @@ namespace Cresta {
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
+				std::unordered_set<KeyCode>& PressedKeys = data.PressedKeys;
+				std::unordered_set<KeyCode>& ReleasedKeys = data.ReleasedKeys;
+				if (data.PressedKeys.size() == 0)
+				{
+					PressedKeys.clear();
+					ReleasedKeys.clear();
+				}
 				switch (action)
 				{
 					case GLFW_PRESS:
 					{
-						KeyPressedEvent event(key, 0);
+						bool keyPresent = false;
+						if (PressedKeys.find(key) == PressedKeys.end())
+						{
+							PressedKeys.insert(key);
+						}
+						KeyPressedEvent event(PressedKeys, 0);
 						data.CallBackFunction(event);
 						break;
 					}
 					case GLFW_RELEASE:
 					{
-						KeyReleasedEvent event(key);
+						bool keyPresent = false;
+						if (PressedKeys.find(key) != PressedKeys.end())
+						{
+							PressedKeys.erase(key);
+						}
+
+						if (!keyPresent)
+						{
+							ReleasedKeys.insert(key);
+						}
+						KeyReleasedEvent event(ReleasedKeys);
 						data.CallBackFunction(event);
 						break;
 					}
 					case GLFW_REPEAT:
 					{
-						KeyPressedEvent event(key, true);
+						KeyPressedEvent event(PressedKeys, true);
 						data.CallBackFunction(event);
 						break;
 					}
@@ -94,9 +116,12 @@ namespace Cresta {
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
 			{
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-				KeyTypedEvent event(keycode);
+				///THIS is temporary Fix solve it in the future//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				std::unordered_set<KeyCode> vec;
+				vec.insert(keycode);
+				KeyTypedEvent event(vec);
 				data.CallBackFunction(event);
 			});
 

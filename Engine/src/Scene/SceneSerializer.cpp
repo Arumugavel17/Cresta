@@ -203,7 +203,6 @@ namespace Cresta
 		}
 		if (entity.HasComponent<BoxCollider>())
 		{
-
 			out << YAML::Key << "BoxCollider";
 			out << YAML::BeginMap;
 			out << YAML::EndMap; 
