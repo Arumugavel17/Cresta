@@ -21,9 +21,10 @@ namespace Cresta
 
 	private:
 		bool m_CameraMovementEnabled = false;
-		float lasttime = 0;
-		float currenttime = 0;
-		float zoom = 45.0f;
+		float m_LastTime = 0;
+		float m_CurrentTime = 0;
+		float m_DeltaTime = 0;
+		float m_Zoom = 45.0f;
 		double lastX = 0, lastY = 0, yaw = -90, pitch;
 	};
 }

@@ -18,6 +18,10 @@ namespace Cresta {
 
 	void EditorCamera::OnUpdate()
 	{
+        m_CurrentTime = RenderCommand::GetTime();
+        m_DeltaTime = m_CurrentTime - m_LastTime;
+        m_LastTime = m_CurrentTime;
+
         if(m_CameraMovementEnabled && Input::GetKeyDown(Key::LeftAlt))
         {
             CameraMovement();
@@ -29,7 +33,6 @@ namespace Cresta {
             lastX = mouseXY.first;
             lastY = mouseXY.second;
         }
-
 	}
 
     void EditorCamera::CameraRotation() 
@@ -82,7 +85,6 @@ namespace Cresta {
         return m_CameraMovementEnabled;
     }
 
-
 	void EditorCamera::OnEvent(Event& e)
 	{
     }
@@ -90,10 +92,7 @@ namespace Cresta {
     void EditorCamera::CameraMovement() 
     {
         glm::vec3 t_CamerPos = m_CameraPos; // chache the cmaera position
-        float currenttime = RenderCommand::GetTime();
-        float deltatime = currenttime - lasttime;
-        float speed_factor = 0.5f;
-        lasttime = currenttime;
+        float speed_factor = 5;
 
         if (Input::GetKeyDown(Key::LeftShift))
         {
@@ -105,7 +104,7 @@ namespace Cresta {
             speed_factor = 2.5f;
         }
 
-        const float cameraSpeed = speed_factor * deltatime; // adjust accordingly
+        const float cameraSpeed = speed_factor * m_DeltaTime; // adjust accordingly
 
         if (Input::GetKeyDown(Key::A))
         {
