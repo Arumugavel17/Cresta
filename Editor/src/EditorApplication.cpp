@@ -4,10 +4,10 @@
 #include "Renderer/Buffer.hpp"
 #include "Crestaph.hpp"
 
-namespace Cresta 
+namespace Editor
 {
-	void EditorApplication::Init()
+	void EditorApplication::Run()
 	{
-
+		Application::Run();
 	}
 }

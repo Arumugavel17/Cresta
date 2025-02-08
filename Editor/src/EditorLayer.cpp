@@ -13,9 +13,9 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 
-namespace Cresta 
+namespace Editor
 {
-    EditorLayer::EditorLayer(Ref<Scene> scene) : Layer("Editor Layer",scene)
+    EditorLayer::EditorLayer(Cresta::Ref<Scene> scene) : Layer("Editor Layer",scene)
     {
         m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 
@@ -33,10 +33,9 @@ namespace Cresta
     void EditorLayer::OnAttach()
 	{
         m_IconPlay = Texture2D::Create("assets/Icons/PlayButton.png");
-        m_IconPause = Texture2D::Create("assets/Icons/PauseButton.png");
-        m_IconSimulate = Texture2D::Create("assets/Icons/SimulateButton.png");
-        m_IconStep = Texture2D::Create("assets/Icons/StepButton.png");
         m_IconStop = Texture2D::Create("assets/Icons/StopButton.png");
+        m_EmptyFolder = Texture2D::Create("assets/Icons/EmptyFolder.png");
+        m_NotEmptyFolder = Texture2D::Create("assets/Icons/NotEmptyFolder.png");
 
         FramebufferSpecification fbSpec;
         fbSpec.Attachments = { 
@@ -406,15 +405,17 @@ namespace Cresta
             std::string filename = entry.path().filename().string();
             if (entry.is_directory())
             {
-                if (ImGui::TreeNode(entry.path().filename().string().c_str()))
+                ImGui::BeginGroup(); // Group image and text together
+                if (ImGui::TreeNode(filename.c_str()))
                 {
-                    ShowFileManager(entry.path(), currentPath + "/" + entry.path().filename().string());
+                    ShowFileManager(entry.path(), currentPath + "/" + filename);
                     ImGui::TreePop();
                 }
+                ImGui::EndGroup();
             }
             else if (entry.is_regular_file())
             {
-                if (ImGui::Selectable(entry.path().filename().string().c_str()))
+                if (ImGui::Selectable(filename.c_str()))
                 {
                     //TODO: Create a way open files through the editor
                 }
@@ -525,7 +526,7 @@ namespace Cresta
 
         ImGui::SetCursorPosX(ImGui::GetWindowContentRegionMin().x + startX);
 
-        Ref<Texture2D> icon = (m_EditorState == EditorState::Edit || m_EditorState == EditorState::Simulate) ? m_IconPlay : m_IconStop;
+        Cresta::Ref<Texture2D> icon = (m_EditorState == EditorState::Edit || m_EditorState == EditorState::Simulate) ? m_IconPlay : m_IconStop;
         if (ImGui::ImageButton("PlayButton", (ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
         {
             if (m_EditorState == EditorState::Edit)
@@ -542,7 +543,7 @@ namespace Cresta
         if (m_EditorState != EditorState::Edit)
         {
             bool isPaused = p_ActiveScene->IsPaused();
-            Ref<Texture2D> icon = m_IconPause;
+            Cresta::Ref<Texture2D> icon = m_IconStop;
             if (ImGui::ImageButton("Pause", (ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
             {
                 p_ActiveScene->SetPaused(!isPaused);

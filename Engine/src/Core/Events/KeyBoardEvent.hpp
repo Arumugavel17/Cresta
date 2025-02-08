@@ -38,6 +38,7 @@ namespace Cresta {
 		{
 			return (IsKeyPressed(first) && ... && IsKeyPressed(rest));
 		}
+
 		bool IsRepeat() const { return m_IsRepeat; }
 
 		std::string ToString() const override

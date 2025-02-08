@@ -2,24 +2,30 @@
 #include "Core/Application.hpp"
 #include "EditorLayer.hpp"
 
-namespace Cresta {
-	class EditorApplication : public Application {
+namespace Editor 
+{
+	class EditorApplication : public Cresta::Application 
+	{
 	public:
 		EditorApplication()
 		{
 			m_EditorLayer = new EditorLayer(sp_ActiveScene);
 			PushLayer(m_EditorLayer);
-			Init();
 		}
 
 		~EditorApplication() = default;
 
-		void Init();
+		void Run() override;
 	private:
 		EditorLayer* m_EditorLayer;
 	};
 
-	Application* CreateApplication() {
-		return new EditorApplication();
+}
+
+namespace Cresta
+{
+	Application* CreateApplication()
+	{
+		return new Editor::EditorApplication();
 	}
 }

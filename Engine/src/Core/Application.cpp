@@ -201,6 +201,21 @@ namespace Cresta
 		}
 	}
 
+	void Application::NewProject()
+	{
+
+	}
+
+	void Application::OpenProject()
+	{
+
+	}
+
+	void Application::OpenProject(const std::filesystem::path& path)
+	{
+
+	}
+
 	bool Application::OnWindowClose(WindowCloseEvent& e) 
 	{
 		p_Running = false;

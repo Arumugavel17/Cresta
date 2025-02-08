@@ -17,12 +17,14 @@
 #include <imgui/imgui_impl_glfw.h>   
 #include <imgui/imgui_impl_opengl3.h>
 
-namespace Cresta 
+
+namespace Editor
 {
+	using namespace Cresta;
 	class EditorLayer : public Layer
 	{
 	public:
-		EditorLayer(Ref<Scene> scene);
+		EditorLayer(Cresta::Ref<Scene> scene);
 
 		virtual void SceneCallBack() override;
 		virtual void OnFixedUpdate() override;
@@ -69,23 +71,23 @@ namespace Cresta
 		ImVec2 previousWindowSize = ImVec2(0, 0);
 		
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
-		Ref<SceneHierarchyPanel> m_HierarchyPanel;
-		Ref<EditorCamera> m_EditorCamera;
+		Cresta::Ref<SceneHierarchyPanel> m_HierarchyPanel;
+		Cresta::Ref<EditorCamera> m_EditorCamera;
 
 		int m_EntityID = -1;
 
-		Ref<Framebuffer> m_Framebuffer;
+		Cresta::Ref<Framebuffer> m_Framebuffer;
 		int m_GizmoType = -1;
 
-		Ref<Shader> m_GridShader;
-		Ref<VertexArray> m_GridVertexArray;
+		Cresta::Ref<Shader> m_GridShader;
+		Cresta::Ref<VertexArray> m_GridVertexArray;
 
 		ImVec2 m_ViewportSize;
 		bool m_SceneActive = false;
 
 		ImVec2 m_ViewportBounds[2];
 
-		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconStep, m_IconSimulate, m_IconStop;
+		Cresta::Ref<Texture2D> m_IconPlay, m_IconStop, m_NotEmptyFolder, m_EmptyFolder;
 
 		float m_MouseX, m_MouseY;
 	};

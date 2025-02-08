@@ -92,6 +92,7 @@ add_subdirectory(Engine/vendor/yaml-cpp)
 
 include_directories(Engine/src/)
 include_directories(Engine/vendor/entt)
+include_directories(Engine/vendor/lua/include)
 include_directories(Engine/vendor/assimp/include)
 include_directories(Engine/vendor/yaml-cpp/include)
 
@@ -146,12 +147,14 @@ target_include_directories(Engine PUBLIC
 )
 
 message("SOURCES " ${CMAKE_BINARY_DIR})
+set(LUA_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/lua)
 
 target_link_libraries(Engine
         glfw
 		assimp
 		Jolt
         yaml-cpp
+        ${LUA_LIBRARY}/lua54.lib
 )
 
 target_compile_definitions(Engine PRIVATE 
@@ -175,6 +178,7 @@ add_executable(Editor
     ${ENGINE_SRC_HEADERS}
     ) 
 
+
 set(ASSETS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/Engine/assets")
 set(ASSETS_DEST_DIR "${CMAKE_BINARY_DIR}/assets")
 
@@ -182,8 +186,13 @@ add_custom_target(copy_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_SOURCE_DIR} ${ASSETS_DEST_DIR}
     COMMENT "Copying assets to the build directory..."
 )
-
 add_dependencies(Engine copy_assets)
+
+add_custom_target(copy_lua ALL
+    COMMAND ${CMAKE_COMMAND} -E copy ${LUA_LIBRARY}/Lua54.dll ${LUA_LIBRARY}/Lua54.dll
+    COMMENT "Copying LUA_Dll to the build directory..."
+)
+add_dependencies(Engine copy_lua)
 
 target_compile_definitions(Editor PRIVATE 
     $<$<CONFIG:Debug>:DEBUG>

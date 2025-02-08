@@ -24,8 +24,6 @@ namespace Cresta
 		if (s_ModelsLoaded.find(Path) == s_ModelsLoaded.end())
 		{
 			CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
-			//std::thread T(&Model::LoadModel,this,Path);
-			//T.join();
 			LoadModel(Path);
 			SetupVAO();
 			s_ModelsLoaded[Path] = std::pair<std::vector<Ref<VertexArray>>, Ref<UniformBuffer>>(m_VAOs, m_UniformBuffer);
@@ -226,6 +224,7 @@ namespace Cresta
 			m_VAOs[i]->AddVertexBuffer(vertexBuffer);
 			m_VAOs[i]->SetIndexBuffer(indexBuffer);
 		}
+
 		m_UniformBuffer = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(), 0, m_TextureHandles.data());
 	}
 
