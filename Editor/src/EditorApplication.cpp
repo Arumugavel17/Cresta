@@ -1,7 +1,7 @@
 #include "Crestaph.hpp"
 #include "EditorApplication.hpp"
 #include "Platform/OpenGL/Utils.hpp"
-#include "ProjectSelection/ToastMessage.hpp"
+#include "ToastMessage.hpp"
 
 #include <nlohmann/json.hpp>
 

@@ -15,6 +15,9 @@
 
 namespace Editor
 {
+
+    Cresta::Ref<Cresta::VertexArray> m_PrimitiveCube;
+    Cresta::Ref<Cresta::Shader> m_Shader;
     EditorLayer::EditorLayer(Cresta::Ref<Scene> scene) : Layer("Editor Layer",scene)
     {
         m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
@@ -82,8 +85,10 @@ namespace Editor
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
             {
+
                 p_ActiveScene->RenderScene();
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
+
                 m_EntityID = m_Framebuffer->ReadPixel(1, m_MouseX, m_MouseY);
                 m_Framebuffer->Unbind();
             }
@@ -409,12 +414,15 @@ namespace Editor
         // VSync settings
         ImGuizmo::BeginFrame();
         ImGui::Begin("VSync");
-        if (ImGui::Checkbox("Set VSync Option", &m_VSync)) {
+        if (ImGui::Checkbox("Set VSync Option", &m_VSync)) 
+        {
             Application::GetApplication().GetWindow()->SetVSync(m_VSync);
-            if (m_VSync) {
+            if (m_VSync) 
+            {
                 CRESTA_CORE_INFO("Enabled VSync");
             }
-            else {
+            else 
+            {
                 CRESTA_CORE_INFO("Disabled VSync");
             }
         }
@@ -522,7 +530,9 @@ namespace Editor
         bool toolbarEnabled = (bool)p_ActiveScene;
         ImVec4 tintColor = ImVec4(1, 1, 1, 1);
         if (!toolbarEnabled)
+        {
             tintColor.w = 0.5f;
+        }
 
         // Button size
         float buttonSize = ImGui::GetWindowHeight() - 4.0f - bottomPadding; // Adjusted for padding
@@ -586,7 +596,6 @@ namespace Editor
 
         ImGui::EndChild();
         ImGui::End();
-
     }
 
     void EditorLayer::NewScene()

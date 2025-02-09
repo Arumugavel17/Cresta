@@ -11,6 +11,46 @@ namespace Cresta
 
 	Scene::Scene()
 	{
+		float vertices[] = {
+			// Front face
+			-1.0f, -1.0f, -1.0f, // 0
+			 1.0f, -1.0f, -1.0f, // 1
+			 1.0f,  1.0f, -1.0f, // 2
+			-1.0f,  1.0f, -1.0f, // 3
+
+			// Back face
+			-1.0f, -1.0f,  1.0f, // 4
+			 1.0f, -1.0f,  1.0f, // 5
+			 1.0f,  1.0f,  1.0f, // 6
+			-1.0f,  1.0f,  1.0f  // 7
+		};
+
+		uint32_t indices[] = {
+			// Front face
+			0, 1, 2,  2, 3, 0,
+			// Back face
+			4, 5, 6,  6, 7, 4,
+			// Left face
+			0, 3, 7,  7, 4, 0,
+			// Right face
+			1, 5, 6,  6, 2, 1,
+			// Top face
+			3, 2, 6,  6, 7, 3,
+			// Bottom face
+			0, 1, 5,  5, 4, 0
+		};
+
+		Cresta::Ref<VertexBuffer> VBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+		Cresta::Ref<IndexBuffer> IBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
+
+		VBuffer->SetLayout({
+			{ShaderDataType::FVec3,"aPos"}
+			});
+		m_PrimitiveCube = VertexArray::Create();
+		m_PrimitiveCube->AddVertexBuffer(VBuffer);
+		m_PrimitiveCube->SetIndexBuffer(IBuffer);
+
+		m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
 		m_Physics = CreateScope<Physics>();
 		m_Registry = CreateRef<entt::registry>();
 	}
@@ -138,6 +178,7 @@ namespace Cresta
 		{
 			auto transform = m_Registry->get<Transform>(entity.second);
 			m_Physics->SetBodyPosition(entity.first, transform.Translation);
+			m_Physics->SetBodyScale(entity.first, transform.Scale);
 		}
 		m_Physics->Start();
 		m_Running = true;
@@ -161,25 +202,24 @@ namespace Cresta
 	{
 		for (auto entity : m_EntityMap)
 		{
-			auto transform = m_Registry->get<Transform>(entity.second);
-			if (m_Running)
+			auto& transform = m_Registry->get<Transform>(entity.second);
+			if (m_Registry->has<PhysicsComponent>(entity.second))
 			{
-				if (m_Registry->has<PhysicsComponent>(entity.second))
+				if (m_Running)
 				{
+					glm::quat Rotation;
 					auto physicsComponent = m_Registry->get<PhysicsComponent>(entity.second); 
 					m_Physics->GetBodyPosition(physicsComponent.BodyID, transform.Translation);
-					glm::quat Rotation;
 					m_Physics->GetBodyRotation(physicsComponent.BodyID, Rotation);
 					transform.SetRotation(Rotation);
 				}
+				Renderer::DrawGizmoIndexed(m_Shader, m_PrimitiveCube, transform.GetTransform());
 			}
 			if (m_Registry->has<MeshRenderer>(entity.second))
 			{
-
 				auto meshRenderer = m_Registry->get<MeshRenderer>(entity.second);
 				if (meshRenderer.Model)
 				{
-
 					meshRenderer.Model->Draw(transform.GetTransform(),meshRenderer.ID);
 				}
 			}

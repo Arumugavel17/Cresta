@@ -23,6 +23,9 @@ namespace Cresta
 		virtual float GetTime() = 0;
 		virtual void Clear() = 0;
 
+		virtual void SetDrawModeToWireFrame() = 0;
+		virtual void SetDrawModeToNormal() = 0;
+
 		virtual void DrawTriangles(unsigned int IndicesCount) = 0;
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;

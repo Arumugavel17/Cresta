@@ -59,6 +59,16 @@ namespace Cresta
 		return glfwGetTime();
 	}
 
+	void OpenGLRenderAPI::SetDrawModeToWireFrame()
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
+	void OpenGLRenderAPI::SetDrawModeToNormal()
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
 	void OpenGLRenderAPI::DrawTriangles(unsigned int IndicesCount)
 	{
 		glDrawArrays(GL_TRIANGLES, 0, IndicesCount);

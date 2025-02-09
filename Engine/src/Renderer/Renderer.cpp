@@ -1,4 +1,7 @@
 #include "Renderer.hpp"
+#include "Renderer.hpp"
+#include "Renderer.hpp"
+#include "Renderer.hpp"
 #include "Crestaph.hpp"
 
 namespace Cresta 
@@ -109,5 +112,37 @@ namespace Cresta
 	void Renderer::DrawIndexed(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer)
 	{
 
+	}
+
+	//Gizmos////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void Renderer::DrawGizmoTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount)
+	{
+		RenderCommand::SetDrawModeToWireFrame();
+		shader->Bind();
+		shader->SetMat4("u_ProjectionView", sm_SceneData->ViewProjectionMatrix);
+		shader->SetVec3("u_CameraPosition", sm_SceneData->CamerPosition);
+		shader->SetMat4("u_Model", transform);
+		vertexArray->Bind();
+		RenderCommand::DrawTriangles(IndicesCount);
+		RenderCommand::SetDrawModeToNormal();
+
+	}
+	void Renderer::DrawGizmoIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+	{
+		RenderCommand::SetDrawModeToWireFrame();
+		shader->Bind();
+		shader->SetMat4("u_ProjectionView", sm_SceneData->ViewProjectionMatrix);
+		shader->SetVec3("u_CameraPosition", sm_SceneData->CamerPosition);
+		shader->SetMat4("u_Model", transform);
+		shader->SetVec4("u_Color", glm::vec4(1.0f));
+		vertexArray->Bind();
+		RenderCommand::DrawIndexed(vertexArray);
+		RenderCommand::SetDrawModeToNormal();
+	}
+	void Renderer::DrawGizmoIndexed(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer)
+	{
+		RenderCommand::SetDrawModeToWireFrame();
+		RenderCommand::SetDrawModeToNormal();
 	}
 }

@@ -10,17 +10,22 @@ namespace Cresta
 	public:
 		~OpenGLRenderAPI() = default;
 
-		void Init() override;
-		void Enable() override;
-		void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
-		void SetClearColor(const glm::vec4& color) override;
-		void Clear() override;
-		float GetTime() override;
+		virtual float GetTime() override;
 
-		void DrawTriangles(unsigned int IndicesCount) override;
-		void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount ) override;
-		void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
+		virtual void Init() override;
+		virtual void Enable() override;
+		virtual void Clear() override;
 
-		void SetLineWidth(float width) override;
+		virtual void DrawTriangles(unsigned int IndicesCount) override;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount ) override;
+		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
+
+		virtual void SetLineWidth(float width) override;
+		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+		virtual void SetClearColor(const glm::vec4& color) override;
+		
+		virtual void SetDrawModeToWireFrame() override;
+		virtual void SetDrawModeToNormal() override;
+		
 	};
 }

@@ -1,4 +1,5 @@
 #include "Physics.hpp"
+#include "Physics.hpp"
 
 namespace Cresta
 {
@@ -26,6 +27,7 @@ namespace Cresta
 
 	Physics::Physics()
 	{
+
 		Init();
 	}
 
@@ -155,6 +157,66 @@ namespace Cresta
 	{
 		m_BodyInterface->SetPosition(m_EntityToBody[EntityID], { position.x, position.y, position.z }, EActivation::Activate);
 	}
+
+	void Physics::SetBodyScale(const UUID& EntityID, const glm::vec3& scale)
+	{
+		// Retrieve the body ID from our entity-to-body map.
+		BodyID body_id = m_EntityToBody[EntityID];
+
+		// Lock the body for writing.
+		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), body_id);
+		if (!lock.Succeeded())
+			return;
+
+		Body& body = lock.GetBody();
+		const Shape* currentShape = body.GetShape();
+		if (currentShape == nullptr)
+		{
+			lock.ReleaseLock();
+			return;
+		}
+
+		Shape* newShape = nullptr;
+
+		// Check if the shape is a BoxShape.
+		if (const BoxShape* box = dynamic_cast<const BoxShape*>(currentShape))
+		{
+			// Get current half extents and apply non-uniform scaling.
+			RVec3 currentHalfExtents = box->GetHalfExtent();
+			RVec3 newHalfExtents(
+				currentHalfExtents.GetX() * scale.x,
+				currentHalfExtents.GetY() * scale.y,
+				currentHalfExtents.GetZ() * scale.z
+			);
+			newShape = new BoxShape(newHalfExtents);
+		}
+		// Check if the shape is a SphereShape.
+		else if (const SphereShape* sphere = dynamic_cast<const SphereShape*>(currentShape))
+		{
+			// For a sphere, uniform scaling is assumed.
+			float newRadius = sphere->GetRadius() * scale.x; // or choose an average scale factor
+			newShape = new SphereShape(newRadius);
+		}
+		// Check if the shape is a CapsuleShape.
+		else if (const CapsuleShape* capsule = dynamic_cast<const CapsuleShape*>(currentShape))
+		{
+			// Assume that the capsule's radius scales uniformly (using scale.x) and
+			// its half-height scales with scale.y (this choice may vary based on your needs).
+			float newRadius = capsule->GetRadius() * scale.x;
+			float newHalfHeight = capsule->GetHalfHeightOfCylinder() * scale.y;
+			newShape = new CapsuleShape(newHalfHeight, newRadius);
+		}
+
+		// If a new shape was created, assign it to the body.
+		if (newShape != nullptr)
+		{
+			// The second parameter 'true' indicates that the old shape should be deleted.
+			body.SetShapeInternal(newShape, true);
+		}
+
+		lock.ReleaseLock();
+	}
+
 
 	void Physics::GetBodyRotation(const UUID& EntityID, glm::quat& rotation)
 	{

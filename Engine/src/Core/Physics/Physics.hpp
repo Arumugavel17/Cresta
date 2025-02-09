@@ -6,6 +6,7 @@
 #include <Jolt/Physics/StateRecorder.h>
 #include <Jolt/Physics/StateRecorderImpl.h>
 
+
 // Member variable to store the initial state
 using namespace JPH;
 using namespace JPH::literals;
@@ -47,6 +48,7 @@ namespace Cresta
 		void GetBodyRotation(const UUID& EntityID, glm::quat& rotation);
 		void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
 		void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
+		void SetBodyScale(const UUID& EntityID, const glm::vec3& scale);
 
 		void GetBodyPosition(const BodyID& ID, glm::vec3& position);
 		void GetBodyRotation(const BodyID& ID, glm::quat& rotation);
@@ -87,7 +89,7 @@ namespace Cresta
 		Scope<JobSystem> m_JobSystem;
 		Scope<TempAllocator> m_TempAllocator;
 		Scope<PhysicsSystem> m_PhysicsSystem;
-
+		
 		BodyInterface* m_BodyInterface;
 
 		// Broadphase filters
