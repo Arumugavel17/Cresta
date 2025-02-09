@@ -18,10 +18,10 @@ namespace Cresta
 		{
 		public:
 			// These return empty strings if cancelled
-			static std::string OpenFile(const char* filter);
-			static std::string SaveFile(const char* filter);
-			static std::string SelectFolder();
-
+			static std::string OpenScene(const char* filter);
+			static std::string SaveScene(const char* filter);
+			static std::string OpenProject();
+			static std::string GetProjectFolder();
 		};
 
 		

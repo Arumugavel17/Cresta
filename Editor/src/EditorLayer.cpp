@@ -240,13 +240,22 @@ namespace Editor
 
     bool EditorLayer::OnKeyPressedEvent(KeyPressedEvent& e)
     {
-        if (e.Has(Key::LeftControl, Key::O))
+        if (!e.Has(Key::LeftShift) && e.Has(Key::LeftControl, Key::O))
         {
             OpenScene();
         }
-        if (e.Has(Key::LeftControl,Key::S))
+        if (!e.Has(Key::LeftShift) && e.Has(Key::LeftControl,Key::S))
         {
             SaveScene();
+        }
+
+        if (e.Has(Key::LeftControl,Key::LeftShift, Key::O))
+        {
+            OpenProject();
+        }
+        if (e.Has(Key::LeftControl, Key::LeftShift, Key::S))
+        {
+            SaveProject();
         }
 
         if (!e.Has(Key::LeftAlt) && !ImGuizmo::IsUsing())
@@ -284,7 +293,6 @@ namespace Editor
         return false;
     }
 
-
     void EditorLayer::CreateDockSpace()
     {
         ImVec4 customColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // RGBA
@@ -314,9 +322,10 @@ namespace Editor
         // Add a menu bar
         if (ImGui::BeginMenuBar())
         {
+            std::pair<string,std::filesystem::path>& ProjectDetails = Application::GetApplication().p_ActiveProjectPath;
+            
             if (ImGui::BeginMenu("File"))
             {
-
                 if (ImGui::MenuItem("New Scene"))
                 {
                     NewScene();
@@ -328,6 +337,19 @@ namespace Editor
                 if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
                 {
                     SaveScene();
+                }
+
+                if (ImGui::MenuItem("New Project"))
+                {
+                    NewProject();
+                }
+                if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O"))
+                {
+                    OpenProject();
+                }
+                if (ImGui::MenuItem("Save Project", "Ctrl+Shift+S"))
+                {
+                    SaveProject();
                 }
             
                 if (ImGui::MenuItem("Exit"))
@@ -359,6 +381,8 @@ namespace Editor
                 }
                 ImGui::EndMenu();
             }
+            
+            ImGui::Text((ProjectDetails.first + " " + ProjectDetails.second.string()).c_str());
 
             ImGui::EndMenuBar();
         }
@@ -375,7 +399,10 @@ namespace Editor
     {
         CreateDockSpace();
         UI_Toolbar();
-        ShowFileManager("assets", "assets");
+        string RootPath = Application::GetApplication().p_ActiveProjectPath.second.string();
+
+        ShowFileManager(RootPath, RootPath);
+        
         ShowScene();
         m_HierarchyPanel->OnImGuiRender();
 
@@ -577,6 +604,21 @@ namespace Editor
     void EditorLayer::SaveScene()
     {
         Application::GetApplication().SaveScene();
+    }
+
+    void EditorLayer::SaveProject()
+    {
+        Application::GetApplication().SaveProject();
+    }
+
+    void EditorLayer::NewProject()
+    {
+        Application::GetApplication().NewProject();
+    }
+
+    void EditorLayer::OpenProject()
+    {
+        Application::GetApplication().OpenProject();
     }
 
     void EditorLayer::OnScenePlay()

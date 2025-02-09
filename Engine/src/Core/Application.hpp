@@ -18,9 +18,10 @@ namespace Cresta
 		void SaveScene();
 		void SaveSceneAs();
 
-		void NewProject();
-		void OpenProject();
-		void OpenProject(const std::filesystem::path& path);
+		virtual void SaveProject(){}
+		virtual void NewProject(){}
+		virtual void OpenProject(){}
+		virtual void OpenProject(const std::filesystem::path& path){}
 
 		void SerializeScene(const Ref<Scene>& scene, const std::filesystem::path& path);
 		void SetSceneForLayers();
@@ -39,15 +40,17 @@ namespace Cresta
 		float p_LastFrameTime = 0.0f;
 		bool p_Running;
 		bool p_Minimized;
-		
-		std::filesystem::path p_ActiveScenePath;
-
 		static Ref<Scene> sp_ActiveScene;
 		static Application* sp_Instance; 
 
 		Ref<Window> p_Window;
 		ImGUILayer* p_ImGUILayer;
 		LayerStack p_LayerStack;
+		std::filesystem::path p_ActiveScenePath;
+	
+	public:
+		std::pair<string,std::filesystem::path> p_ActiveProjectPath;
+
 	};
 
 	Application* CreateApplication();

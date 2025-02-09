@@ -1,28 +1,32 @@
 #include "Utils.hpp"
+#include "Utils.hpp"
 #include <shobjidl.h> // For SHBrowseForFolder
 
 namespace Cresta
 {
 	namespace Utils
 	{
-		std::string FileDialogs::SelectFolder()
+        std::string FileDialogs::OpenProject()
         {
-            std::string selectedPath = "";
+            std::string selectedPath = ""; // Default file if none is selected
+
             // Initialize COM for using IFileDialog
             HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 std::cerr << "Failed to initialize COM: " << std::hex << hr << std::endl;
-                return "";
+                return selectedPath;
             }
 
-            IFileSaveDialog* pFileSave = nullptr;
+            IFileOpenDialog* pFileOpen = nullptr;
 
             // Create the File Save Dialog
-            hr = CoCreateInstance(CLSID_FileSaveDialog, nullptr, CLSCTX_ALL, IID_IFileSaveDialog, (void**)&pFileSave);
-            if (FAILED(hr)) {
+            hr = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_ALL, IID_IFileOpenDialog, (void**)&pFileOpen);
+            if (FAILED(hr))
+            {
                 std::cerr << "Failed to create file dialog: " << std::hex << hr << std::endl;
                 CoUninitialize();
-                return "";
+                return selectedPath;
             }
 
             // Set file types for filtering
@@ -30,21 +34,24 @@ namespace Cresta
                 { L"Cresta Project Files", L"*.cproj" },
                 { L"All Files", L"*.*" }
             };
-            pFileSave->SetFileTypes(2, fileTypes);
-            pFileSave->SetDefaultExtension(L"cproj");
-            pFileSave->SetFileName(L"project.cproj");
+            pFileOpen->SetFileTypes(2, fileTypes);
+            pFileOpen->SetDefaultExtension(L"cproj");
+            pFileOpen->SetFileName(L"project.cproj");
 
             // Show the dialog
-            hr = pFileSave->Show(nullptr);
-            if (SUCCEEDED(hr)) {
+            hr = pFileOpen->Show(nullptr);
+            if (SUCCEEDED(hr))
+            {
                 // Get the result
                 IShellItem* pItem = nullptr;
-                hr = pFileSave->GetResult(&pItem);
-                if (SUCCEEDED(hr)) {
+                hr = pFileOpen->GetResult(&pItem);
+                if (SUCCEEDED(hr))
+                {
                     // Get the file path
                     PWSTR pszFilePath = nullptr;
                     hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-                    if (SUCCEEDED(hr)) {
+                    if (SUCCEEDED(hr))
+                    {
                         // Convert the wide string to a standard string
                         char filepath[MAX_PATH];
                         wcstombs(filepath, pszFilePath, MAX_PATH);
@@ -58,18 +65,88 @@ namespace Cresta
                     pItem->Release();
                 }
             }
-            else {
+            else
+            {
+                std::cerr << "Dialog canceled or failed. Using default project file: " << selectedPath << std::endl;
+                return "";
+            }
+
+            // Release resources and uninitialize COM
+            pFileOpen->Release();
+            CoUninitialize();
+            return selectedPath;
+        }
+
+        std::string FileDialogs::GetProjectFolder()
+        {
+            std::string selectedPath = "";  // Will store the selected directory
+
+            // Initialize COM for using IFileDialog
+            HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+            if (FAILED(hr))
+            {
+                std::cerr << "Failed to initialize COM: " << std::hex << hr << std::endl;
+                return "";
+            }
+
+            IFileOpenDialog* pFileDialog = nullptr;
+
+            // Create the File Dialog for folder selection
+            hr = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_ALL, IID_IFileOpenDialog, (void**)&pFileDialog);
+            if (FAILED(hr))
+            {
+                std::cerr << "Failed to create file dialog: " << std::hex << hr << std::endl;
+                CoUninitialize();
+                return "";
+            }
+
+            // Set the dialog to pick folders instead of files
+            DWORD dwOptions;
+            pFileDialog->GetOptions(&dwOptions);
+            pFileDialog->SetOptions(dwOptions | FOS_PICKFOLDERS);
+
+            // Show the dialog
+            hr = pFileDialog->Show(nullptr);
+            if (SUCCEEDED(hr))
+            {
+                // Get the selected folder
+                IShellItem* pItem = nullptr;
+                hr = pFileDialog->GetResult(&pItem);
+                if (SUCCEEDED(hr))
+                {
+                    PWSTR pszFolderPath = nullptr;
+                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFolderPath);
+                    if (SUCCEEDED(hr))
+                    {
+                        // Convert the wide string to a standard string
+                        char folderPath[MAX_PATH];
+                        wcstombs(folderPath, pszFolderPath, MAX_PATH);
+
+                        // Store the selected path
+                        selectedPath = folderPath;
+
+                        std::ofstream project(selectedPath + "\\pr");
+                        
+
+                        // Free memory
+                        CoTaskMemFree(pszFolderPath);
+                    }
+                    pItem->Release();
+                }
+            }
+            else
+            {
                 std::cerr << "Dialog canceled or failed." << std::endl;
             }
 
             // Release resources and uninitialize COM
-            pFileSave->Release();
+            pFileDialog->Release();
             CoUninitialize();
 
             return selectedPath;
         }
 
-		std::string FileDialogs::OpenFile(const char* filter)
+		std::string FileDialogs::OpenScene(const char* filter)
 		{
 			OPENFILENAMEA ofn;
 			CHAR szFile[260] = { 0 };
@@ -92,7 +169,7 @@ namespace Cresta
 
 		}
 
-		std::string FileDialogs::SaveFile(const char* filter)
+		std::string FileDialogs::SaveScene(const char* filter)
 		{
 			OPENFILENAMEA ofn;
 			CHAR szFile[260] = { 0 };

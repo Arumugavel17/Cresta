@@ -1,15 +1,19 @@
 #pragma once
 #include "Core/Window.hpp"
-#include "glad/glad.h"
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <functional>
+
 #include "Core/Events/WindowEvent.hpp"
 #include "Core/Events/KeyBoardEvent.hpp"
 #include "Core/Events/MouseEvent.hpp"
 
-namespace Cresta {
-	class OpenGLWindow : public Window {
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <functional>
+
+namespace Cresta 
+{
+	class OpenGLWindow : public Window 
+	{
 	public:
 		~OpenGLWindow();
 		OpenGLWindow();

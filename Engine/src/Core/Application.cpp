@@ -136,7 +136,7 @@ namespace Cresta
 
 	void Application::OpenScene()
 	{
-		std::string filepath = Utils::FileDialogs::OpenFile("Cresta Scene (*.cresta)\0*.cresta\0");
+		std::string filepath = Utils::FileDialogs::OpenScene("Cresta Scene (*.cresta)\0*.cresta\0");
 		if (!filepath.empty())
 		{
 			return OpenScene(filepath);
@@ -193,27 +193,12 @@ namespace Cresta
 
 	void Application::SaveSceneAs()
 	{
-		std::string filepath = Utils::FileDialogs::SaveFile("Cresta Scene (*.cresta)\0*.cresta\0");
+		std::string filepath = Utils::FileDialogs::SaveScene("Cresta Scene (*.cresta)\0*.cresta\0");
 		if (!filepath.empty())
 		{
 			SerializeScene(sp_ActiveScene, filepath);
 			p_ActiveScenePath = filepath;
 		}
-	}
-
-	void Application::NewProject()
-	{
-
-	}
-
-	void Application::OpenProject()
-	{
-
-	}
-
-	void Application::OpenProject(const std::filesystem::path& path)
-	{
-
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e) 

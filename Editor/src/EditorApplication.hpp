@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Application.hpp"
 #include "EditorLayer.hpp"
+#include "ProjectSelection/ProjectSelection.hpp"
 
 namespace Editor 
 {
@@ -15,11 +16,16 @@ namespace Editor
 
 		~EditorApplication() = default;
 
+		void SaveProject() override;
+		void NewProject() override;
+		void OpenProject() override;
+		std::string GetProjectFolder();
+
+		void OnEvent(Event& e) override;
 		void Run() override;
 	private:
 		EditorLayer* m_EditorLayer;
 	};
-
 }
 
 namespace Cresta

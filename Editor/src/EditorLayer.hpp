@@ -46,6 +46,9 @@ namespace Editor
 		void OpenScene();
 		void SaveScene();
 
+		void SaveProject();
+		void NewProject();
+		void OpenProject();
 
 		void OnScenePlay();
 		void OnSceneSimulate();

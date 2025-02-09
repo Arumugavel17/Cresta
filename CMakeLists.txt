@@ -85,6 +85,7 @@ set(CMAKE_EXE_LINKER_FLAGS_DISTRIBUTION "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 SET_INTERPROCEDURAL_OPTIMIZATION()
 
 #add_subdirectory(Editor)
+add_subdirectory(Engine/vendor/json)
 add_subdirectory(Engine/vendor/assimp)
 add_subdirectory(Engine/vendor/glfw)
 add_subdirectory(Engine/vendor/spdlog)
@@ -92,6 +93,7 @@ add_subdirectory(Engine/vendor/yaml-cpp)
 
 include_directories(Engine/src/)
 include_directories(Engine/vendor/entt)
+include_directories(Engine/vendor/json/include)
 include_directories(Engine/vendor/lua/include)
 include_directories(Engine/vendor/assimp/include)
 include_directories(Engine/vendor/yaml-cpp/include)
@@ -155,6 +157,7 @@ target_link_libraries(Engine
 		Jolt
         yaml-cpp
         ${LUA_LIBRARY}/lua54.lib
+        nlohmann_json::nlohmann_json
 )
 
 target_compile_definitions(Engine PRIVATE 
