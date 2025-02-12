@@ -1,9 +1,19 @@
 #include "Scene.hpp"
-#include "Scene.hpp"
-#include "Scene.hpp"
 #include "Entity.hpp"
 
+#include "Core/Physics/LinearMovement.hpp"
+
 #include <glm/glm.hpp>
+
+#define DEFINE_ON_COMPONENT_ADDED(Type, Code)      \
+template<>                                         \
+void Cresta::Scene::OnComponentAdded<Type>(Entity entity, Type& component) \
+{                                                  \
+    Code                                           \
+}
+
+#define NO_OP {}  // For components that need no special handling
+
 
 namespace Cresta 
 {
@@ -176,6 +186,11 @@ namespace Cresta
 		Save();
 		for (auto entity : m_EntityMap)
 		{
+			if (m_Registry->has<Rigidbody>(entity.second))
+			{
+				auto& rigidbody = m_Registry->get<Rigidbody>(entity.second);
+				SetUpCuboid(rigidbody);
+			}
 			auto transform = m_Registry->get<Transform>(entity.second);
 			m_Physics->SetBodyPosition(entity.first, transform.Translation);
 			m_Physics->SetBodyScale(entity.first, transform.Scale);
@@ -195,7 +210,7 @@ namespace Cresta
 	{
 		if (m_Running)	
 		{
-			m_Physics->Step();
+			//m_Physics->Step();
 		}
 	}
 	void Scene::RenderScene()
@@ -207,11 +222,17 @@ namespace Cresta
 			{
 				if (m_Running)
 				{
-					glm::quat Rotation;
+					/*glm::quat Rotation;
 					auto physicsComponent = m_Registry->get<PhysicsComponent>(entity.second); 
 					m_Physics->GetBodyPosition(physicsComponent.BodyID, transform.Translation);
-					m_Physics->GetBodyRotation(physicsComponent.BodyID, Rotation);
-					transform.SetRotation(Rotation);
+					m_Physics->GetBodyRotation(physicsComponent.BodyID, Rotation);*/
+					//m_Physics->SetBodyScale(entity.first, transform.Scale);
+					//transform.SetRotation(Rotation);
+					if (m_Registry->has<Rigidbody>(entity.second))
+					{
+						auto& rigidbody = m_Registry->get<Rigidbody>(entity.second);
+						StepSimulation(transform, rigidbody, 0.001);
+					}
 				}
 				Renderer::DrawGizmoIndexed(m_Shader, m_PrimitiveCube, transform.GetTransform());
 			}
@@ -238,31 +259,12 @@ namespace Cresta
 		static_assert(sizeof(T) == 0);
 	}
 
-	template<>
-	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<Transform>(Entity entity, Transform& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<SpriteRenderer>(Entity entity, SpriteRenderer& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<MeshRenderer>(Entity entity, MeshRenderer& component)	
-	{
-		component.ID = (int)(entt::entity)entity;
-	}
+	// Then in your .cpp:
+	DEFINE_ON_COMPONENT_ADDED(IDComponent, NO_OP)
+	DEFINE_ON_COMPONENT_ADDED(Transform, NO_OP)
+	DEFINE_ON_COMPONENT_ADDED(CameraComponent, NO_OP)
+	DEFINE_ON_COMPONENT_ADDED(SpriteRenderer, NO_OP)
+	DEFINE_ON_COMPONENT_ADDED(MeshRenderer, { component.ID = static_cast<int>(entity); })
 
 	PhysicsComponent AddPhysicsComponent(Entity entity)
 	{
@@ -278,52 +280,27 @@ namespace Cresta
 
 		return PhysicsComponent_;
 	}
-
-
-	template<>
-	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
-	{
-	}
-
-	template<>
-	void Scene::OnComponentAdded<PhysicsComponent>(Entity entity, PhysicsComponent& component)
-	{
-		m_Physics->CreateBody(entity.GetComponent<IDComponent>().ID, component.BodyID);
-	}
-
-	template<>
-	void Scene::OnComponentAdded<Rigidbody>(Entity entity, Rigidbody& component)
-	{
-		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-		m_Physics->AddRigidBody(PhysicsComponent_.BodyID);
-	}
-
-	template<>
-	void Scene::OnComponentAdded<BoxCollider>(Entity entity, BoxCollider& component)
-	{
-		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-		m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::BoxCollider);
-	}
-
-	template<>
-	void Scene::OnComponentAdded<SphereCollider>(Entity entity, SphereCollider& component)
-	{
-		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-		m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::SphereCollider);
-	}
-
-	template<>
-	void Scene::OnComponentAdded<CapsuleCollider>(Entity entity, CapsuleCollider& component)
-	{
-		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-		m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::CapsuleCollider);
-	}
-
-	template<>
-	void Scene::OnComponentAdded<MeshCollider>(Entity entity, MeshCollider& component)
-	{
-		PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
-	}
+	DEFINE_ON_COMPONENT_ADDED(TagComponent, NO_OP)
+	DEFINE_ON_COMPONENT_ADDED(PhysicsComponent, { m_Physics->CreateBody(entity.GetComponent<IDComponent>().ID, component.BodyID); } )
+	DEFINE_ON_COMPONENT_ADDED(Rigidbody, {
+			PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
+			m_Physics->AddRigidBody(PhysicsComponent_.BodyID);
+		})
+	DEFINE_ON_COMPONENT_ADDED(BoxCollider, {
+			PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
+			m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::BoxCollider);
+		})
+	DEFINE_ON_COMPONENT_ADDED(SphereCollider, {
+			PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
+			m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::SphereCollider); 
+		})
+	DEFINE_ON_COMPONENT_ADDED(CapsuleCollider, {
+			PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
+			m_Physics->AddCollider(PhysicsComponent_.BodyID, ColliderShape::CapsuleCollider);
+		})
+	DEFINE_ON_COMPONENT_ADDED(MeshCollider, {
+			PhysicsComponent PhysicsComponent_ = AddPhysicsComponent(entity);
+		})
 
 	//Componenet Removed Methods ?////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename T>

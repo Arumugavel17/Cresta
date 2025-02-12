@@ -179,7 +179,21 @@ namespace Cresta
 
 	struct Rigidbody
 	{
-		int temp;
+		glm::vec3 Translation = glm::vec3(0.0f);
+		glm::vec3 Velocity = glm::vec3(0.0f,0.0f,0.0f);
+		glm::mat3 RotationMatrix = glm::mat3(1.0f);
+		glm::vec3 RotationAxis = glm::vec3(0.0f,1.0f,0.0f);
+
+		void SetTranslation(glm::vec3 translation)
+		{
+			Translation = translation;
+		}
+
+		void SetVelocity(const glm::vec3& velocity)
+		{
+			Velocity = velocity;
+		}
+
 		std::string ToString()
 		{
 			return "Rigid Body";
