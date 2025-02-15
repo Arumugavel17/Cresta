@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Scene.hpp"
-#include "Components.hpp"
+#include "Scene/Scene.hpp"
+#include "Components/Components.hpp"
 #include "entt/entt.hpp"
 
 namespace Cresta 

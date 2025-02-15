@@ -1,16 +1,58 @@
 #include "ComponentUI.hpp"
+#include "cmath"
 
 namespace Cresta
 {
 	namespace Utils
 	{
+		static glm::vec3 TransformPosition = glm::vec3(0.0f);
+		static glm::vec3 TransformRotation = glm::vec3(0.0f);
+		static glm::vec3 TransformScale = glm::vec3(0.0f);
+
+		inline glm::vec3 Round(const glm::vec3& vec,float num)
+		{
+			return glm::round(vec * num);
+		}
+
+		inline bool HasChanged(const glm::vec3& oldVal, const glm::vec3& newVal, float factor = 1000.0f) 
+		{
+			return Round(oldVal, factor) != Round(newVal, factor);
+		}
+
 		void TransformUI(Transform& component)
 		{
+			constexpr float roundFactor = 1000.0f;
 			Cresta::Utils::DrawVec3Control("Translation", component.Translation);
 			glm::vec3 rotation = glm::degrees(component.Rotation);
 			Cresta::Utils::DrawVec3Control("Rotation", rotation);
 			component.Rotation = glm::radians(rotation);
 			Cresta::Utils::DrawVec3Control("Scale", component.Scale, 1.0f);
+
+
+			if (HasChanged(TransformPosition, component.Translation, roundFactor))
+			{
+				CRESTA_INFO("Position Changed {0} {1} {2} : {3} {4} {5}",
+					TransformPosition.x, TransformPosition.y, TransformPosition.z,
+					component.Translation.x, component.Translation.y, component.Translation.z);
+			}
+
+			if (HasChanged(TransformRotation, component.Rotation, roundFactor))
+			{
+				CRESTA_INFO("Rotation Changed {0} {1} {2} : {3} {4} {5}",
+					TransformRotation.x, TransformRotation.y, TransformRotation.z,
+					component.Rotation.x, component.Rotation.y, component.Rotation.z);
+			}
+
+			if (HasChanged(TransformScale, component.Scale, roundFactor))
+			{
+				CRESTA_INFO("Scale Changed {0} {1} {2} : {3} {4} {5}",
+					TransformScale.x, TransformScale.y, TransformScale.z,
+					component.Scale.x, component.Scale.y, component.Scale.z);
+			}
+
+			TransformPosition = component.Translation;
+			TransformRotation = component.Rotation;
+			TransformScale = component.Scale;
 		}
 
 		void SpriteRendererUI(SpriteRenderer& component)

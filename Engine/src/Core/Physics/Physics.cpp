@@ -1,6 +1,6 @@
 #include "Physics.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
-
+#include <Jolt/Physics/Body/BodyCreationSettings.h>
 
 namespace Cresta
 {
@@ -108,16 +108,14 @@ namespace Cresta
 
 	void Physics::CreateBody(const UUID& EntityID, BodyID& ID)
 	{
-		BodyCreationSettings settings(new SphereShape(1.0f),
+		RefConst<Shape> scaled_sphere_shape = /* new ScaledShape( */new SphereShape(1.0f)/*, {1.0f,1.0f,1.0f})*/;
+		BodyCreationSettings settings(scaled_sphere_shape,
 			RVec3(0, 0, 0),
 			Quat::sIdentity(),
 			EMotionType::Static, Layers::NoCollision);
 
 		settings.mAllowDynamicOrKinematic = true;
-
-		Body* body = m_BodyInterface->CreateBody(settings);
-		body->SetCollideKinematicVsNonDynamic(true);
-
+		
 		m_EntityToBody[EntityID] = m_BodyInterface->CreateAndAddBody(settings,EActivation::Activate);
 		ID = m_EntityToBody[EntityID];
 	}
@@ -133,13 +131,13 @@ namespace Cresta
 			switch (shape)
 			{
 			case ColliderShape::BoxCollider:
-					body.SetShapeInternal(new BoxShape(cm_HalfExtents), true);
+				body.SetShapeInternal(new BoxShape(cm_HalfExtents), true);
 				break;
 			case ColliderShape::SphereCollider:
-					body.SetShapeInternal(new SphereShape(cm_Radius), true);
+				body.SetShapeInternal(new SphereShape(cm_Radius), true);
 				break;
 			case ColliderShape::CapsuleCollider:
-					body.SetShapeInternal(new CapsuleShape(cm_CapsuleHalfHeight, cm_Radius), true);
+				body.SetShapeInternal(new CapsuleShape(cm_CapsuleHalfHeight, cm_Radius), true);
 				break;
 			}
 			lock.ReleaseLock();
@@ -161,64 +159,34 @@ namespace Cresta
 
 	void Physics::SetBodyScale(const UUID& EntityID, const glm::vec3& scale)
 	{
-		// Retrieve the body ID from our entity-to-body map.
 		BodyID body_id = m_EntityToBody[EntityID];
-
-		// Lock the body for writing.
 		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), body_id);
-		if (!lock.Succeeded())
-			return;
-
-		Body& body = lock.GetBody();
-		const Shape* currentShape = body.GetShape();
-		if (currentShape == nullptr)
+		Body* body;
+		if (lock.Succeeded())
 		{
-			lock.ReleaseLock();
-			return;
+			Vec3 Scale({ scale.x,scale.y,scale.z });
+			body = &lock.GetBody();
+			Vec3 BodyScale = body->GetShape()->GetLocalBounds().GetExtent();
+			if(Scale == BodyScale)
+			{
+				lock.ReleaseLock();
+				return;
+			}
+			BodyScale = Scale / BodyScale;
+			Shape::ShapeResult new_shape = body->GetShape()->ScaleShape(BodyScale);
+			if (new_shape.IsValid())
+			{
+				m_PhysicsSystem->GetBodyInterfaceNoLock().SetShape(body->GetID(), new_shape.Get(), true, EActivation::Activate);
+			}
 		}
-
-		Shape* newShape = nullptr;
-
-		// Check if the shape is a BoxShape.
-		if (const BoxShape* box = dynamic_cast<const BoxShape*>(currentShape))
-		{
-			// Get current half extents and apply non-uniform scaling.
-			RVec3 currentHalfExtents = box->GetHalfExtent();
-			RVec3 newHalfExtents(
-				currentHalfExtents.GetX() * scale.x,
-				currentHalfExtents.GetY() * scale.y,
-				currentHalfExtents.GetZ() * scale.z
-			);
-			newShape = new BoxShape(newHalfExtents);
-		}
-		// Check if the shape is a SphereShape.
-		else if (const SphereShape* sphere = dynamic_cast<const SphereShape*>(currentShape))
-		{
-			// For a sphere, uniform scaling is assumed.
-			float newRadius = sphere->GetRadius() * scale.x; // or choose an average scale factor
-			newShape = new SphereShape(newRadius);
-		}
-		// Check if the shape is a CapsuleShape.
-		else if (const CapsuleShape* capsule = dynamic_cast<const CapsuleShape*>(currentShape))
-		{
-			// Assume that the capsule's radius scales uniformly (using scale.x) and
-			// its half-height scales with scale.y (this choice may vary based on your needs).
-			float newRadius = capsule->GetRadius() * scale.x;
-			float newHalfHeight = capsule->GetHalfHeightOfCylinder() * scale.y;
-			newShape = new CapsuleShape(newHalfHeight, newRadius);
-		}
-
-		// If a new shape was created, assign it to the body.
-		if (newShape != nullptr)
-		{
-			// The second parameter 'true' indicates that the old shape should be deleted.
-			body.SetShapeInternal(newShape, true);
-		}
-
 		lock.ReleaseLock();
-
+		AABox Box = body->GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
+		m_BodyInterface->ActivateBodiesInAABox(
+			Box,
+			m_PhysicsSystem->GetDefaultBroadPhaseLayerFilter(body->GetObjectLayer()),
+			m_PhysicsSystem->GetDefaultLayerFilter(body->GetObjectLayer())
+			);
 	}
-
 
 	void Physics::GetBodyRotation(const UUID& EntityID, glm::quat& rotation)
 	{
@@ -264,6 +232,7 @@ namespace Cresta
 	void Physics::Step()
 	{	
 		const int cCollisionSteps = 1;
+		m_PhysicsSystem->OptimizeBroadPhase();
 		m_PhysicsSystem->Update(cm_DeltaTime, cCollisionSteps, m_TempAllocator.get(), m_JobSystem.get());
 	}
 

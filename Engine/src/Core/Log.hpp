@@ -6,6 +6,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
+
 namespace Cresta 
 {
 	class Log
@@ -22,6 +23,8 @@ namespace Cresta
 	};
 
 }
+
+
 
 template<typename OStream, typename T>
 inline OStream& operator<<(OStream& os, const std::vector<T> vec)

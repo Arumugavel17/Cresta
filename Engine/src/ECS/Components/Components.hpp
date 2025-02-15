@@ -3,7 +3,7 @@
 #include "Renderer/Camera.hpp"
 #include "Renderer/Model.hpp"
 #include "Renderer/Texture.hpp"
-#include "UUID.hpp"
+#include "ECS/UUID.hpp"
 
 #include <exception>
 #include <glm/glm.hpp>
@@ -202,7 +202,7 @@ namespace Cresta
 
 	struct BoxCollider
 	{
-		int temp;
+		glm::vec3 Bounds = glm::vec3(1.0f);
 		std::string ToString()
 		{
 			return "Box Collider";

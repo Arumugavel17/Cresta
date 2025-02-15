@@ -1,7 +1,7 @@
 #pragma once
 #include "Crestaph.hpp"
 #include "Core/Events/Event.hpp"
-#include "Scene/Scene.hpp"
+#include "ECS/Scene/Scene.hpp"
 
 namespace Cresta 
 {

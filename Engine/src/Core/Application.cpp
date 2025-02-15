@@ -1,6 +1,6 @@
 #include "Application.hpp"
 #include "Core/Time.hpp"
-#include "Scene/SceneSerializer.hpp"
+#include "ECS/Scene/SceneSerializer.hpp"
 #include "Platform/OpenGL/Utils.hpp"
 
 #include "Crestaph.hpp"

@@ -1,6 +1,6 @@
 #include "SceneHierarchyPanel.hpp"
-#include "Scene/Components.hpp"
-#include "Scene/ComponentUI.hpp"
+#include "ECS/Components/Components.hpp"
+#include "ECS/Components/ComponentUI.hpp"
 
 #include "Core/Input.hpp"
 

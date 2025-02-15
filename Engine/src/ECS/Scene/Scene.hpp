@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Components.hpp"
 #include "Crestaph.hpp"
-#include "UUID.hpp"
+#include "ECS/UUID.hpp"
+#include "ECS/Components/Components.hpp"
 
 #include "entt/entt.hpp"
 #include "Renderer/Camera.hpp"

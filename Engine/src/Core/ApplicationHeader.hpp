@@ -14,7 +14,7 @@
 
 #include "Renderer/Renderer.hpp"
 
-#include "Scene/Scene.hpp"
+#include "ECS/Scene/Scene.hpp"
 
 #include <iostream>
 #include <memory>

@@ -1,8 +1,8 @@
 #include "Crestaph.hpp"
 #include "SceneSerializer.hpp"
-#include "Components.hpp"
-#include "UUID.hpp"
-#include "Entity.hpp"
+#include "ECS/Components/Components.hpp"
+#include "ECS/UUID.hpp"
+#include "ECS/Entity.hpp"
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 

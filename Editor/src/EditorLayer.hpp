@@ -7,10 +7,9 @@
 #include "Renderer/FrameBuffer.hpp"
 #include "Renderer/Model.hpp"
 
-#include "Scene/Scene.hpp"
-#include "Scene/Entity.hpp"
-#include "Scene/SceneHierarchyPanel.hpp"
-#include "Scene/ContentBrowserPanel.hpp"
+#include "ECS/Scene/Scene.hpp"
+#include "ECS/Entity.hpp"
+#include "ECS/Scene/SceneHierarchyPanel.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      
@@ -73,7 +72,6 @@ namespace Editor
 		bool m_VSync = true;
 		ImVec2 previousWindowSize = ImVec2(0, 0);
 		
-		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 		Cresta::Ref<SceneHierarchyPanel> m_HierarchyPanel;
 		Cresta::Ref<EditorCamera> m_EditorCamera;
 

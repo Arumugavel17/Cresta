@@ -1,5 +1,5 @@
-#include "Scene.hpp"
-#include "Entity.hpp"
+#include "ECS/Scene/Scene.hpp"
+#include "ECS/Entity.hpp"
 
 #include "Core/Physics/LinearMovement.hpp"
 
@@ -78,8 +78,10 @@ namespace Cresta
 	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
 		Entity entity = { m_Registry->create(), this };
+
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<Transform>();
+		
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 		m_EntityMap[uuid] = entity;
@@ -186,14 +188,22 @@ namespace Cresta
 		Save();
 		for (auto entity : m_EntityMap)
 		{
+			auto transform = m_Registry->get<Transform>(entity.second);
+
 			if (m_Registry->has<Rigidbody>(entity.second))
 			{
 				auto& rigidbody = m_Registry->get<Rigidbody>(entity.second);
 				SetUpCuboid(rigidbody);
 			}
-			auto transform = m_Registry->get<Transform>(entity.second);
+
+			if (m_Registry->has<BoxCollider>(entity.second))
+			{
+				auto& boxCollider = m_Registry->get<BoxCollider>(entity.second);
+				m_Physics->SetBodyScale(entity.first, transform.Scale);
+			}
+
 			m_Physics->SetBodyPosition(entity.first, transform.Translation);
-			m_Physics->SetBodyScale(entity.first, transform.Scale);
+			m_Physics->SetBodyRotation(entity.first, transform.Rotation);
 		}
 		m_Physics->Start();
 		m_Running = true;
@@ -210,9 +220,21 @@ namespace Cresta
 	{
 		if (m_Running)	
 		{
-			//m_Physics->Step();
+			for (auto entity : m_EntityMap)
+			{
+				if (m_Registry->has<BoxCollider>(entity.second))
+				{
+					auto transform = m_Registry->get<Transform>(entity.second);
+					if (std::abs(transform.Scale.x)  > 0.1f && std::abs(transform.Scale.y) > 0.1f && std::abs(transform.Scale.z) > 0.1f)
+					{
+						m_Physics->SetBodyScale(entity.first, transform.Scale);
+					}
+				}
+			}
+			m_Physics->Step();
 		}
 	}
+
 	void Scene::RenderScene()
 	{
 		for (auto entity : m_EntityMap)
@@ -222,17 +244,11 @@ namespace Cresta
 			{
 				if (m_Running)
 				{
-					/*glm::quat Rotation;
+					glm::quat Rotation;
 					auto physicsComponent = m_Registry->get<PhysicsComponent>(entity.second); 
 					m_Physics->GetBodyPosition(physicsComponent.BodyID, transform.Translation);
-					m_Physics->GetBodyRotation(physicsComponent.BodyID, Rotation);*/
-					//m_Physics->SetBodyScale(entity.first, transform.Scale);
-					//transform.SetRotation(Rotation);
-					if (m_Registry->has<Rigidbody>(entity.second))
-					{
-						auto& rigidbody = m_Registry->get<Rigidbody>(entity.second);
-						StepSimulation(transform, rigidbody, 0.001);
-					}
+					m_Physics->GetBodyRotation(physicsComponent.BodyID, Rotation);
+					transform.SetRotation(Rotation);
 				}
 				Renderer::DrawGizmoIndexed(m_Shader, m_PrimitiveCube, transform.GetTransform());
 			}

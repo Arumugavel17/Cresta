@@ -1,6 +1,6 @@
 #pragma once
 #include "Crestaph.hpp"
-#include "Scene/Components.hpp"
+#include "ECS/Components/Components.hpp"
 #include "glm/gtx/euler_angles.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 

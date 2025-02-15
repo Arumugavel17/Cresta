@@ -1,7 +1,7 @@
 #pragma once
 #include "Crestaph.hpp"
-#include "Entity.hpp"
-#include "SceneHierarchyPanelUtils.hpp"
+#include "ECS/Entity.hpp"
+#include "ECS/Scene/SceneHierarchyPanelUtils.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)
