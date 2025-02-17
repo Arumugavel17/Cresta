@@ -4,44 +4,71 @@
 #include "Renderer/Model.hpp"
 #include "Renderer/Texture.hpp"
 #include "ECS/UUID.hpp"
+#include "Core/Physics/PhysicsUtils.hpp"
 
 #include <exception>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Jolt/Physics/Body/BodyID.h>
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
 namespace Cresta 
 {
-	struct IDComponent
-	{
-		UUID ID;
+	class Entity;
 
-		IDComponent() = default;
-		IDComponent(const IDComponent&) = default;
+	class Component
+	{
+	//private:
+	//	Entity* m_Entity;
+	public:
+		template<typename... Dependencies>
+		struct Require {};
+
+		virtual ~Component() = default;
+		Component() = default;
+		//Component(Entity& entity) : m_Entity(&entity){}
+
+		virtual void OnComponentAdded(Entity& entity) {}
+		virtual void OnComponentRemoved(Entity& entity) {}
+		virtual std::string ToString() = 0;
 	};
 
-	struct TagComponent
+	class IDComponent
 	{
+	public:
+		UUID m_ID;
+	public:
+		IDComponent() = default;
+		void OnComponentAdded(Entity& entity);
+		void OnComponentRemoved() {}
+
+		std::string ToString()
+		{
+			return "IDComponent";
+		}
+	};
+
+	class TagComponent : public Component 
+	{
+	public:
 		std::string Tag;
 
 		TagComponent() = default;
-		TagComponent(const TagComponent&) = default;
+		//TagComponent(Entity& entity) : Component(entity) {}
 		TagComponent(const std::string& tag)
-			: Tag(tag) 
-		{
-		}
+			: Tag(tag) {}
 
-		std::string ToString()
+		void OnComponentAdded(Entity& entity) override;
+		std::string ToString() override
 		{
 			return "Tag Component";
 		}
 	};
 
-	struct Transform
+	class Transform : public Component 
 	{
+	public:
 		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
@@ -53,10 +80,9 @@ namespace Cresta
 		glm::vec3 Save_Scale = { 1.0f, 1.0f, 1.0f };
 
 		Transform() = default;
-		Transform(const Transform&) = default;
-		Transform(const glm::vec3& translation)
-			: Translation(translation) {
-		}
+		//Transform(Entity& entity) : Component(entity) {}
+ 		Transform(const glm::vec3& translation)
+			: Translation(translation) {}
 
 		void Save()
 		{
@@ -86,26 +112,26 @@ namespace Cresta
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}
 
-		std::string ToString()
+		std::string ToString() override
 		{
 			return "Transform Component";
 		}
+		
+		void OnComponentAdded(Entity& entity) override;
 	};
 
-	struct SpriteRenderer
+	class SpriteRenderer : public Component 
 	{
+	public:
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<Texture2D> Texture; 
 
 		char* path = new char[128]();
 		float MixFactor = 1.0f;
-
 		SpriteRenderer() = default;
-		SpriteRenderer(const SpriteRenderer&) = default;
+		//SpriteRenderer(Entity& entity) : Component(entity) {}
 		SpriteRenderer(const glm::vec4& color)
-			: Color(color) 
-		{
-		}
+			: Color(color) {}
 
 		void PathChanged()
 		{
@@ -120,65 +146,91 @@ namespace Cresta
 			}
 		}
 
-		std::string ToString()
+		std::string ToString() override
 		{
 			return "Sprite Renderer Component";
 		}
+
+		void OnComponentAdded(Entity& entity) override;
 	};
 
-	struct MeshRenderer
+	class MeshRenderer : public Component 
 	{
-		int ID;
-		std::string Path;
-		Ref<Model> Model;
+	private:
+		int m_ID;
+		std::string m_Path;
+		Ref<Model> m_Model;
+
+	public:
 		MeshRenderer() = default;
-		MeshRenderer(std::string v_path,int id) : Path(v_path), ID(id)
+		//MeshRenderer(Entity& entity) : Component(entity) {}
+		MeshRenderer(std::string path,int id) : m_Path(path), m_ID(id)
 		{
 			PathChanged();
 		}
-		MeshRenderer(const MeshRenderer&) = default;
 
 		void PathChanged()
 		{
-			if (Path != "")
+			if (m_Path != "")
 			{
-				Model = Model::Create(Path);
+				m_Model = Model::Create(m_Path);
 			}
 		}
 
-		std::string ToString()
-		{
-			return "Mesh Renderer";
-		}
+		void const SetID(int ID) { m_ID = ID; }
+		void const SetPath(std::string path) { m_Path = path; }
+		void const SetPath(char* path) { m_Path = std::string(path); }
+
+		inline const int GetID() const { return m_ID; }
+		inline const std::string& GetPath() const { return m_Path; }
+		inline const Ref<Model>& GetModel() const { return m_Model; }
+
+		void OnComponentAdded(Entity& entity) override;
+
+		std::string ToString() override { return "Mesh Renderer"; }
 	};
 
-	struct CameraComponent
+	class CameraComponent : public Component 
 	{
+	public:
 		Camera Camera;
 		bool Primary = true; // TODO: think about moving to Scene
 		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
-		CameraComponent(const CameraComponent&) = default;
-
-		std::string ToString()
+		//CameraComponent(Entity& entity) : Component(entity) {}
+		
+		std::string ToString() override
 		{
 			return "Camera Component";
 		}
-	};
 
-	struct PhysicsComponent
+		void OnComponentAdded(Entity& entity) override;
+	};
+	
+	class PhysicsComponent : public Component 
 	{
+	public:
 		JPH::BodyID BodyID; // Physics Body ID 
 
-		std::string ToString()
+		PhysicsComponent() = default;
+		//PhysicsComponent(Entity& entity) : Component(entity) {}
+
+
+		std::string ToString() override
 		{
 			return "Physics Component";
 		}
+
+		void OnComponentAdded(Entity& entity) override;
 	};
 
-	struct Rigidbody
+	class Rigidbody : public Component
 	{
+	public:
+		Rigidbody() = default;
+		//Rigidbody(Entity& entity) : PhysicsComponent(entity) {}
+
 		glm::vec3 Translation = glm::vec3(0.0f);
 		glm::vec3 Velocity = glm::vec3(0.0f,0.0f,0.0f);
 		glm::mat3 RotationMatrix = glm::mat3(1.0f);
@@ -194,47 +246,87 @@ namespace Cresta
 			Velocity = velocity;
 		}
 
-		std::string ToString()
+		std::string ToString() override
 		{
 			return "Rigid Body";
 		}
+
+		void OnComponentAdded(Entity& entity) override;
 	};
 
-	struct BoxCollider
+
+	class Collider : public Component
 	{
-		glm::vec3 Bounds = glm::vec3(1.0f);
-		std::string ToString()
+	public:
+		ColliderShape m_Shape;
+		Collider() = default;
+		Collider(ColliderShape shape) : m_Shape(shape){}
+		virtual std::string ToString() override
+		{
+			return "Collider";
+		}
+	};
+
+	class BoxCollider : public Collider
+	{
+	public:
+		BoxCollider() : Collider(ColliderShape::BoxCollider) {}
+
+		std::string ToString() override
 		{
 			return "Box Collider";
 		}
+
+		void OnComponentAdded(Entity& entity) override;
 	};
 
-	struct SphereCollider
+	class SphereCollider : public Collider
 	{
-		int temp;
-		std::string ToString()
+	public:
+		SphereCollider() : Collider(ColliderShape::SphereCollider) {}
+
+		std::string ToString() override
 		{
 			return "Sphere Collider";
 		}
+		void OnComponentAdded(Entity& entity) override;
 	};
 
-	struct CapsuleCollider
+	class CapsuleCollider : public Collider
 	{
-		int temp;
-		std::string ToString()
+	public:
+		CapsuleCollider() : Collider(ColliderShape::CapsuleCollider) {}
+
+		std::string ToString() override
 		{
 			return "Capsule Collider";
 		}
+		void OnComponentAdded(Entity& entity) override;
 	};
 
-	struct MeshCollider
+	class MeshCollider : public Collider
 	{
-		int temp;
-
-		std::string ToString()
+	public:
+		MeshCollider() : Collider(ColliderShape::MeshCollider) {}
+		
+		std::string ToString() override
 		{
 			return "Mesh Collider";
 		}
+		void OnComponentAdded(Entity& entity) override;
+	};
+
+	class ClassComponent : public Component
+	{
+	public:
+		ClassComponent() = default;
+		//ClassComponent(Entity& entity) : Component(entity) {}	
+
+		std::string ToString() override
+		{
+			return "Mesh Collider";
+		}
+		void OnComponentAdded(Entity& entity) override;
 	};
 
 	template<typename... Component>
@@ -242,7 +334,8 @@ namespace Cresta
 	{
 	};
 
+
 	using AllComponents =
 		ComponentGroup < Transform, SpriteRenderer, CameraComponent, MeshRenderer, 
-		PhysicsComponent, Rigidbody, BoxCollider, SphereCollider, CapsuleCollider, MeshCollider>;
+		PhysicsComponent, Rigidbody, BoxCollider, SphereCollider, CapsuleCollider, MeshCollider, ClassComponent>;
 }

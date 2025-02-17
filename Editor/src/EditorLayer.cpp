@@ -85,7 +85,6 @@ namespace Editor
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
             {
-
                 p_ActiveScene->RenderScene();
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
 
@@ -291,6 +290,7 @@ namespace Editor
         {
             if (m_EntityID >= 0)
             {
+                std::cout << "Entity ID: " << m_EntityID;
                 m_HierarchyPanel->SetSelectedEntity((entt::entity)m_EntityID);
                 return true;
             }

@@ -7,6 +7,14 @@ using namespace JPH::literals;
 
 namespace Cresta
 {
+	enum class ColliderShape
+	{
+		BoxCollider,
+		SphereCollider,
+		CapsuleCollider,
+		MeshCollider
+	};
+
 	namespace Layers
 	{
 		static constexpr ObjectLayer NON_MOVING = 0;

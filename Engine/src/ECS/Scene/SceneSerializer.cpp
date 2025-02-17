@@ -191,7 +191,7 @@ namespace Cresta
 			out << YAML::BeginMap; // MeshRendererComponent
 
 			auto& MeshRendererComponent = entity.GetComponent<MeshRenderer>();
-			out << YAML::Key << "path" << YAML::Value << MeshRendererComponent.Path;
+			out << YAML::Key << "path" << YAML::Value << MeshRendererComponent.GetPath();
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
@@ -288,8 +288,8 @@ namespace Cresta
 
 				CRESTA_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
-
+				Entity deserializedEntity = m_Scene->CreateEntity(name);
+				
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
@@ -328,23 +328,25 @@ namespace Cresta
 				auto RigibodyComponent = entity["Rigidbody"];
 				if (RigibodyComponent)
 				{
-					deserializedEntity.AddComponent<Rigidbody>();
+					auto& rigidbody = deserializedEntity.AddComponent<Rigidbody>();
 				}
 
 				auto SphereColliderComponent = entity["SphereCollider"];
 				if (SphereColliderComponent)
 				{
-					deserializedEntity.AddComponent<SphereCollider>();
+					auto& spherecollider = deserializedEntity.AddComponent<SphereCollider>();
 				}
+
 				auto CapsuleColliderComponenet = entity["CapsuleCollider"];
 				if (CapsuleColliderComponenet)
 				{
-					deserializedEntity.AddComponent<CapsuleCollider>();
+					auto& Capsulecollider = deserializedEntity.AddComponent<CapsuleCollider>();
 				}
+
 				auto BoxColliderComponent = entity["BoxCollider"];
 				if (BoxColliderComponent)
 				{
-					deserializedEntity.AddComponent<BoxCollider>();
+					auto& boxcollider = deserializedEntity.AddComponent<BoxCollider>();
 				}
 			}
 		}

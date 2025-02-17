@@ -84,12 +84,12 @@ namespace Cresta
 		void MeshRendererUI(MeshRenderer& component)
 		{
 			char buffer[128];
-			std::strncpy(buffer, component.Path.c_str(), sizeof(buffer) - 1);
+			std::strncpy(buffer, component.GetPath().c_str(), sizeof(buffer) - 1);
 			buffer[sizeof(buffer) - 1] = '\0';
 
 			if (ImGui::InputText("TextPath", buffer, sizeof(buffer), ImGuiInputTextFlags_ReadOnly))
 			{
-				component.Path = buffer;
+				component.SetPath(buffer);
 				component.PathChanged();
 			}
 
@@ -99,7 +99,7 @@ namespace Cresta
 				if (payload != nullptr)
 				{
 					std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
-					component.Path = tempString; // Assign directly to the std::string
+					component.SetPath(tempString); // Assign directly to the std::string
 					component.PathChanged();
 				}
 				ImGui::EndDragDropTarget();
@@ -126,6 +126,11 @@ namespace Cresta
 		void MeshColliderUI(MeshCollider& component)
 		{
 			ImGui::Text("Mesh Collider");
+		}
+
+		void ClassComponentUI(ClassComponent& component)
+		{
+			ImGui::Text("Class Component");
 		}
 	}
 }

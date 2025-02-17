@@ -10,7 +10,7 @@ namespace Cresta
 	{
 	public:
 		Entity() = default;
-		Entity::Entity(entt::entity handle, Scene* scene)
+		Entity(entt::entity handle, Scene* scene)
 			: m_EntityHandle(handle), m_Scene(scene)
 		{
 		}
@@ -18,9 +18,15 @@ namespace Cresta
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
+
 			CRESTA_ASSERT(HasComponent<T>(), "Entity already has component!");
+
+			// Create the component and add it to the registry
 			T& component = m_Scene->m_Registry->emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
-			m_Scene->OnComponentAdded<T>(*this, component);
+
+			// If T is derived from Component, call OnComponentAdded
+			component.OnComponentAdded(*this);
+
 			return component;
 		}
 
@@ -42,7 +48,7 @@ namespace Cresta
 		{
 			CRESTA_ASSERT(!HasComponent<T>(), "Entity does not have component!");
 			T& component = m_Scene->m_Registry->get<T>(m_EntityHandle);
-			m_Scene->OnComponentRemoved<T>(*this, component);
+			component.OnComponentRemoved(*this);
 			m_Scene->m_Registry->remove<T>(m_EntityHandle);
 		}
 
@@ -50,9 +56,8 @@ namespace Cresta
 		operator entt::entity() const { return m_EntityHandle; }
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
 
-		UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+		UUID GetUUID() { return GetComponent<IDComponent>().m_ID; }
 		const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
-
 
 		bool operator==(const Entity& other) const
 		{
@@ -64,6 +69,7 @@ namespace Cresta
 			return !(*this == other);
 		}
 
+		void OnUpdate();
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;

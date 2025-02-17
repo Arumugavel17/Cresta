@@ -1,1 +1,2 @@
-TODO: Create a Component Dependency Mechanism where on component can subscribe to another component.
+Severity	Code	Description	Project	File	Line	Suppression State	Details
+Error	LNK1163	invalid selection for COMDAT section 0x3DB9	C:\dev\Cresta\out\build\x64-Debug\Cresta	C:\dev\Cresta\out\build\x64-Debug\SceneSerializer.cpp.obj	1		

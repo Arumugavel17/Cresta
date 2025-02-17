@@ -13,13 +13,6 @@ using namespace JPH::literals;
 
 namespace Cresta
 {
-	enum class ColliderShape
-	{
-		BoxCollider,
-		SphereCollider,
-		CapsuleCollider
-	};
-
 	class Physics
 	{
 	public:
@@ -42,7 +35,7 @@ namespace Cresta
 		void AddRigidBody(const BodyID& ID);
 
 		void CreateBody(const UUID& EntityID,BodyID& ID);
-		void AddCollider(const BodyID& ID, ColliderShape shape);
+		void AddCollider(const BodyID& ID,const ColliderShape& shape);
 
 		void GetBodyPosition(const UUID& EntityID, glm::vec3& position);
 		void GetBodyRotation(const UUID& EntityID, glm::quat& rotation);

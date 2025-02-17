@@ -215,6 +215,7 @@ namespace Cresta
 			DisplayAddComponentEntry<SphereCollider>("SphereCollider");
 			DisplayAddComponentEntry<CapsuleCollider>("CapsuleCollider");
 			DisplayAddComponentEntry<MeshCollider>("MeshCollider");
+			DisplayAddComponentEntry<ClassComponent>("ClassComponent");
 			ImGui::EndPopup();
 		}
 
@@ -226,6 +227,7 @@ namespace Cresta
 		Utils::DrawComponent<SphereCollider>("SphereCollider", m_SelectedEntity, Utils::SphereColliderUI);
 		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider", m_SelectedEntity, Utils::CapsuleColliderUI);
 		Utils::DrawComponent<MeshCollider>("MeshCollider", m_SelectedEntity, Utils::MeshColliderUI);
+		Utils::DrawComponent<ClassComponent>("ClassComponent", m_SelectedEntity, Utils::ClassComponentUI);
 
 		ImGui::End();
 	}
@@ -237,6 +239,24 @@ namespace Cresta
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
 				m_SelectedEntity.AddComponent<T>();
+			//	if (std::is_base_of<PhysicsComponent, T>::value)
+			//	{
+			//		PhysicsComponent* physicscomponent = dynamic_cast<PhysicsComponent*>(component);
+			//		m_Scene->AddPhysicsObject(m_SelectedEntity.GetUUID(), physicscomponent->BodyID);
+			//		Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(physicscomponent);
+			//		if (rigidbody)
+			//		{
+			//			m_Scene->AddRigidBody(rigidbody->BodyID);
+			//		}
+			//		else if (std::is_base_of<Collider, T>::value)
+			//		{
+			//			Collider* collider = dynamic_cast<Collider*>(component);
+			//			if (collider)
+			//			{
+			//				m_Scene->AddCollider(collider->BodyID,collider->m_Shape);
+			//			}
+			//		}
+			//	}	
 				ImGui::CloseCurrentPopup();
 			}
 		}

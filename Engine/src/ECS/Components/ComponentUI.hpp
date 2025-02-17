@@ -20,6 +20,7 @@ namespace Cresta
 		void CapsuleColliderUI(CapsuleCollider& component);
 		void SphereColliderUI(SphereCollider& component);
 		void MeshColliderUI(MeshCollider& component);
+		void ClassComponentUI(ClassComponent& component);
 
 		template<typename T, typename UIFunction>
 		static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)

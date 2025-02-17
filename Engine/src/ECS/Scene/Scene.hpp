@@ -19,6 +19,7 @@ namespace Cresta
 	{
 	public:
 		Ref<entt::registry> m_Registry;
+		static Scope<Physics> m_Physics;
 
 	public:
 		template<typename... Components>
@@ -35,12 +36,12 @@ namespace Cresta
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity CreateEntity(const std::string& name = std::string());
-		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
-		Entity FindEntityByName(std::string name);
+		Entity& CreateEntity(const std::string& name = std::string());
+		Entity& CreateEntity(UUID& ID,const std::string& name = std::string());
+		Entity* FindEntityByName(std::string name);
 		Entity* FindEntityByID(entt::entity entitiyID);
 
-		Entity GetPrimaryCameraEntity();
+		Entity* GetPrimaryCameraEntity();
 
 		bool IsRunning() const { return m_Running; }
 		bool IsPaused() const { return m_Paused; }
@@ -49,20 +50,19 @@ namespace Cresta
 		void FixedUpate();
 		void RenderScene();
 
-		void DestroyEntity(Entity entity);
+		void DestroyEntity(Entity& entity);
 		void AddSceneUpdateCallBack(const std::function<void()>& func);
 		void RemoveSceneUpdateCallBack(const std::function<void()>& func);
 
+		void AddPhysicsObject(const UUID& entity, JPH::BodyID& ID);
+		void AddRigidBody(const JPH::BodyID& ID);
+		void Scene::AddCollider(const JPH::BodyID& ID, const ColliderShape& shape);
+
 	private:
-		template<typename T>
-		void OnComponentAdded(Entity entity, T& component);
-		template<typename T>
-		void OnComponentRemoved(Entity entity, T& component);
 		void InvokeSceneUpdateCallBacks();
 
 	private:
-		Scope<Physics> m_Physics;
-		std::unordered_map<UUID, entt::entity> m_EntityMap;
+		std::unordered_map<UUID, Entity> m_EntityMap;
 		std::vector<std::function<void()>> m_SceneUpdateCallBack;
 
 		bool m_Running = false;

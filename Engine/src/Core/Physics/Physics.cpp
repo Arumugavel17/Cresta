@@ -108,6 +108,7 @@ namespace Cresta
 
 	void Physics::CreateBody(const UUID& EntityID, BodyID& ID)
 	{
+		
 		RefConst<Shape> scaled_sphere_shape = /* new ScaledShape( */new SphereShape(1.0f)/*, {1.0f,1.0f,1.0f})*/;
 		BodyCreationSettings settings(scaled_sphere_shape,
 			RVec3(0, 0, 0),
@@ -120,7 +121,7 @@ namespace Cresta
 		ID = m_EntityToBody[EntityID];
 	}
 
-	void Physics::AddCollider(const BodyID& ID, ColliderShape shape)
+	void Physics::AddCollider(const BodyID& ID, const ColliderShape& shape)
 	{
 		m_BodyInterface->SetObjectLayer(ID, Layers::Colliders);
 	
