@@ -1,22 +1,44 @@
 #pragma once
 #include "Crestaph.hpp"
+#include "ECS/Components/Components.hpp"
 
 namespace Cresta
 {
 	extern "C" 
 	{
-		#include "lua.hpp"
+		#include "lua.h"
+		#include "lualib.h"
+		#include "lauxlib.h"
 	}
-	class LuaManager
+
+	static class LuaManager
 	{
 	public:
 		LuaManager();
 		~LuaManager();
 
-		void RunScript(const std::string& script);
+		static void CreateNewEnvironmentTable();
+		static void LoadFile(const std::string& path);
+		static void SetEnvironmentTable();
+		static void RunScript(const std::string& script);
+		static void PrepareScriptComponent(const std::string& script);
 
-		int callLuaFunction(const std::string& function, int a, int b);
+		static int callLuaFunction(const std::string& function, int a, int b);
 	private:
-		lua_State* L;
+		static lua_State* L;
+	};
+
+	class Script : public Component
+	{
+	public:
+		Script(const std::string& ScriptPath)
+		{
+			LuaManager::PrepareScriptComponent(ScriptPath);
+		}
+
+		std::string ToString() override
+		{
+			return "Script Component";
+		}
 	};
 }

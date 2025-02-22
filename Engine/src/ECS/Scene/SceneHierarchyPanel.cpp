@@ -215,7 +215,6 @@ namespace Cresta
 			DisplayAddComponentEntry<SphereCollider>("SphereCollider");
 			DisplayAddComponentEntry<CapsuleCollider>("CapsuleCollider");
 			DisplayAddComponentEntry<MeshCollider>("MeshCollider");
-			DisplayAddComponentEntry<ClassComponent>("ClassComponent");
 			ImGui::EndPopup();
 		}
 
@@ -227,8 +226,7 @@ namespace Cresta
 		Utils::DrawComponent<SphereCollider>("SphereCollider", m_SelectedEntity, Utils::SphereColliderUI);
 		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider", m_SelectedEntity, Utils::CapsuleColliderUI);
 		Utils::DrawComponent<MeshCollider>("MeshCollider", m_SelectedEntity, Utils::MeshColliderUI);
-		Utils::DrawComponent<ClassComponent>("ClassComponent", m_SelectedEntity, Utils::ClassComponentUI);
-
+		
 		ImGui::End();
 	}
 

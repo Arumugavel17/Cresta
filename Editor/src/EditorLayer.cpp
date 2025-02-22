@@ -98,8 +98,6 @@ namespace Editor
 
     bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
     {
-        // From glm::decompose in matrix_decompose.inl
-
         using namespace glm;
         using T = float;
 
@@ -600,13 +598,15 @@ namespace Editor
 
     void EditorLayer::NewScene()
     {
-        Application::GetApplication().NewScene();
+        Application::GetApplication().NewScene(); 
+        //p_ActiveScene will be updated by Application through SetSceneForLayers
         m_HierarchyPanel->SetScene(p_ActiveScene);
     }
 
     void EditorLayer::OpenScene()
     {
         Application::GetApplication().OpenScene();
+        //p_ActiveScene will be updated by Application through SetSceneForLayers
         m_HierarchyPanel->SetScene(p_ActiveScene); 
     }
 

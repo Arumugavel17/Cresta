@@ -97,14 +97,12 @@ namespace Editor
 
 	void EditorApplication::OpenProject()
 	{
-	
-
 		std::string filepath = Utils::FileDialogs::OpenProject();
 		if (!filepath.empty())
 		{
 			string strpath = filepath;
 			p_ActiveProjectPath.first = strpath.substr(strpath.find_last_of("\\") + 1, strpath.length());
-			p_ActiveProjectPath.second = strpath;
+			p_ActiveProjectPath.second = strpath.substr(0,strpath.find_last_of("\\"));
 
 			std::ifstream IProjectList("assets/Projects.json");
 			json j;
@@ -112,7 +110,7 @@ namespace Editor
 			IProjectList.close();
 			std::ofstream OProjectList("assets/Projects.json");
 			j[p_ActiveProjectPath.first] = {
-				filepath,
+				p_ActiveProjectPath.second,
 				std::time(nullptr)
 			};
 			OProjectList << j;
@@ -187,7 +185,6 @@ namespace Editor
 			if (ImGui::Button("New Project", ImVec2(ImGui::GetContentRegionAvail().x, 50)))
 			{
 				ShowNewProjectWindow = true;
-				//NewProject();
 			}
 			if (ImGui::Button("Open Project",ImVec2(ImGui::GetContentRegionAvail().x, 50)))
 			{

@@ -127,10 +127,5 @@ namespace Cresta
 		{
 			ImGui::Text("Mesh Collider");
 		}
-
-		void ClassComponentUI(ClassComponent& component)
-		{
-			ImGui::Text("Class Component");
-		}
 	}
 }

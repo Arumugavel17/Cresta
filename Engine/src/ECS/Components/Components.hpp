@@ -19,15 +19,12 @@ namespace Cresta
 
 	class Component
 	{
-	//private:
-	//	Entity* m_Entity;
 	public:
 		template<typename... Dependencies>
 		struct Require {};
 
 		virtual ~Component() = default;
 		Component() = default;
-		//Component(Entity& entity) : m_Entity(&entity){}
 
 		virtual void OnComponentAdded(Entity& entity) {}
 		virtual void OnComponentRemoved(Entity& entity) {}
@@ -41,7 +38,7 @@ namespace Cresta
 	public:
 		IDComponent() = default;
 		void OnComponentAdded(Entity& entity);
-		void OnComponentRemoved() {}
+		void OnComponentRemoved(Entity& entity);
 
 		std::string ToString()
 		{
@@ -55,11 +52,12 @@ namespace Cresta
 		std::string Tag;
 
 		TagComponent() = default;
-		//TagComponent(Entity& entity) : Component(entity) {}
 		TagComponent(const std::string& tag)
 			: Tag(tag) {}
 
 		void OnComponentAdded(Entity& entity) override;
+		void OnComponentRemoved(Entity& entity) override;
+
 		std::string ToString() override
 		{
 			return "Tag Component";
@@ -80,7 +78,6 @@ namespace Cresta
 		glm::vec3 Save_Scale = { 1.0f, 1.0f, 1.0f };
 
 		Transform() = default;
-		//Transform(Entity& entity) : Component(entity) {}
  		Transform(const glm::vec3& translation)
 			: Translation(translation) {}
 
@@ -118,79 +115,10 @@ namespace Cresta
 		}
 		
 		void OnComponentAdded(Entity& entity) override;
+		void OnComponentRemoved(Entity& entity) override;
 	};
 
-	class SpriteRenderer : public Component 
-	{
-	public:
-		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
-		Ref<Texture2D> Texture; 
-
-		char* path = new char[128]();
-		float MixFactor = 1.0f;
-		SpriteRenderer() = default;
-		//SpriteRenderer(Entity& entity) : Component(entity) {}
-		SpriteRenderer(const glm::vec4& color)
-			: Color(color) {}
-
-		void PathChanged()
-		{
-			try
-			{
-				Ref<Texture2D> ref = Texture2D::Create(path);
-				Texture = ref;
-			}
-			catch (std::exception e)
-			{
-				CRESTA_CORE_ERROR(e.what());
-			}
-		}
-
-		std::string ToString() override
-		{
-			return "Sprite Renderer Component";
-		}
-
-		void OnComponentAdded(Entity& entity) override;
-	};
-
-	class MeshRenderer : public Component 
-	{
-	private:
-		int m_ID;
-		std::string m_Path;
-		Ref<Model> m_Model;
-
-	public:
-		MeshRenderer() = default;
-		//MeshRenderer(Entity& entity) : Component(entity) {}
-		MeshRenderer(std::string path,int id) : m_Path(path), m_ID(id)
-		{
-			PathChanged();
-		}
-
-		void PathChanged()
-		{
-			if (m_Path != "")
-			{
-				m_Model = Model::Create(m_Path);
-			}
-		}
-
-		void const SetID(int ID) { m_ID = ID; }
-		void const SetPath(std::string path) { m_Path = path; }
-		void const SetPath(char* path) { m_Path = std::string(path); }
-
-		inline const int GetID() const { return m_ID; }
-		inline const std::string& GetPath() const { return m_Path; }
-		inline const Ref<Model>& GetModel() const { return m_Model; }
-
-		void OnComponentAdded(Entity& entity) override;
-
-		std::string ToString() override { return "Mesh Renderer"; }
-	};
-
-	class CameraComponent : public Component 
+	class CameraComponent : public Component
 	{
 	public:
 		Camera Camera;
@@ -198,144 +126,13 @@ namespace Cresta
 		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
-		//CameraComponent(Entity& entity) : Component(entity) {}
-		
+
 		std::string ToString() override
 		{
 			return "Camera Component";
 		}
 
 		void OnComponentAdded(Entity& entity) override;
+		void OnComponentRemoved(Entity& entity) override;
 	};
-	
-	class PhysicsComponent : public Component 
-	{
-	public:
-		JPH::BodyID BodyID; // Physics Body ID 
-
-		PhysicsComponent() = default;
-		//PhysicsComponent(Entity& entity) : Component(entity) {}
-
-
-		std::string ToString() override
-		{
-			return "Physics Component";
-		}
-
-		void OnComponentAdded(Entity& entity) override;
-	};
-
-	class Rigidbody : public Component
-	{
-	public:
-		Rigidbody() = default;
-		//Rigidbody(Entity& entity) : PhysicsComponent(entity) {}
-
-		glm::vec3 Translation = glm::vec3(0.0f);
-		glm::vec3 Velocity = glm::vec3(0.0f,0.0f,0.0f);
-		glm::mat3 RotationMatrix = glm::mat3(1.0f);
-		glm::vec3 RotationAxis = glm::vec3(0.0f,1.0f,0.0f);
-
-		void SetTranslation(glm::vec3 translation)
-		{
-			Translation = translation;
-		}
-
-		void SetVelocity(const glm::vec3& velocity)
-		{
-			Velocity = velocity;
-		}
-
-		std::string ToString() override
-		{
-			return "Rigid Body";
-		}
-
-		void OnComponentAdded(Entity& entity) override;
-	};
-
-
-	class Collider : public Component
-	{
-	public:
-		ColliderShape m_Shape;
-		Collider() = default;
-		Collider(ColliderShape shape) : m_Shape(shape){}
-		virtual std::string ToString() override
-		{
-			return "Collider";
-		}
-	};
-
-	class BoxCollider : public Collider
-	{
-	public:
-		BoxCollider() : Collider(ColliderShape::BoxCollider) {}
-
-		std::string ToString() override
-		{
-			return "Box Collider";
-		}
-
-		void OnComponentAdded(Entity& entity) override;
-	};
-
-	class SphereCollider : public Collider
-	{
-	public:
-		SphereCollider() : Collider(ColliderShape::SphereCollider) {}
-
-		std::string ToString() override
-		{
-			return "Sphere Collider";
-		}
-		void OnComponentAdded(Entity& entity) override;
-	};
-
-	class CapsuleCollider : public Collider
-	{
-	public:
-		CapsuleCollider() : Collider(ColliderShape::CapsuleCollider) {}
-
-		std::string ToString() override
-		{
-			return "Capsule Collider";
-		}
-		void OnComponentAdded(Entity& entity) override;
-	};
-
-	class MeshCollider : public Collider
-	{
-	public:
-		MeshCollider() : Collider(ColliderShape::MeshCollider) {}
-		
-		std::string ToString() override
-		{
-			return "Mesh Collider";
-		}
-		void OnComponentAdded(Entity& entity) override;
-	};
-
-	class ClassComponent : public Component
-	{
-	public:
-		ClassComponent() = default;
-		//ClassComponent(Entity& entity) : Component(entity) {}	
-
-		std::string ToString() override
-		{
-			return "Mesh Collider";
-		}
-		void OnComponentAdded(Entity& entity) override;
-	};
-
-	template<typename... Component>
-	struct ComponentGroup
-	{
-	};
-
-
-	using AllComponents =
-		ComponentGroup < Transform, SpriteRenderer, CameraComponent, MeshRenderer, 
-		PhysicsComponent, Rigidbody, BoxCollider, SphereCollider, CapsuleCollider, MeshCollider, ClassComponent>;
 }

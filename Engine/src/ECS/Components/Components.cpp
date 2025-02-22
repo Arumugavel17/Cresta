@@ -20,86 +20,30 @@ namespace Cresta
 		CRESTA_INFO("Transform OnComponentAdded");
 	}
 
-	void SpriteRenderer::OnComponentAdded(Entity& entity)
-	{
-		CRESTA_INFO("SpriteRenderer OnComponentAdded");
-	}
-
-	void MeshRenderer::OnComponentAdded(Entity& entity)
-	{
-		CRESTA_INFO("Mesh Renderer OnComponentAdded");
-		int ID = static_cast<int>(entt::entity(entity));
-		SetID(ID);
-	}
-
 	void CameraComponent::OnComponentAdded(Entity& entity)
 	{
 		CRESTA_INFO("CameraComponent OnComponentAdded");
 	}
 
-	void PhysicsComponent::OnComponentAdded(Entity& entity)
+	//Removed////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void IDComponent::OnComponentRemoved(Entity& entity)
 	{
-		CRESTA_INFO("PhysicsComponent OnComponentAdded");
-		Scene::m_Physics->CreateBody(entity.GetUUID(), BodyID);
+		CRESTA_INFO("IDComponent OnComponentRemoved");
 	}
 
-	void Rigidbody::OnComponentAdded(Entity& entity)
+	void TagComponent::OnComponentRemoved(Entity& entity)
 	{
-		if (!entity.HasComponent<PhysicsComponent>())
-		{
-			entity.AddComponent<PhysicsComponent>();
-		}
-		Scene::m_Physics->AddRigidBody(entity.GetComponent<PhysicsComponent>().BodyID);
-
-		CRESTA_INFO("Rigidbody OnComponentAdded");
+		CRESTA_INFO("TagComponent OnComponentRemoved");
 	}
 
-	void BoxCollider::OnComponentAdded(Entity& entity)
+	void Transform::OnComponentRemoved(Entity& entity)
 	{
-		if (!entity.HasComponent<PhysicsComponent>())
-		{
-			entity.AddComponent<PhysicsComponent>();
-		}
-		Scene::m_Physics->AddCollider(entity.GetComponent<PhysicsComponent>().BodyID,m_Shape);
-
-		CRESTA_INFO("BoxCollider OnComponentAdded");
+		CRESTA_INFO("Transform OnComponentRemoved");
 	}
 
-	void SphereCollider::OnComponentAdded(Entity& entity)
+	void CameraComponent::OnComponentRemoved(Entity& entity)
 	{
-		if (!entity.HasComponent<PhysicsComponent>())
-		{
-			entity.AddComponent<PhysicsComponent>();
-		}
-		Scene::m_Physics->AddCollider(entity.GetComponent<PhysicsComponent>().BodyID, m_Shape);
-
-		CRESTA_INFO("SphereCollider OnComponentAdded");
-	}
-
-	void CapsuleCollider::OnComponentAdded(Entity& entity)
-	{
-		if (!entity.HasComponent<PhysicsComponent>())
-		{
-			entity.AddComponent<PhysicsComponent>();
-		}
-		Scene::m_Physics->AddCollider(entity.GetComponent<PhysicsComponent>().BodyID, m_Shape);
-
-		CRESTA_INFO("CapsuleCollider OnComponentAdded");
-	}
-
-	void MeshCollider::OnComponentAdded(Entity& entity)
-	{
-		if (!entity.HasComponent<PhysicsComponent>())
-		{
-			entity.AddComponent<PhysicsComponent>();
-		}
-		Scene::m_Physics->AddCollider(entity.GetComponent<PhysicsComponent>().BodyID, m_Shape);
-
-		CRESTA_INFO("MeshCollider OnComponentAdded");
-	}
-
-	void ClassComponent::OnComponentAdded(Entity& entity)
-	{
-		CRESTA_INFO("ClassComponent OnComponentAdded");
+		CRESTA_INFO("CameraComponent OnComponentRemoved");
 	}
 }

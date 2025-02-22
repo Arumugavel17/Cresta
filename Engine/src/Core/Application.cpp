@@ -145,6 +145,7 @@ namespace Cresta
 
 	void Application::OpenScene(const std::filesystem::path& path)
 	{
+	
 		if (path.extension().string() != ".cresta")
 		{
 			CRESTA_CORE_WARN("Could not load {0} - not a scene file", path.filename().string());
@@ -155,7 +156,7 @@ namespace Cresta
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			Ref<Scene> temp = sp_ActiveScene;
+			//Ref<Scene> temp = sp_ActiveScene;
 			sp_ActiveScene = newScene;
 			p_ActiveScenePath = path;
 			SetSceneForLayers();
@@ -171,6 +172,7 @@ namespace Cresta
 		serializer.Serialize(path.string());
 	}
 
+	//All the layer has a local Reference to the scene this method updates all the Layer
 	void Application::SetSceneForLayers()
 	{
 		for (Layer* layer : p_LayerStack)

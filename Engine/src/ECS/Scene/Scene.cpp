@@ -1,21 +1,10 @@
 #include "Scene.hpp"
-#include "Scene.hpp"
 #include "ECS/Scene/Scene.hpp"
 #include "ECS/Entity.hpp"
 
 #include "Core/Physics/LinearMovement.hpp"
 
 #include <glm/glm.hpp>
-
-#define DEFINE_ON_COMPONENT_ADDED(Type, Code)      \
-template<>                                         \
-void Cresta::Scene::OnComponentAdded<Type>(Entity& entity, Type& component) \
-{                                                  \
-    Code                                           \
-}
-
-#define NO_OP {}  // For components that need no special handling
-
 
 namespace Cresta 
 {
@@ -73,13 +62,13 @@ namespace Cresta
 		sm_Count--;
 	}
 
-	Entity& Scene::CreateEntity(UUID& ID, const std::string& name)
+	Entity Scene::CreateEntity(UUID& ID, const std::string& name)
 	{
-		Entity& entity = CreateEntity(name);
+		Entity entity = CreateEntity(name);
 		return entity;
 	}
 
-	Entity& Scene::CreateEntity(const std::string& name)
+	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity = { m_Registry->create(), this };
 
@@ -101,22 +90,34 @@ namespace Cresta
 		InvokeSceneUpdateCallBacks();
 	}
 
-	void Scene::AddPhysicsObject(const UUID& entityID,JPH::BodyID& ID)
+	void Scene::AssignPhysicsBody(const UUID& entityID)
 	{
-		if(ID.IsInvalid())
-		{
-			m_Physics->CreateBody(entityID,ID);
-		}
+		m_Physics->CreateBody(entityID);
 	}
 
-	void Scene::AddRigidBody(const JPH::BodyID& ID)
+	void Scene::AddRigidBody(const UUID& entity)
 	{
-		m_Physics->AddRigidBody(ID);
+		m_Physics->AddRigidBody(entity);
 	}
 
-	void Scene::AddCollider(const JPH::BodyID& ID, const ColliderShape& shape)
+	void Scene::AddCollider(const UUID& entity, const ColliderShape& shape)
 	{
-		m_Physics->AddCollider(ID, shape);
+		m_Physics->AddCollider(entity, shape);
+	}
+
+	void Scene::RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID)
+	{
+		
+	}
+
+	void Scene::RemoveRigidBody(const UUID& entity)
+	{
+		m_Physics->MakeBodyStatic(entity);
+	}
+
+	void Scene::RemoveCollider(const UUID& entity)
+	{
+		m_Physics->RemoveCollider(entity);
 	}
 
 	void Scene::AddSceneUpdateCallBack(const std::function<void()>& func)
@@ -256,14 +257,13 @@ namespace Cresta
 		for (auto& entity : m_EntityMap)
 		{
 			auto& transform = m_Registry->get<Transform>(entity.second);
-			if (m_Registry->has<PhysicsComponent>(entity.second))
+			if (m_Registry->has<Rigidbody>(entity.second))
 			{
 				if (m_Running)
 				{
 					glm::quat Rotation;
-					auto& physicsComponent = m_Registry->get<PhysicsComponent>(entity.second); 
-					m_Physics->GetBodyPosition(physicsComponent.BodyID, transform.Translation);
-					m_Physics->GetBodyRotation(physicsComponent.BodyID, Rotation);
+					m_Physics->GetBodyPosition(entity.first, transform.Translation);
+					m_Physics->GetBodyRotation(entity.first, Rotation);
 					transform.SetRotation(Rotation);
 				}
 			}

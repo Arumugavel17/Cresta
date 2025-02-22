@@ -19,7 +19,6 @@ namespace Cresta
 	{
 	public:
 		Ref<entt::registry> m_Registry;
-		static Scope<Physics> m_Physics;
 
 	public:
 		template<typename... Components>
@@ -36,8 +35,8 @@ namespace Cresta
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity& CreateEntity(const std::string& name = std::string());
-		Entity& CreateEntity(UUID& ID,const std::string& name = std::string());
+		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntity(UUID& ID,const std::string& name = std::string());
 		Entity* FindEntityByName(std::string name);
 		Entity* FindEntityByID(entt::entity entitiyID);
 
@@ -54,9 +53,13 @@ namespace Cresta
 		void AddSceneUpdateCallBack(const std::function<void()>& func);
 		void RemoveSceneUpdateCallBack(const std::function<void()>& func);
 
-		void AddPhysicsObject(const UUID& entity, JPH::BodyID& ID);
-		void AddRigidBody(const JPH::BodyID& ID);
-		void Scene::AddCollider(const JPH::BodyID& ID, const ColliderShape& shape);
+		static void AssignPhysicsBody(const UUID& entity);
+		static void AddRigidBody(const UUID& entity);
+		static void AddCollider(const UUID& entity, const ColliderShape& shape);
+
+		static void RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID);
+		static void RemoveRigidBody(const UUID& entity);
+		static void RemoveCollider(const UUID& entity);
 
 	private:
 		void InvokeSceneUpdateCallBacks();
@@ -74,6 +77,7 @@ namespace Cresta
 		uint32_t m_ViewportHeight = 0;
 
 		static int sm_Count;
+		static Scope<Physics> m_Physics;
 
 		friend class Entity;
 		friend class SceneSerializer;

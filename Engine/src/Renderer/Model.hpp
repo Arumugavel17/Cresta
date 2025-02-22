@@ -73,7 +73,6 @@ namespace Cresta
 		Ref<Shader> m_Shader;
 		Ref<UniformBuffer> m_UniformBuffer;
 
-		glm::vec3 m_GlobalScaling;
 		std::string m_Directory;
 		std::vector<Mesh> m_Meshes;
 		std::vector<Ref<Texture2D>> m_TexturesLoaded;

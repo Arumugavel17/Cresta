@@ -1,4 +1,5 @@
 #include "Physics.hpp"
+#include "Physics.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
@@ -93,22 +94,25 @@ namespace Cresta
 		m_EntityToBody.clear();
 	}
 
-	void Physics::AddRigidBody(const BodyID& ID)
+	void Physics::AddRigidBody(const UUID& EntityID)
 	{
-		m_BodyInterface->SetMotionType(ID,EMotionType::Dynamic, EActivation::Activate);
-		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(ID);
+		m_BodyInterface->SetMotionType(m_EntityToBody[EntityID],EMotionType::Dynamic, EActivation::Activate);
+		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(m_EntityToBody[EntityID]);
 
 		if (Layer == Layers::Colliders)
 		{
 			return;
 		}
 		
-		m_BodyInterface->SetObjectLayer(ID,Layers::MOVING);
+		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID],Layers::MOVING);
 	}
 
-	void Physics::CreateBody(const UUID& EntityID, BodyID& ID)
+	void Physics::CreateBody(const UUID& EntityID)
 	{
-		
+		if (m_EntityToBody.find(EntityID) != m_EntityToBody.end())
+		{
+			return;
+		}
 		RefConst<Shape> scaled_sphere_shape = /* new ScaledShape( */new SphereShape(1.0f)/*, {1.0f,1.0f,1.0f})*/;
 		BodyCreationSettings settings(scaled_sphere_shape,
 			RVec3(0, 0, 0),
@@ -118,14 +122,13 @@ namespace Cresta
 		settings.mAllowDynamicOrKinematic = true;
 		
 		m_EntityToBody[EntityID] = m_BodyInterface->CreateAndAddBody(settings,EActivation::Activate);
-		ID = m_EntityToBody[EntityID];
 	}
 
-	void Physics::AddCollider(const BodyID& ID, const ColliderShape& shape)
+	void Physics::AddCollider(const UUID& EntityID, const ColliderShape& shape)
 	{
-		m_BodyInterface->SetObjectLayer(ID, Layers::Colliders);
+		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::Colliders);
 	
-		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), ID);
+		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), m_EntityToBody[EntityID]);
 		if (lock.Succeeded()) 
 		{
 			Body& body = lock.GetBody();
@@ -144,15 +147,6 @@ namespace Cresta
 			lock.ReleaseLock();
 		}
 	}
-
-	void Physics::GetBodyPosition(const UUID& EntityID, glm::vec3& position)
-	{
-		RVec3 bodyPosition = m_BodyInterface->GetCenterOfMassPosition(m_EntityToBody[EntityID]);
-		position.x = bodyPosition.GetX();
-		position.y = bodyPosition.GetY();
-		position.z = bodyPosition.GetZ();
-	}
-
 	void Physics::SetBodyPosition(const UUID& EntityID, const glm::vec3& position)
 	{
 		m_BodyInterface->SetPosition(m_EntityToBody[EntityID], { position.x, position.y, position.z }, EActivation::Activate);
@@ -179,14 +173,15 @@ namespace Cresta
 			{
 				m_PhysicsSystem->GetBodyInterfaceNoLock().SetShape(body->GetID(), new_shape.Get(), true, EActivation::Activate);
 			}
+			lock.ReleaseLock();
+			AABox Box = body->GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
+			
+			m_BodyInterface->ActivateBodiesInAABox(
+				Box,
+				m_PhysicsSystem->GetDefaultBroadPhaseLayerFilter(body->GetObjectLayer()),
+				m_PhysicsSystem->GetDefaultLayerFilter(body->GetObjectLayer())
+				);
 		}
-		lock.ReleaseLock();
-		AABox Box = body->GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
-		m_BodyInterface->ActivateBodiesInAABox(
-			Box,
-			m_PhysicsSystem->GetDefaultBroadPhaseLayerFilter(body->GetObjectLayer()),
-			m_PhysicsSystem->GetDefaultLayerFilter(body->GetObjectLayer())
-			);
 	}
 
 	void Physics::GetBodyRotation(const UUID& EntityID, glm::quat& rotation)
@@ -203,31 +198,12 @@ namespace Cresta
 		m_BodyInterface->SetRotation(m_EntityToBody[EntityID], { rotation.x, rotation.y, rotation.z , rotation.w}, EActivation::Activate);
 	}
 
-	void Physics::GetBodyPosition(const BodyID& ID, glm::vec3& position)
+	void Physics::GetBodyPosition(const UUID& EntityID, glm::vec3& position)
 	{
-		RVec3 bodyPosition = m_BodyInterface->GetCenterOfMassPosition(ID);
+		RVec3 bodyPosition = m_BodyInterface->GetCenterOfMassPosition(m_EntityToBody[EntityID]);
 		position.x = bodyPosition.GetX();
 		position.y = bodyPosition.GetY();
 		position.z = bodyPosition.GetZ();
-	}
-
-	void Physics::SetBodyPosition(const BodyID& ID, const glm::vec3& position)
-	{
-		m_BodyInterface->SetPosition(ID, { position.x, position.y, position.z }, EActivation::Activate);
-	}
-
-	void Physics::GetBodyRotation(const BodyID& ID, glm::quat& rotation)
-	{
-		Quat bodyRotation = m_BodyInterface->GetRotation(ID);
-		rotation.x = bodyRotation.GetX();
-		rotation.y = bodyRotation.GetY();
-		rotation.z = bodyRotation.GetZ();
-		rotation.w = bodyRotation.GetW();
-	}
-
-	void Physics::SetBodyRotation(const BodyID& ID, const glm::quat& rotation)
-	{
-		m_BodyInterface->SetRotation(ID, { rotation.x, rotation.y, rotation.z , rotation.w }, EActivation::Activate);
 	}
 
 	void Physics::Step()

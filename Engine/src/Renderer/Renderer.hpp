@@ -8,6 +8,7 @@
 
 namespace Cresta 
 {
+	
 	class Renderer
 	{
 	public:
@@ -37,6 +38,7 @@ namespace Cresta
 			glm::vec3 CamerPosition;
 			glm::mat4 ViewProjectionMatrix;
 		};
+
 
 		static Ref<Shader> sm_SpriteShader;
 		static Ref<VertexArray> sm_SpriteVertexArray;

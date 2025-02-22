@@ -39,9 +39,14 @@ namespace Cresta
 	{
 
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_JoinIdenticalVertices | aiProcess_GlobalScale |
+		const aiScene* scene = importer.ReadFile(path, 
+			aiProcess_JoinIdenticalVertices | 
+			aiProcess_GlobalScale | 
+			aiProcess_FindDegenerates | 
+			aiProcess_FixInfacingNormals |
 			aiProcess_Triangulate | aiProcess_GenSmoothNormals | 
-			aiProcess_CalcTangentSpace | aiProcess_ConvertToLeftHanded);
+			aiProcess_CalcTangentSpace |
+			aiProcess_ConvertToLeftHanded);
 
 		bool condition = !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode;
 
