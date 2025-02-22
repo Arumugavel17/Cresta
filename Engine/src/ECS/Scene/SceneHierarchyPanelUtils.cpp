@@ -1,9 +1,5 @@
 #include "SceneHierarchyPanelUtils.hpp"
 
-#include <imgui/imgui.h>
-#include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)
-#include <imgui/imgui_impl_glfw.h>   // Platform-specific (GLFW example)
-#include <imgui/imgui_impl_opengl3.h> // Renderer-specific (OpenGL example)
 
 namespace Cresta
 {
@@ -75,5 +71,6 @@ namespace Cresta
 			ImGui::Columns(1);
 			ImGui::PopID();
 		}
+
 	}
 }

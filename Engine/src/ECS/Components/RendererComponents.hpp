@@ -3,7 +3,7 @@
 #include "Components.hpp"
 
 namespace Cresta
-{
+{	
 	class SpriteRenderer : public Component
 	{
 	public:
@@ -12,10 +12,13 @@ namespace Cresta
 
 		char* path = new char[128]();
 		float MixFactor = 1.0f;
+
 		SpriteRenderer() = default;
 		SpriteRenderer(const glm::vec4& color)
 			: Color(color) {
 		}
+
+		void UI() override;
 
 		void PathChanged()
 		{
@@ -71,6 +74,8 @@ namespace Cresta
 
 		void OnComponentAdded(Entity& entity) override;
 		void OnComponentRemoved(Entity& entity) override;
+
+		void UI() override;
 
 		std::string ToString() override { return "Mesh Renderer"; }
 	};

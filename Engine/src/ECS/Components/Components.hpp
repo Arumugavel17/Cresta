@@ -26,6 +26,7 @@ namespace Cresta
 		virtual ~Component() = default;
 		Component() = default;
 
+		virtual void UI() = 0;
 		virtual void OnComponentAdded(Entity& entity) {}
 		virtual void OnComponentRemoved(Entity& entity) {}
 		virtual std::string ToString() = 0;
@@ -58,6 +59,10 @@ namespace Cresta
 		void OnComponentAdded(Entity& entity) override;
 		void OnComponentRemoved(Entity& entity) override;
 
+		void UI() override
+		{
+
+		}
 		std::string ToString() override
 		{
 			return "Tag Component";
@@ -114,6 +119,7 @@ namespace Cresta
 			return "Transform Component";
 		}
 		
+		void UI() override;
 		void OnComponentAdded(Entity& entity) override;
 		void OnComponentRemoved(Entity& entity) override;
 	};
@@ -132,6 +138,10 @@ namespace Cresta
 			return "Camera Component";
 		}
 
+		void UI() override
+		{
+
+		}
 		void OnComponentAdded(Entity& entity) override;
 		void OnComponentRemoved(Entity& entity) override;
 	};

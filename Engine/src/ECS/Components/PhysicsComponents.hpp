@@ -13,6 +13,8 @@ namespace Cresta
 		glm::mat3 RotationMatrix = glm::mat3(1.0f);
 		glm::vec3 RotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 
+		void UI() override;
+
 		void SetTranslation(glm::vec3 translation)
 		{
 			Translation = translation;
@@ -38,6 +40,12 @@ namespace Cresta
 		ColliderShape m_Shape;
 		Collider() = default;
 		Collider(ColliderShape shape) : m_Shape(shape) {}
+
+		void UI() override
+		{
+
+		}
+
 		virtual std::string ToString() override
 		{
 			return "Collider";
@@ -48,6 +56,8 @@ namespace Cresta
 	{
 	public:
 		BoxCollider() : Collider(ColliderShape::BoxCollider) {}
+
+		void UI() override;
 
 		std::string ToString() override
 		{
@@ -63,6 +73,7 @@ namespace Cresta
 	public:
 		SphereCollider() : Collider(ColliderShape::SphereCollider) {}
 
+		void UI() override;
 		std::string ToString() override
 		{
 			return "Sphere Collider";
@@ -76,6 +87,8 @@ namespace Cresta
 	public:
 		CapsuleCollider() : Collider(ColliderShape::CapsuleCollider) {}
 
+		void UI() override;
+		
 		std::string ToString() override
 		{
 			return "Capsule Collider";
@@ -88,6 +101,8 @@ namespace Cresta
 	{
 	public:
 		MeshCollider() : Collider(ColliderShape::MeshCollider) {}
+
+		void UI() override;
 
 		std::string ToString() override
 		{

@@ -90,6 +90,7 @@ add_subdirectory(Engine/vendor/assimp)
 add_subdirectory(Engine/vendor/glfw)
 add_subdirectory(Engine/vendor/spdlog)
 add_subdirectory(Engine/vendor/yaml-cpp)
+add_subdirectory(Engine/vendor/sol2-3.3.0)
 
 include_directories(Engine/src/)
 include_directories(Engine/vendor/entt)
@@ -97,6 +98,7 @@ include_directories(Engine/vendor/json/include)
 include_directories(Engine/vendor/lua/include)
 include_directories(Engine/vendor/assimp/include)
 include_directories(Engine/vendor/yaml-cpp/include)
+include_directories(Engine/vendor/sol2-3.3.0/include)
 
 
 file(GLOB IMGUI_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/imgui/imgui/*.h")

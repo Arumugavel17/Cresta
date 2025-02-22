@@ -1,7 +1,5 @@
 #include "SceneHierarchyPanel.hpp"
-#include "ECS/Components/Components.hpp"
-#include "ECS/Components/ComponentUI.hpp"
-
+#include "SceneHierarchyPanelUtils.hpp"
 #include "Core/Input.hpp"
 
 #include <imgui/imgui.h>
@@ -117,21 +115,6 @@ namespace Cresta
 		ImGuiTreeNodeFlags flags;
 		if (m_SelectedEntity == entity)
 		{
-			//ImVec2 viewportMinRegion = ImGui::GetWindowContentRegionMin();
-			//ImVec2 viewportMaxRegion = ImGui::GetWindowContentRegionMax();
-			//ImVec2 viewportOffset = ImGui::GetWindowPos();
-
-			//ImVec2 ViewportBoundsMin = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-			//ImVec2 ViewportBoundsMax = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
-			//ImGuizmo::SetOrthographic(false);
-			//ImGuizmo::SetDrawlist();
-
-			//ImGuizmo::SetRect(ViewportBoundsMin.x, ViewportBoundsMin.y, ViewportBoundsMax.x - ViewportBoundsMin.x, ViewportBoundsMin.y - ViewportBoundsMin.y);
-			//glm::mat4 camView = m_Camera->GetViewMatrix();
-			//glm::mat4 camProj = m_Camera->GetProjectionMatrix();
-			//EditTransform(&camView[0][0], &camProj[0][0], &entity.GetComponent<Transform>().GetTransform()[0][0]);
-
 			flags = ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_OpenOnArrow;
 
 		}
@@ -218,14 +201,14 @@ namespace Cresta
 			ImGui::EndPopup();
 		}
 
-		Utils::DrawComponent<Transform>("Transform", m_SelectedEntity, Utils::TransformUI);
-		Utils::DrawComponent<SpriteRenderer>("Sprite Renderer", m_SelectedEntity, Utils::SpriteRendererUI);
-		Utils::DrawComponent<MeshRenderer>("Mesh Renderer", m_SelectedEntity, Utils::MeshRendererUI);
-		Utils::DrawComponent<Rigidbody>("RigidBody", m_SelectedEntity, Utils::RigidbodyUI);
-		Utils::DrawComponent<BoxCollider>("BoxCollider", m_SelectedEntity, Utils::BoxColliderUI);
-		Utils::DrawComponent<SphereCollider>("SphereCollider", m_SelectedEntity, Utils::SphereColliderUI);
-		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider", m_SelectedEntity, Utils::CapsuleColliderUI);
-		Utils::DrawComponent<MeshCollider>("MeshCollider", m_SelectedEntity, Utils::MeshColliderUI);
+		Utils::DrawComponent<Transform>("Transform", m_SelectedEntity);
+		Utils::DrawComponent<SpriteRenderer>("Sprite Renderer", m_SelectedEntity);
+		Utils::DrawComponent<MeshRenderer>("Mesh Renderer", m_SelectedEntity);
+		Utils::DrawComponent<Rigidbody>("RigidBody", m_SelectedEntity);
+		Utils::DrawComponent<BoxCollider>("BoxCollider", m_SelectedEntity);
+		Utils::DrawComponent<SphereCollider>("SphereCollider", m_SelectedEntity);
+		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider", m_SelectedEntity);
+		Utils::DrawComponent<MeshCollider>("MeshCollider", m_SelectedEntity);
 		
 		ImGui::End();
 	}
@@ -237,24 +220,6 @@ namespace Cresta
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
 				m_SelectedEntity.AddComponent<T>();
-			//	if (std::is_base_of<PhysicsComponent, T>::value)
-			//	{
-			//		PhysicsComponent* physicscomponent = dynamic_cast<PhysicsComponent*>(component);
-			//		m_Scene->AddPhysicsObject(m_SelectedEntity.GetUUID(), physicscomponent->BodyID);
-			//		Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(physicscomponent);
-			//		if (rigidbody)
-			//		{
-			//			m_Scene->AddRigidBody(rigidbody->BodyID);
-			//		}
-			//		else if (std::is_base_of<Collider, T>::value)
-			//		{
-			//			Collider* collider = dynamic_cast<Collider*>(component);
-			//			if (collider)
-			//			{
-			//				m_Scene->AddCollider(collider->BodyID,collider->m_Shape);
-			//			}
-			//		}
-			//	}	
 				ImGui::CloseCurrentPopup();
 			}
 		}
