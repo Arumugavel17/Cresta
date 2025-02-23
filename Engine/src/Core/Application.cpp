@@ -2,6 +2,7 @@
 #include "Core/Time.hpp"
 #include "ECS/Scene/SceneSerializer.hpp"
 #include "Platform/OpenGL/Utils.hpp"
+#include "Renderer/PrimitiveMeshes.hpp"
 
 #include "Crestaph.hpp"
 
@@ -18,6 +19,7 @@ namespace Cresta
 
 		Log::Init();
 		Renderer::Init();
+		Primitive::Init();
 		Init();
 	}
 

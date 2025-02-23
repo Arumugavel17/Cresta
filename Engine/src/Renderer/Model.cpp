@@ -1,4 +1,5 @@
 #include "Model.hpp"
+#include "Model.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Shader.hpp"
 #include <future>
@@ -233,6 +234,20 @@ namespace Cresta
 		m_UniformBuffer = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(), 0, m_TextureHandles.data());
 	}
 
+	void Model::DrawWireFrame(const glm::vec3& position)
+	{
+		if (!m_UniformBuffer || m_VAOs.size() <= 0 || m_IsStatic)
+		{
+			return;
+		}
+		m_UniformBuffer->Bind();
+
+		for (int i = 0;i < m_VAOs.size();i++)
+		{
+			Renderer::DrawGizmoIndexed(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
+		}
+	}
+
 	void Model::Draw(const glm::vec3& position, int EntityID)
 	{
 		if (!m_UniformBuffer || m_VAOs.size() <= 0 || m_IsStatic)
@@ -243,11 +258,13 @@ namespace Cresta
 
 		for (int i = 0;i < m_VAOs.size();i++)
 		{
+			m_Shader->Bind();
+			m_Shader->SetInt("o_EntityID", EntityID);
 			Renderer::DrawIndexed(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
 		}
 	}
 
-	void Model::Draw(const glm::mat4& transform, int m_EntityID)
+	void Model::Draw(const glm::mat4& transform, int EntityID)
 	{
 		if (m_IsStatic)
 		{
@@ -257,7 +274,7 @@ namespace Cresta
 		for (int i = 0;i < m_VAOs.size();i++)
 		{
 			m_Shader->Bind();
-			m_Shader->SetInt("o_EntityID",m_EntityID);
+			m_Shader->SetInt("o_EntityID",EntityID);
 			Renderer::DrawIndexed(m_Shader, m_VAOs[i], transform);	
 		}
 	}

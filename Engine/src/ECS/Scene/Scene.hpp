@@ -9,11 +9,11 @@
 #include "Renderer/Shader.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/VertexArray.hpp"
-#include "Core/Physics/Physics.hpp"
 
 namespace Cresta 
 {
 	class Entity;
+	class Physics;
 
 	class Scene
 	{
@@ -77,10 +77,5 @@ namespace Cresta
 		uint32_t m_ViewportHeight = 0;
 
 		static int sm_Count;
-		static Scope<Physics> m_Physics;
-
-		friend class Entity;
-		friend class SceneSerializer;
-		friend class SceneHierarchyPanel;
 	};
 }

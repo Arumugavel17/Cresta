@@ -10,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Jolt/Physics/Body/BodyID.h>
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
@@ -23,10 +24,11 @@ namespace Cresta
 		template<typename... Dependencies>
 		struct Require {};
 
-		virtual ~Component() = default;
 		Component() = default;
+		virtual ~Component() = default;
 
 		virtual void UI() = 0;
+		virtual void OnGizmo() {}
 		virtual void OnComponentAdded(Entity& entity) {}
 		virtual void OnComponentRemoved(Entity& entity) {}
 		virtual std::string ToString() = 0;
@@ -59,10 +61,8 @@ namespace Cresta
 		void OnComponentAdded(Entity& entity) override;
 		void OnComponentRemoved(Entity& entity) override;
 
-		void UI() override
-		{
+		void UI() override {}
 
-		}
 		std::string ToString() override
 		{
 			return "Tag Component";
@@ -138,10 +138,7 @@ namespace Cresta
 			return "Camera Component";
 		}
 
-		void UI() override
-		{
-
-		}
+		void UI() override {}
 		void OnComponentAdded(Entity& entity) override;
 		void OnComponentRemoved(Entity& entity) override;
 	};

@@ -1,15 +1,11 @@
 #include "Scene.hpp"
-#include "ECS/Scene/Scene.hpp"
+#include "Core/Physics/Physics.hpp"
 #include "ECS/Entity.hpp"
-
-#include "Core/Physics/LinearMovement.hpp"
-
 #include <glm/glm.hpp>
 
 namespace Cresta 
 {
 	int Scene::sm_Count = 0;
-	Scope<Physics> Scene::m_Physics = nullptr;
 
 	Scene::Scene()
 	{
@@ -53,7 +49,6 @@ namespace Cresta
 		m_PrimitiveCube->SetIndexBuffer(IBuffer);
 
 		m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
-		m_Physics = CreateScope<Physics>();
 		m_Registry = CreateRef<entt::registry>();
 	}
 
@@ -92,17 +87,17 @@ namespace Cresta
 
 	void Scene::AssignPhysicsBody(const UUID& entityID)
 	{
-		m_Physics->CreateBody(entityID);
+		Physics::CreateBody(entityID);
 	}
 
 	void Scene::AddRigidBody(const UUID& entity)
 	{
-		m_Physics->AddRigidBody(entity);
+		Physics::AddRigidBody(entity);
 	}
 
 	void Scene::AddCollider(const UUID& entity, const ColliderShape& shape)
 	{
-		m_Physics->AddCollider(entity, shape);
+		Physics::AddCollider(entity, shape);
 	}
 
 	void Scene::RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID)
@@ -112,12 +107,12 @@ namespace Cresta
 
 	void Scene::RemoveRigidBody(const UUID& entity)
 	{
-		m_Physics->MakeBodyStatic(entity);
+		Physics::MakeBodyStatic(entity);
 	}
 
 	void Scene::RemoveCollider(const UUID& entity)
 	{
-		m_Physics->RemoveCollider(entity);
+		Physics::RemoveCollider(entity);
 	}
 
 	void Scene::AddSceneUpdateCallBack(const std::function<void()>& func)
@@ -216,20 +211,19 @@ namespace Cresta
 			if (m_Registry->has<Rigidbody>(entity.second))
 			{
 				auto& rigidbody = m_Registry->get<Rigidbody>(entity.second);
-				SetUpCuboid(rigidbody);
 			}
 
-			m_Physics->SetBodyPosition(entity.first, transform.Translation);
-			m_Physics->SetBodyRotation(entity.first, transform.Rotation);
+			Physics::SetBodyPosition(entity.first, transform.Translation);
+			Physics::SetBodyRotation(entity.first, transform.Rotation);
 		}
-		m_Physics->Start();
+		Physics::Start();
 		m_Running = true;
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		m_Running = false;
-		m_Physics->Stop();
+		Physics::Stop();
 		Reset();
 	}
 
@@ -244,11 +238,11 @@ namespace Cresta
 					auto transform = m_Registry->get<Transform>(entity.second);
 					if (std::abs(transform.Scale.x)  > 0.1f && std::abs(transform.Scale.y) > 0.1f && std::abs(transform.Scale.z) > 0.1f)
 					{
-						m_Physics->SetBodyScale(entity.first, transform.Scale);
+						Physics::SetBodyScale(entity.first, transform.Scale);
 					}
 				}
 			}
-			m_Physics->Step();
+			Physics::Step();
 		}
 	}
 
@@ -262,8 +256,8 @@ namespace Cresta
 				if (m_Running)
 				{
 					glm::quat Rotation;
-					m_Physics->GetBodyPosition(entity.first, transform.Translation);
-					m_Physics->GetBodyRotation(entity.first, Rotation);
+					Physics::GetBodyPosition(entity.first, transform.Translation);
+					Physics::GetBodyRotation(entity.first, Rotation);
 					transform.SetRotation(Rotation);
 				}
 			}

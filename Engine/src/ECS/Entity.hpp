@@ -11,14 +11,11 @@ namespace Cresta
 	public:
 		Entity() = default;
 		Entity(entt::entity handle, Scene* scene)
-			: m_EntityHandle(handle), m_Scene(scene)
-		{
-		}
+			: m_EntityHandle(handle), m_Scene(scene) {}
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
-
 			CRESTA_ASSERT(HasComponent<T>(), "Entity already has component!");
 
 			// Create the component and add it to the registry

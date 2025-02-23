@@ -44,10 +44,11 @@ namespace Cresta
 	public:
 		Model(int EntityID);
 		Model(const std::string& Path);
+
+		void DrawWireFrame(const glm::vec3& position);
 		void Draw(const glm::vec3& position = glm::vec3(1.0f) , int m_EntityID = 0);
 		void Draw(const glm::mat4& transform = glm::mat4(1.0f), int m_EntityID = 0);
 		static Ref<Model> Create(const std::string& Path);
-
 		
 	private:
 		

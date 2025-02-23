@@ -1,5 +1,6 @@
 #pragma once
 #include "Components.hpp"
+#include "Core/Physics/Physics.hpp"
 
 namespace Cresta
 {
@@ -7,22 +8,11 @@ namespace Cresta
 	{
 	public:
 		Rigidbody() = default;
-
-		glm::vec3 Translation = glm::vec3(0.0f);
-		glm::vec3 Velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::mat3 RotationMatrix = glm::mat3(1.0f);
-		glm::vec3 RotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-
 		void UI() override;
-
-		void SetTranslation(glm::vec3 translation)
-		{
-			Translation = translation;
-		}
 
 		void SetVelocity(const glm::vec3& velocity)
 		{
-			Velocity = velocity;
+			m_Velocity = velocity;
 		}
 
 		std::string ToString() override
@@ -32,6 +22,12 @@ namespace Cresta
 
 		void OnComponentAdded(Entity& entity) override;
 		void OnComponentRemoved(Entity& entity) override;
+
+	private:
+		glm::vec3 m_Velocity = glm::vec3(0.0f);
+		glm::vec3 m_CenterOfMass = glm::vec3(0.0f);
+		float m_Density = 0.1f;
+		bool m_IsStatic = false;
 	};
 
 	class Collider : public Component
@@ -41,11 +37,8 @@ namespace Cresta
 		Collider() = default;
 		Collider(ColliderShape shape) : m_Shape(shape) {}
 
-		void UI() override
-		{
-
-		}
-
+		virtual void UI() override {}
+		
 		virtual std::string ToString() override
 		{
 			return "Collider";
@@ -56,8 +49,21 @@ namespace Cresta
 	{
 	public:
 		BoxCollider() : Collider(ColliderShape::BoxCollider) {}
-
 		void UI() override;
+
+		void SetCenter(const glm::vec3& center)
+		{
+			m_Center.x = center.x;
+			m_Center.y = center.y;
+			m_Center.z = center.z;
+		}
+
+		void SetSize(const glm::vec3& size)
+		{
+			m_Size.x = size.x;
+			m_Size.y = size.y;
+			m_Size.z = size.z;
+		}
 
 		std::string ToString() override
 		{
@@ -66,6 +72,9 @@ namespace Cresta
 
 		void OnComponentAdded(Entity& entity) override;
 		void OnComponentRemoved(Entity& entity) override;
+	private:
+		glm::vec3 m_Center = glm::vec3(0.0f);
+		glm::vec3 m_Size = glm::vec3(0.0f);
 	};
 
 	class SphereCollider : public Collider
