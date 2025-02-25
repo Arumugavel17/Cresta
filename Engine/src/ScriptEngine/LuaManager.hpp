@@ -21,18 +21,4 @@ namespace Cresta
 	private:
 		static sol::state sm_lua;
 	};
-
-	class Script : public Component
-	{
-	public:
-		Script(const std::string& ScriptPath)
-		{
-			LuaManager::PrepareScriptComponent(ScriptPath);
-		}
-
-		std::string ToString() override
-		{
-			return "Script Component";
-		}
-	};
 }

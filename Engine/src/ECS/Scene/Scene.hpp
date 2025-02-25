@@ -18,7 +18,7 @@ namespace Cresta
 	class Scene
 	{
 	public:
-		Ref<entt::registry> m_Registry;
+		entt::registry m_Registry;
 
 	public:
 		template<typename... Components>

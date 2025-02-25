@@ -1,26 +1,31 @@
 #include "RendererComponents.hpp"
+#include "RendererComponents.hpp"
 #include "ECS/Entity.hpp"
 
 namespace Cresta
 {
-	void SpriteRenderer::OnComponentAdded(Entity& entity)
+	void SpriteRenderer::OnComponentAdded()
 	{
 		CRESTA_INFO("SpriteRenderer OnComponentAdded");
 	}
 
-	void MeshRenderer::OnComponentAdded(Entity& entity)
+	MeshRenderer::MeshRenderer(Entity* entity, const std::string& path, int id) : ComponentTemplate(entity), m_Path(path)
 	{
-		CRESTA_INFO("Mesh Renderer OnComponentAdded");
-		int ID = static_cast<int>(entt::entity(entity));
-		SetID(ID);
+		m_ID = static_cast<int>(entt::entity(*entity));
+		PathChanged();
 	}
 
-	void SpriteRenderer::OnComponentRemoved(Entity& entity)
+	void MeshRenderer::OnComponentAdded()
+	{
+		CRESTA_INFO("Mesh Renderer OnComponentAdded");
+	}
+
+	void SpriteRenderer::OnComponentRemoved()
 	{
 		CRESTA_INFO("SpriteRenderer OnComponentRemoved");
 	}
 
-	void MeshRenderer::OnComponentRemoved(Entity& entity)
+	void MeshRenderer::OnComponentRemoved()
 	{
 		CRESTA_INFO("Mesh Renderer OnComponentRemoved");
 	}

@@ -5,10 +5,10 @@
 
 namespace Cresta
 {
-	class ScriptComponent : public Component
+	class ScriptComponent : public ComponentTemplate
 	{
 	public:
-		ScriptComponent(std::filesystem::path ScriptPath) : m_ScriptPath(ScriptPath)
+		ScriptComponent(Entity* entiy, std::filesystem::path ScriptPath) : ComponentTemplate(entiy), m_ScriptPath(ScriptPath)
 		{
 			m_lua.open_libraries(sol::lib::base);
 

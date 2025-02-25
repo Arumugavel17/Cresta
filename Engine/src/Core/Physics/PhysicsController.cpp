@@ -92,19 +92,6 @@ namespace Cresta
 		m_EntityToBody.clear();
 	}
 
-	void PhysicsController::AddRigidBody(const UUID& EntityID)
-	{
-		m_BodyInterface->SetMotionType(m_EntityToBody[EntityID], EMotionType::Dynamic, EActivation::Activate);
-		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(m_EntityToBody[EntityID]);
-
-		if (Layer == Layers::Colliders)
-		{
-			return;
-		}
-
-		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::MOVING);
-	}
-
 	void PhysicsController::CreateBody(const UUID& EntityID)
 	{
 		if (m_EntityToBody.find(EntityID) != m_EntityToBody.end())
@@ -124,6 +111,7 @@ namespace Cresta
 
 	void PhysicsController::AddCollider(const UUID& EntityID, const ColliderShape& shape)
 	{
+		CreateBody(EntityID);
 		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::Colliders);
 
 		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), m_EntityToBody[EntityID]);
@@ -145,6 +133,22 @@ namespace Cresta
 			lock.ReleaseLock();
 		}
 	}
+
+	void PhysicsController::AddRigidBody(const UUID& EntityID)
+	{
+		CreateBody(EntityID);
+		m_BodyInterface->SetMotionType(m_EntityToBody[EntityID], EMotionType::Dynamic, EActivation::Activate);
+		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(m_EntityToBody[EntityID]);
+
+		if (Layer == Layers::Colliders)
+		{
+			return;
+		}
+
+		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::MOVING);
+	}
+
+
 	void PhysicsController::SetBodyPosition(const UUID& EntityID, const glm::vec3& position)
 	{
 		m_BodyInterface->SetPosition(m_EntityToBody[EntityID], { position.x, position.y, position.z }, EActivation::Activate);

@@ -4,10 +4,10 @@
 
 namespace Cresta
 {
-	class Rigidbody : public Component
+	class Rigidbody : public ComponentTemplate
 	{
 	public:
-		Rigidbody() = default;
+		Rigidbody(Entity* entity) : ComponentTemplate(entity) {}
 		void UI() override;
 
 		void SetVelocity(const glm::vec3& velocity)
@@ -20,8 +20,8 @@ namespace Cresta
 			return "Rigid Body";
 		}
 
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 
 	private:
 		glm::vec3 m_Velocity = glm::vec3(0.0f);
@@ -30,12 +30,11 @@ namespace Cresta
 		bool m_IsStatic = false;
 	};
 
-	class Collider : public Component
+	class Collider : public ComponentTemplate
 	{
 	public:
 		ColliderShape m_Shape;
-		Collider() = default;
-		Collider(ColliderShape shape) : m_Shape(shape) {}
+		Collider(Entity* entity, ColliderShape shape) : ComponentTemplate(entity), m_Shape(shape) {}
 
 		virtual void UI() override {}
 		
@@ -48,7 +47,7 @@ namespace Cresta
 	class BoxCollider : public Collider
 	{
 	public:
-		BoxCollider() : Collider(ColliderShape::BoxCollider) {}
+		BoxCollider(Entity* entity) : Collider(entity,ColliderShape::BoxCollider) {}
 		void UI() override;
 
 		void SetCenter(const glm::vec3& center)
@@ -70,8 +69,8 @@ namespace Cresta
 			return "Box Collider";
 		}
 
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 	private:
 		glm::vec3 m_Center = glm::vec3(0.0f);
 		glm::vec3 m_Size = glm::vec3(0.0f);
@@ -80,44 +79,41 @@ namespace Cresta
 	class SphereCollider : public Collider
 	{
 	public:
-		SphereCollider() : Collider(ColliderShape::SphereCollider) {}
-
+		SphereCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
 		void UI() override;
 		std::string ToString() override
 		{
 			return "Sphere Collider";
 		}
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 	};
 
 	class CapsuleCollider : public Collider
 	{
 	public:
-		CapsuleCollider() : Collider(ColliderShape::CapsuleCollider) {}
-
+		CapsuleCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
 		void UI() override;
 		
 		std::string ToString() override
 		{
 			return "Capsule Collider";
 		}
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 	};
 
 	class MeshCollider : public Collider
 	{
 	public:
-		MeshCollider() : Collider(ColliderShape::MeshCollider) {}
-
+		MeshCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
 		void UI() override;
 
 		std::string ToString() override
 		{
 			return "Mesh Collider";
 		}
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 	};
 }

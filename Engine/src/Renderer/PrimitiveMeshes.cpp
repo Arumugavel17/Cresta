@@ -1,33 +1,30 @@
 #include "PrimitiveMeshes.hpp"
-#include "Renderer/Model.hpp"
 
 namespace Cresta
 {
-	Ref<VertexArray> Primitive::sm_CubeGuizmo = nullptr;
-	Ref<VertexArray> Primitive::sm_SphereGuizmo = nullptr;
-	Ref<VertexArray> Primitive::sm_CapsuleGuizmo = nullptr;
-
+	Scope<Model> Primitive::sm_CubeModel = nullptr;
 	Scope<Model> Primitive::sm_SphereModel = nullptr;
 	Scope<Model> Primitive::sm_CapsuleModel = nullptr;
 
 	void Primitive::Init()
 	{
+		sm_CubeModel = CreateScope<Model>("assets/models/sphere/sphere.obj");
 		sm_SphereModel = CreateScope<Model>("assets/models/sphere/sphere.obj");
 		sm_CapsuleModel = CreateScope<Model>("assets/models/sphere/sphere.obj");
 	}
 
-	void Primitive::DrawCubeGuizmo()
+	void Primitive::DrawCubeGuizmo(const glm::vec3& position)
 	{
-
+		sm_CubeModel->DrawWireFrame(position);
 	}
 
-	void Primitive::DrawSphereGuizmo()
+	void Primitive::DrawSphereGuizmo(const glm::vec3& position)
 	{
-
+		sm_SphereModel->DrawWireFrame(position);
 	}
 
-	void Primitive::DrawCapsuleGuizmo()
+	void Primitive::DrawCapsuleGuizmo(const glm::vec3& position)
 	{
-
+		sm_CapsuleModel->DrawWireFrame(position);
 	}
 }

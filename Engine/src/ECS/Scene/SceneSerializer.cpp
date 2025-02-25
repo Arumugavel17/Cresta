@@ -235,7 +235,7 @@ namespace Cresta
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		m_Scene->m_Registry->each([&](auto entityID)
+		m_Scene->m_Registry.each([&](auto entityID)
 			{
 				Entity entity = { entityID, m_Scene.get() };
 				if (!entity)
@@ -322,7 +322,7 @@ namespace Cresta
 				{
 					std::string path = MeshRendererComponenet["path"].as<std::string>();
 
-					auto comp = deserializedEntity.AddComponent<MeshRenderer>(path, (int)(entt::entity)deserializedEntity);
+					auto& comp = deserializedEntity.AddComponent<MeshRenderer>(path, (int)(entt::entity)deserializedEntity);
 				}
 
 				auto RigibodyComponent = entity["Rigidbody"];

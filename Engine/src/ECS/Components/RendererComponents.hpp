@@ -4,7 +4,7 @@
 
 namespace Cresta
 {	
-	class SpriteRenderer : public Component
+	class SpriteRenderer : public ComponentTemplate
 	{
 	public:
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -13,10 +13,7 @@ namespace Cresta
 		char* path = new char[128]();
 		float MixFactor = 1.0f;
 
-		SpriteRenderer() = default;
-		SpriteRenderer(const glm::vec4& color)
-			: Color(color) {
-		}
+		SpriteRenderer(Entity* entity,const glm::vec4& color = glm::vec4( 1.0f, 1.0f, 1.0f, 1.0f)) : ComponentTemplate(entity), Color(color) {}
 
 		void UI() override;
 
@@ -38,11 +35,11 @@ namespace Cresta
 			return "Sprite Renderer Component";
 		}
 
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 	};
 
-	class MeshRenderer : public Component
+	class MeshRenderer : public ComponentTemplate
 	{
 	private:
 		int m_ID;
@@ -50,15 +47,11 @@ namespace Cresta
 		Ref<Model> m_Model;
 
 	public:
-		MeshRenderer() = default;
-		MeshRenderer(std::string path, int id) : m_Path(path), m_ID(id)
-		{
-			PathChanged();
-		}
+		MeshRenderer(Entity* entity, const std::string& path = std::string(), int id = -1);
 
 		void PathChanged()
 		{
-			if (m_Path != "")
+			if (!m_Path.empty())
 			{
 				m_Model = Model::Create(m_Path);
 			}
@@ -68,12 +61,20 @@ namespace Cresta
 		void const SetPath(std::string path) { m_Path = path; }
 		void const SetPath(char* path) { m_Path = std::string(path); }
 
+		void const Draw(const glm::mat4& transform) 
+		{ 
+			if (m_Model)
+			{
+				m_Model->Draw(transform,m_ID); 
+			}
+		}
+
 		inline const int GetID() const { return m_ID; }
 		inline const std::string& GetPath() const { return m_Path; }
 		inline const Ref<Model>& GetModel() const { return m_Model; }
 
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 
 		void UI() override;
 

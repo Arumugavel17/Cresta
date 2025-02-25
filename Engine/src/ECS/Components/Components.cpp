@@ -4,38 +4,37 @@
 
 namespace Cresta
 {
-	void IDComponent::OnComponentAdded(Entity& entity)
-	{
-		entity.GetComponent<IDComponent>().m_ID = UUID();
-	}
-
-	void TagComponent::OnComponentAdded(Entity& entity)
+	void IDComponent::OnComponentAdded()
 	{
 	}
 
-	void Transform::OnComponentAdded(Entity& entity)
+	void TagComponent::OnComponentAdded()
 	{
 	}
 
-	void CameraComponent::OnComponentAdded(Entity& entity)
+	void Transform::OnComponentAdded()
+	{
+	}
+
+	void CameraComponent::OnComponentAdded()
 	{
 	}
 
 	//Removed////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void IDComponent::OnComponentRemoved(Entity& entity)
+	void IDComponent::OnComponentRemoved()
 	{
 	}
 
-	void TagComponent::OnComponentRemoved(Entity& entity)
+	void TagComponent::OnComponentRemoved()
 	{
 	}
 
-	void Transform::OnComponentRemoved(Entity& entity)
+	void Transform::OnComponentRemoved()
 	{
 	}
 
-	void CameraComponent::OnComponentRemoved(Entity& entity)
+	void CameraComponent::OnComponentRemoved()
 	{
 	}
 }

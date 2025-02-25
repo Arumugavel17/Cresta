@@ -49,7 +49,6 @@ namespace Cresta
 		m_PrimitiveCube->SetIndexBuffer(IBuffer);
 
 		m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
-		m_Registry = CreateRef<entt::registry>();
 	}
 
 	Scene::~Scene()
@@ -65,14 +64,13 @@ namespace Cresta
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-		Entity entity = { m_Registry->create(), this };
+		Entity entity = { m_Registry.create(), this };
 
 		entity.AddComponent<IDComponent>();
 		entity.AddComponent<Transform>();
-
-		auto& tag = entity.AddComponent<TagComponent>();
-		tag.Tag = name.empty() ? "Entity" : name;
-		m_EntityMap[entity.GetComponent<IDComponent>().m_ID] = entity;
+		
+		auto& tag = entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
+		m_EntityMap[entity.GetComponent<IDComponent>().GetUUID()] = entity;
 
 		InvokeSceneUpdateCallBacks();
 		return entity;
@@ -81,7 +79,7 @@ namespace Cresta
 	void Scene::DestroyEntity(Entity& entity)
 	{
 		m_EntityMap.erase(entity.GetUUID());
-		m_Registry->destroy(entity);
+		m_Registry.destroy(entity);
 		InvokeSceneUpdateCallBacks();
 	}
 
@@ -135,7 +133,7 @@ namespace Cresta
 
 	void Scene::Save()
 	{
-		auto m_RigidbodyView = m_Registry->view<Transform>();
+		auto m_RigidbodyView = m_Registry.view<Transform>();
 		if (m_RigidbodyView.size() > 0)
 		{
 			for (auto entity : m_RigidbodyView)
@@ -148,7 +146,7 @@ namespace Cresta
 
 	void Scene::Reset()
 	{
-		auto m_RigidbodyView = m_Registry->view<Transform>();
+		auto m_RigidbodyView = m_Registry.view<Transform>();
 		if (m_RigidbodyView.size() > 0)
 		{
 			for (auto entity : m_RigidbodyView)
@@ -161,7 +159,7 @@ namespace Cresta
 
 	Entity* Scene::GetPrimaryCameraEntity()
 	{
-		auto view = m_Registry->view<CameraComponent>();
+		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
 			const auto& camera = view.get<CameraComponent>(entity);
@@ -175,7 +173,7 @@ namespace Cresta
 
 	Entity* Scene::FindEntityByName(std::string name)
 	{
-		auto view = m_Registry->view<TagComponent>();
+		auto view = m_Registry.view<TagComponent>();
 		for (auto entity : view)
 		{
 			const TagComponent& tc = view.get<TagComponent>(entity);
@@ -189,7 +187,7 @@ namespace Cresta
 
 	Entity* Scene::FindEntityByID(entt::entity entitiyID)
 	{
-		auto view = m_Registry->view<TagComponent>();
+		auto view = m_Registry.view<TagComponent>();
 		for (auto entity : view)
 		{
 			if (entity == entitiyID)
@@ -206,11 +204,11 @@ namespace Cresta
 		Save();
 		for (auto& entity : m_EntityMap)
 		{
-			auto transform = m_Registry->get<Transform>(entity.second);
+			auto& transform = m_Registry.get<Transform>(entity.second);
 
-			if (m_Registry->has<Rigidbody>(entity.second))
+			if (m_Registry.has<Rigidbody>(entity.second))
 			{
-				auto& rigidbody = m_Registry->get<Rigidbody>(entity.second);
+				auto& rigidbody = m_Registry.get<Rigidbody>(entity.second);
 			}
 
 			Physics::SetBodyPosition(entity.first, transform.Translation);
@@ -233,9 +231,9 @@ namespace Cresta
 		{
 			for (auto& entity : m_EntityMap)
 			{
-				if (m_Registry->has<BoxCollider>(entity.second))
+				if (m_Registry.has<BoxCollider>(entity.second))
 				{
-					auto transform = m_Registry->get<Transform>(entity.second);
+					auto& transform = m_Registry.get<Transform>(entity.second);
 					if (std::abs(transform.Scale.x)  > 0.1f && std::abs(transform.Scale.y) > 0.1f && std::abs(transform.Scale.z) > 0.1f)
 					{
 						Physics::SetBodyScale(entity.first, transform.Scale);
@@ -250,8 +248,8 @@ namespace Cresta
 	{
 		for (auto& entity : m_EntityMap)
 		{
-			auto& transform = m_Registry->get<Transform>(entity.second);
-			if (m_Registry->has<Rigidbody>(entity.second))
+			auto& transform = m_Registry.get<Transform>(entity.second);
+			if (m_Registry.has<Rigidbody>(entity.second))
 			{
 				if (m_Running)
 				{
@@ -262,17 +260,14 @@ namespace Cresta
 				}
 			}
 			Renderer::DrawGizmoIndexed(m_Shader, m_PrimitiveCube, transform.GetTransform());
-			if (m_Registry->has<MeshRenderer>(entity.second))
+			if (m_Registry.has<MeshRenderer>(entity.second))
 			{
-				auto meshRenderer = m_Registry->get<MeshRenderer>(entity.second);
-				if (meshRenderer.GetModel())
-				{
-					meshRenderer.GetModel()->Draw(transform.GetTransform(), meshRenderer.GetID());
-				}
+				auto& meshRenderer = m_Registry.get<MeshRenderer>(entity.second);
+				meshRenderer.Draw(transform.GetTransform());
 			}
-			if (m_Registry->has<SpriteRenderer>(entity.second))
+			if (m_Registry.has<SpriteRenderer>(entity.second))
 			{
-				auto spriteRenderer = m_Registry->get<SpriteRenderer>(entity.second);
+				auto& spriteRenderer = m_Registry.get<SpriteRenderer>(entity.second);
 				Renderer::DrawSprite(spriteRenderer.Color, spriteRenderer.Texture, transform.GetTransform(), spriteRenderer.MixFactor);
 			}
 		}

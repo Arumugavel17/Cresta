@@ -22,7 +22,7 @@ namespace Cresta
 		m_SelectedEntity = {};
 		m_EntityList.clear();
 
-		m_Scene->m_Registry->each([&](auto entityID)
+		m_Scene->m_Registry.each([&](auto entityID)
 			{
 				m_EntityList.push_back(new Entity{ entityID , m_Scene.get() });
 			});

@@ -3,58 +3,55 @@
 
 namespace Cresta
 {
-	void Rigidbody::OnComponentAdded(Entity& entity)
+	void Rigidbody::OnComponentAdded()
 	{
-		Scene::AssignPhysicsBody(entity.GetUUID());
-		Scene::AddRigidBody(entity.GetComponent<IDComponent>().m_ID);
+		Scene::AddRigidBody(p_Entity->GetComponent<IDComponent>().GetUUID());
 	}
 
-	void BoxCollider::OnComponentAdded(Entity& entity)
+	void BoxCollider::OnComponentAdded()
 	{
-		Scene::AssignPhysicsBody(entity.GetUUID());
-		Scene::AddCollider(entity.GetComponent<IDComponent>().m_ID, m_Shape);
+		Scene::AddCollider(p_Entity->GetComponent<IDComponent>().GetUUID(), m_Shape);
 	}
 
-	void SphereCollider::OnComponentAdded(Entity& entity)
+	void SphereCollider::OnComponentAdded()
 	{
-		Scene::AssignPhysicsBody(entity.GetUUID());
-		Scene::AddCollider(entity.GetComponent<IDComponent>().m_ID, m_Shape);
+		Scene::AddCollider(p_Entity->GetComponent<IDComponent>().GetUUID(), m_Shape);
 	}
 
-	void CapsuleCollider::OnComponentAdded(Entity& entity)
+	void CapsuleCollider::OnComponentAdded()
 	{
-		Scene::AssignPhysicsBody(entity.GetUUID());
-		Scene::AddCollider(entity.GetComponent<IDComponent>().m_ID, m_Shape);
+		Scene::AddCollider(p_Entity->GetComponent<IDComponent>().GetUUID(), m_Shape);
 	}
 
-	void MeshCollider::OnComponentAdded(Entity& entity)
+	void MeshCollider::OnComponentAdded()
 	{
-		Scene::AssignPhysicsBody(entity.GetUUID());
-		Scene::AddCollider(entity.GetComponent<IDComponent>().m_ID, m_Shape);
+		Scene::AddCollider(p_Entity->GetComponent<IDComponent>().GetUUID(), m_Shape);
 	}
 
-	void Rigidbody::OnComponentRemoved(Entity& entity)
+	//ComponentRemoved///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void Rigidbody::OnComponentRemoved()
 	{
-		Scene::RemoveRigidBody(entity.GetUUID());
+		Scene::RemoveRigidBody(p_Entity->GetUUID());
 	}
 
-	void BoxCollider::OnComponentRemoved(Entity& entity)
+	void BoxCollider::OnComponentRemoved()
 	{
-		Scene::RemoveCollider(entity.GetUUID());
+		Scene::RemoveCollider(p_Entity->GetUUID());
 	}
 
-	void SphereCollider::OnComponentRemoved(Entity& entity)
+	void SphereCollider::OnComponentRemoved()
 	{
-		Scene::RemoveCollider(entity.GetUUID());
+		Scene::RemoveCollider(p_Entity->GetUUID());
 	}
 
-	void CapsuleCollider::OnComponentRemoved(Entity& entity)
+	void CapsuleCollider::OnComponentRemoved()
 	{
-		Scene::RemoveCollider(entity.GetUUID());
+		Scene::RemoveCollider(p_Entity->GetUUID());
 	}
 
-	void MeshCollider::OnComponentRemoved(Entity& entity)
+	void MeshCollider::OnComponentRemoved()
 	{
-		Scene::RemoveCollider(entity.GetUUID());
+		Scene::RemoveCollider(p_Entity->GetUUID());
 	}
 }

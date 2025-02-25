@@ -18,58 +18,69 @@ namespace Cresta
 {
 	class Entity;
 
-	class Component
+	class ComponentTemplate
 	{
 	public:
-		template<typename... Dependencies>
-		struct Require {};
+		explicit ComponentTemplate(Entity* entity) : p_Entity(entity) {}
+		virtual ~ComponentTemplate() = default;
 
-		Component() = default;
-		virtual ~Component() = default;
+		ComponentTemplate(ComponentTemplate&& other) noexcept : p_Entity(other.p_Entity) {}
+
+		ComponentTemplate& operator=(ComponentTemplate&& other) noexcept
+		{
+			if (this != &other)
+			{
+				p_Entity = other.p_Entity;  // Transfer ownership
+			}
+			return *this;
+		}
 
 		virtual void UI() = 0;
 		virtual void OnGizmo() {}
-		virtual void OnComponentAdded(Entity& entity) {}
-		virtual void OnComponentRemoved(Entity& entity) {}
+		virtual void OnComponentAdded() {}
+		virtual void OnComponentRemoved() {}
 		virtual std::string ToString() = 0;
+
+		Entity* GetEntity() { return p_Entity; }
+		const Entity* GetEntity() const { return p_Entity; }
+
+	protected:
+		Entity* p_Entity;  // No longer const, but still private/protected
 	};
 
-	class IDComponent
+
+	class IDComponent 
 	{
-	public:
+	private:
 		UUID m_ID;
 	public:
-		IDComponent() = default;
-		void OnComponentAdded(Entity& entity);
-		void OnComponentRemoved(Entity& entity);
+		IDComponent(Entity* entity) {}
+		void OnComponentAdded();
+		void OnComponentRemoved();
 
+		inline const UUID& GetUUID() const { return m_ID; }
 		std::string ToString()
 		{
 			return "IDComponent";
 		}
 	};
 
-	class TagComponent : public Component 
+	class TagComponent : public ComponentTemplate
 	{
 	public:
 		std::string Tag;
-
-		TagComponent() = default;
-		TagComponent(const std::string& tag)
-			: Tag(tag) {}
-
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		TagComponent(Entity* entity, const std::string& tag) : ComponentTemplate(entity),Tag(tag) {}
 
 		void UI() override {}
-
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 		std::string ToString() override
 		{
 			return "Tag Component";
 		}
 	};
 
-	class Transform : public Component 
+	class Transform : public ComponentTemplate 
 	{
 	public:
 		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
@@ -82,9 +93,7 @@ namespace Cresta
 		glm::vec3 Save_Rotation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Save_Scale = { 1.0f, 1.0f, 1.0f };
 
-		Transform() = default;
- 		Transform(const glm::vec3& translation)
-			: Translation(translation) {}
+		Transform(Entity* entity) : ComponentTemplate(entity) {}
 
 		void Save()
 		{
@@ -120,18 +129,19 @@ namespace Cresta
 		}
 		
 		void UI() override;
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 	};
 
-	class CameraComponent : public Component
+	class CameraComponent : public ComponentTemplate
 	{
 	public:
+		CameraComponent(Entity* entity) : ComponentTemplate(entity) {}
+
 		Camera Camera;
 		bool Primary = true; // TODO: think about moving to Scene
 		bool FixedAspectRatio = false;
 
-		CameraComponent() = default;
 
 		std::string ToString() override
 		{
@@ -139,7 +149,7 @@ namespace Cresta
 		}
 
 		void UI() override {}
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 	};
 }
