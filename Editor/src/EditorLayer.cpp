@@ -196,16 +196,17 @@ namespace Editor
         ImVec2 m_ViewportBoundsMin = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
         ImVec2 m_ViewportBoundsMax = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-        Entity selectedEntity = m_HierarchyPanel->GetSelectedEntity();
-        if (selectedEntity && m_GizmoType != -1)
+        Entity* selectedEntity = m_HierarchyPanel->GetSelectedEntity();
+        if (selectedEntity && selectedEntity->IsValid() && m_GizmoType != -1)
         {
+
             ImGuizmo::SetDrawlist();
             ImGuizmo::SetRect(m_ViewportBoundsMin.x, m_ViewportBoundsMin.y, m_ViewportBoundsMax.x - m_ViewportBoundsMin.x, m_ViewportBoundsMax.y - m_ViewportBoundsMin.y);
 
             const glm::mat4& cameraProjection = m_EditorCamera->GetProjectionMatrix();
             glm::mat4 cameraView = m_EditorCamera->GetViewMatrix();
 
-            auto& tc = selectedEntity.GetComponent<Transform>();
+            auto& tc = selectedEntity->GetComponent<Transform>();
             glm::mat4 transform = tc.GetTransform();
 
             ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),

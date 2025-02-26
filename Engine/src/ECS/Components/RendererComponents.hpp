@@ -7,27 +7,19 @@ namespace Cresta
 	class SpriteRenderer : public ComponentTemplate
 	{
 	public:
-		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
-		Ref<Texture2D> Texture;
-
-		char* path = new char[128]();
-		float MixFactor = 1.0f;
-
 		SpriteRenderer(Entity* entity,const glm::vec4& color = glm::vec4( 1.0f, 1.0f, 1.0f, 1.0f)) : ComponentTemplate(entity), Color(color) {}
-
 		void UI() override;
 
-		void PathChanged()
+		void SetPath(const std::string& path)
 		{
-			try
-			{
-				Ref<Texture2D> ref = Texture2D::Create(path);
-				Texture = ref;
-			}
-			catch (std::exception e)
-			{
-				CRESTA_CORE_ERROR(e.what());
-			}
+			std::copy(path.begin(), path.end(), m_Path);
+			m_Path[path.size()] = '\0';
+			PathChanged();
+		}
+		
+		void OnUpdate() override
+		{
+
 		}
 
 		std::string ToString() override
@@ -37,6 +29,25 @@ namespace Cresta
 
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
+
+	private:
+		void PathChanged()
+		{
+			try
+			{
+				Ref<Texture2D> ref = Texture2D::Create(m_Path);
+				Texture = ref;
+			}
+			catch (std::exception e)
+			{
+				CRESTA_CORE_ERROR(e.what());
+			}
+		}
+	public:
+		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		Ref<Texture2D> Texture;
+		char* m_Path = new char[128]();
+		float MixFactor = 1.0f;
 	};
 
 	class MeshRenderer : public ComponentTemplate
@@ -73,6 +84,7 @@ namespace Cresta
 		inline const std::string& GetPath() const { return m_Path; }
 		inline const Ref<Model>& GetModel() const { return m_Model; }
 
+		void OnUpdate() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
 

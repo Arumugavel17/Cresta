@@ -57,6 +57,13 @@ namespace Cresta
 			m_Center.z = center.z;
 		}
 
+		void SetRotation(const glm::vec3& rotation)
+		{
+			m_Rotation.x = rotation.x;
+			m_Rotation.y = rotation.y;
+			m_Rotation.z = rotation.z;
+		}
+
 		void SetSize(const glm::vec3& size)
 		{
 			m_Size.x = size.x;
@@ -71,7 +78,9 @@ namespace Cresta
 
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
+
 	private:
+		glm::vec3 m_Rotation = glm::vec3(0.0f);
 		glm::vec3 m_Center = glm::vec3(0.0f);
 		glm::vec3 m_Size = glm::vec3(0.0f);
 	};

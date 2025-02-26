@@ -9,6 +9,8 @@ namespace Cresta
 		UUID();
 		UUID(uint64_t uuid);
 		UUID(const UUID&) = default;
+		UUID(UUID&& other) = default;
+		UUID& operator=(UUID&& other) = default;
 
 		operator uint64_t() const { return m_UUID; }
 	private:

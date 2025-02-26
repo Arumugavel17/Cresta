@@ -16,26 +16,35 @@
 
 namespace Cresta 
 {
+	// Helper to check if a class overrides OnUpdate
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnUpdate : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnUpdate<Base, Derived, std::void_t<decltype(&Base::OnUpdate), decltype(&Derived::OnUpdate)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnUpdate), decltype(&Derived::OnUpdate)>;
+	};
+
+
 	class Entity;
 
-	class ComponentTemplate
+	class ComponentTemplate 
 	{
 	public:
 		explicit ComponentTemplate(Entity* entity) : p_Entity(entity) {}
 		virtual ~ComponentTemplate() = default;
 
-		ComponentTemplate(ComponentTemplate&& other) noexcept : p_Entity(other.p_Entity) {}
-
-		ComponentTemplate& operator=(ComponentTemplate&& other) noexcept
-		{
-			if (this != &other)
-			{
-				p_Entity = other.p_Entity;  // Transfer ownership
+		ComponentTemplate(ComponentTemplate&& other) noexcept : p_Entity(std::exchange(other.p_Entity, nullptr)) {}
+		ComponentTemplate& operator=(ComponentTemplate&& other) noexcept {
+			if (this != &other) {
+				p_Entity = std::exchange(other.p_Entity, nullptr);
 			}
 			return *this;
 		}
 
 		virtual void UI() = 0;
+		virtual void OnUpdate() {}
+		virtual void OnFixedUpdate() {}
 		virtual void OnGizmo() {}
 		virtual void OnComponentAdded() {}
 		virtual void OnComponentRemoved() {}
@@ -45,16 +54,28 @@ namespace Cresta
 		const Entity* GetEntity() const { return p_Entity; }
 
 	protected:
-		Entity* p_Entity;  // No longer const, but still private/protected
+		Entity* p_Entity;
 	};
 
-
-	class IDComponent 
+	class IDComponent
 	{
 	private:
 		UUID m_ID;
 	public:
-		IDComponent(Entity* entity) {}
+
+		IDComponent() = default; // Ensure default constructibility
+		IDComponent(Entity* entity) { std::cout << "Construct"; }
+		IDComponent(IDComponent&& other) noexcept
+		{
+			std::cout << "Move Constructor Called\n";
+		}
+
+		// Move Assignment Operator (Debugging Output)
+		IDComponent& operator=(IDComponent&& other) noexcept
+		{
+			std::cout << "Move Assignment Called\n";
+			return *this;
+		}
 		void OnComponentAdded();
 		void OnComponentRemoved();
 
@@ -83,16 +104,6 @@ namespace Cresta
 	class Transform : public ComponentTemplate 
 	{
 	public:
-		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
-
-		glm::quat RotationQuat = { 0.0f, 0.0f, 0.0f, 0.0f};
-
-		glm::vec3 Save_Translation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Save_Rotation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Save_Scale = { 1.0f, 1.0f, 1.0f };
-
 		Transform(Entity* entity) : ComponentTemplate(entity) {}
 
 		void Save()
@@ -131,6 +142,17 @@ namespace Cresta
 		void UI() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
+
+	public:
+		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
+
+		glm::quat RotationQuat = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+		glm::vec3 Save_Translation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Save_Rotation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Save_Scale = { 1.0f, 1.0f, 1.0f };
 	};
 
 	class CameraComponent : public ComponentTemplate

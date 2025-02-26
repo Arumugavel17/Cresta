@@ -1,5 +1,6 @@
 #include "RendererComponents.hpp"
 #include "RendererComponents.hpp"
+#include "RendererComponents.hpp"
 #include "ECS/Entity.hpp"
 
 namespace Cresta
@@ -13,6 +14,11 @@ namespace Cresta
 	{
 		m_ID = static_cast<int>(entt::entity(*entity));
 		PathChanged();
+	}
+
+	void MeshRenderer::OnUpdate()
+	{
+		Draw(p_Entity->GetComponent<Transform>().GetTransform());
 	}
 
 	void MeshRenderer::OnComponentAdded()

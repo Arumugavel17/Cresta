@@ -14,6 +14,7 @@ namespace Cresta
 {
 	class Entity;
 	class Physics;
+	class SceneHierarchyPanel;
 
 	class Scene
 	{
@@ -35,8 +36,8 @@ namespace Cresta
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity CreateEntity(const std::string& name = std::string());
-		Entity CreateEntity(UUID& ID,const std::string& name = std::string());
+		Entity& CreateEntity(const std::string& name = std::string());
+		Entity& CreateEntity(UUID& ID,const std::string& name = std::string());
 		Entity* FindEntityByName(std::string name);
 		Entity* FindEntityByID(entt::entity entitiyID);
 
@@ -65,7 +66,7 @@ namespace Cresta
 		void InvokeSceneUpdateCallBacks();
 
 	private:
-		std::unordered_map<UUID, Entity> m_EntityMap;
+		std::unordered_map<UUID, Ref<Entity>> m_EntityMap;
 		std::vector<std::function<void()>> m_SceneUpdateCallBack;
 
 		bool m_Running = false;
@@ -77,5 +78,7 @@ namespace Cresta
 		uint32_t m_ViewportHeight = 0;
 
 		static int sm_Count;
+
+		friend class SceneHierarchyPanel;
 	};
 }

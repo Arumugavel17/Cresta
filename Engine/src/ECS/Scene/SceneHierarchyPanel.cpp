@@ -14,18 +14,13 @@ namespace Cresta
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
+		m_SelectedEntity = nullptr;
 		SetScene(scene);
 	}
 
 	void SceneHierarchyPanel::PrepareEntity()
 	{
-		m_SelectedEntity = {};
-		m_EntityList.clear();
-
-		m_Scene->m_Registry.each([&](auto entityID)
-			{
-				m_EntityList.push_back(new Entity{ entityID , m_Scene.get() });
-			});
+		m_SelectedEntity = nullptr;
 	}
 
 	void SceneHierarchyPanel::SetScene(const Ref<Scene>& scene)
@@ -43,19 +38,16 @@ namespace Cresta
 
 		if (m_Scene)
 		{
-
-			for (Entity* i : m_EntityList)
+			for (auto& i : m_Scene->m_EntityMap)
 			{
-				DrawEntityNode(*i);
+				DrawEntityNode(*i.second);
 			}
 
-			// Deselect entity when clicking on blank space
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
 			{
-				m_SelectedEntity = {};
+				m_SelectedEntity = nullptr;
 			}
 
-			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow("SceneHierarchyBlankContext", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
@@ -71,24 +63,24 @@ namespace Cresta
 		DrawInspectorWindow();
 	}
 
-	Entity SceneHierarchyPanel::GetSelectedEntity() const
+	Entity* SceneHierarchyPanel::GetSelectedEntity()
 	{
 		return m_SelectedEntity;
 	}
 
-	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	void SceneHierarchyPanel::SetSelectedEntity(Entity& entity)
 	{
-		m_SelectedEntity = entity;
+		m_SelectedEntity = &entity;
 	}
 
 	void SceneHierarchyPanel::SetSelectedEntity(entt::entity entity)
 	{
-		for (Entity* i : m_EntityList)
+		for (auto& i : m_Scene->m_EntityMap)
 		{
-			entt::entity k = (entt::entity)*i;
+			entt::entity k = (entt::entity)*i.second;
 			if (k == entity)
 			{
-				m_SelectedEntity = *i;
+				m_SelectedEntity = i.second.get();
 			}
 		}
 	}
@@ -108,12 +100,12 @@ namespace Cresta
 		}	
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::DrawEntityNode(Entity& entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
 		ImGuiTreeNodeFlags flags;
-		if (m_SelectedEntity == entity)
+		if (m_SelectedEntity && m_SelectedEntity->IsValid() && *m_SelectedEntity == entity)
 		{
 			flags = ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_OpenOnArrow;
 
@@ -127,7 +119,7 @@ namespace Cresta
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
-			m_SelectedEntity = entity;
+			m_SelectedEntity = &entity;
 		}
 
 		bool entityDeleted = false;
@@ -153,9 +145,9 @@ namespace Cresta
 		if (entityDeleted)
 		{
 			m_Scene->DestroyEntity(entity);
-			if (m_SelectedEntity == entity)
+			if (m_SelectedEntity && m_SelectedEntity->IsValid() && *m_SelectedEntity == entity)
 			{
-				m_SelectedEntity = {};
+				m_SelectedEntity = nullptr;
 			}
 		}
 	}
@@ -163,13 +155,13 @@ namespace Cresta
 	void SceneHierarchyPanel::DrawInspectorWindow()
 	{
 		ImGui::Begin("Inspector");
-		if (!m_SelectedEntity || !m_SelectedEntity.HasComponent<TagComponent>())
+		if (!m_SelectedEntity || !m_SelectedEntity->IsValid() || !m_SelectedEntity->HasComponent<TagComponent>())
 		{
 			ImGui::End();
 			return;
 		}
 
-		auto& tag = m_SelectedEntity.GetComponent<TagComponent>().Tag;
+		auto& tag = m_SelectedEntity->GetComponent<TagComponent>().Tag;
 
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
@@ -201,25 +193,25 @@ namespace Cresta
 			ImGui::EndPopup();
 		}
 
-		Utils::DrawComponent<Transform>("Transform", m_SelectedEntity);
-		Utils::DrawComponent<SpriteRenderer>("Sprite Renderer", m_SelectedEntity);
-		Utils::DrawComponent<MeshRenderer>("Mesh Renderer", m_SelectedEntity);
-		Utils::DrawComponent<Rigidbody>("RigidBody", m_SelectedEntity);
-		Utils::DrawComponent<BoxCollider>("BoxCollider", m_SelectedEntity);
-		Utils::DrawComponent<SphereCollider>("SphereCollider", m_SelectedEntity);
-		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider", m_SelectedEntity);
-		Utils::DrawComponent<MeshCollider>("MeshCollider", m_SelectedEntity);
+		Utils::DrawComponent<Transform>("Transform",			*m_SelectedEntity);
+		Utils::DrawComponent<SpriteRenderer>("Sprite Renderer", *m_SelectedEntity);
+		Utils::DrawComponent<MeshRenderer>("Mesh Renderer",		*m_SelectedEntity);
+		Utils::DrawComponent<Rigidbody>("RigidBody",			*m_SelectedEntity);
+		Utils::DrawComponent<BoxCollider>("BoxCollider",		*m_SelectedEntity);
+		Utils::DrawComponent<SphereCollider>("SphereCollider",	*m_SelectedEntity);
+		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider",*m_SelectedEntity);
+		Utils::DrawComponent<MeshCollider>("MeshCollider",		*m_SelectedEntity);
 		
 		ImGui::End();
 	}
 
 	template<typename T>
 	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
-		if (!m_SelectedEntity.HasComponent<T>())
+		if (!m_SelectedEntity->HasComponent<T>())
 		{
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
-				m_SelectedEntity.AddComponent<T>();
+				m_SelectedEntity->AddComponent<T>();
 				ImGui::CloseCurrentPopup();
 			}
 		}

@@ -65,7 +65,7 @@ namespace Cresta
 		ImGui::DragFloat("Mix Factor", &MixFactor, 0.1f, 0.0f, 100.0f);
 		ImGui::ColorEdit4("Color (Inline)", glm::value_ptr(Color), ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreview);
 
-		ImGui::InputText("Texture", path, 128, ImGuiInputTextFlags_ReadOnly);
+		ImGui::InputText("Texture", m_Path, 128, ImGuiInputTextFlags_ReadOnly);
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -74,9 +74,6 @@ namespace Cresta
 			{
 				// Get the dropped file path
 				std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
-				std::copy(tempString.begin(), tempString.end(), path);
-				path[tempString.size()] = '\0'; // Null-terminate the 
-				PathChanged();
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -115,7 +112,8 @@ namespace Cresta
 
 	void BoxCollider::UI()
 	{
-		ImGui::Text("Box Collider");
+		Cresta::Utils::DrawVec3Control("Center", m_Center);
+		Cresta::Utils::DrawVec3Control("Size", m_Size, 1.0f);
 	}
 
 	void CapsuleCollider::UI()

@@ -1,5 +1,12 @@
 #include "Entity.hpp"
 
-namespace Cresta {
-
+namespace Cresta 
+{
+	void Entity::OnUpdate()
+	{
+		for (auto i : OnUpdateFunctions)
+		{
+			i.second();
+		}
+	}
 }

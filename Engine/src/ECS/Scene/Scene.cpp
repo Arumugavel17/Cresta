@@ -56,21 +56,21 @@ namespace Cresta
 		sm_Count--;
 	}
 
-	Entity Scene::CreateEntity(UUID& ID, const std::string& name)
+	Entity& Scene::CreateEntity(UUID& ID, const std::string& name)
 	{
-		Entity entity = CreateEntity(name);
+		Entity& entity = CreateEntity(name);
 		return entity;
 	}
 
-	Entity Scene::CreateEntity(const std::string& name)
+	Entity& Scene::CreateEntity(const std::string& name)
 	{
-		Entity entity = { m_Registry.create(), this };
-
+		Ref<Entity> entity1 = CreateRef<Entity>(m_Registry.create(), this);
+		Entity& entity = *entity1;
 		entity.AddComponent<IDComponent>();
 		entity.AddComponent<Transform>();
 		
 		auto& tag = entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
-		m_EntityMap[entity.GetComponent<IDComponent>().GetUUID()] = entity;
+		m_EntityMap[entity.GetComponent<IDComponent>().GetUUID()] = entity1;
 
 		InvokeSceneUpdateCallBacks();
 		return entity;
@@ -204,11 +204,11 @@ namespace Cresta
 		Save();
 		for (auto& entity : m_EntityMap)
 		{
-			auto& transform = m_Registry.get<Transform>(entity.second);
+			auto& transform = m_Registry.get<Transform>(*entity.second);
 
-			if (m_Registry.has<Rigidbody>(entity.second))
+			if (m_Registry.has<Rigidbody>(*entity.second))
 			{
-				auto& rigidbody = m_Registry.get<Rigidbody>(entity.second);
+				auto& rigidbody = m_Registry.get<Rigidbody>(*entity.second);
 			}
 
 			Physics::SetBodyPosition(entity.first, transform.Translation);
@@ -231,9 +231,9 @@ namespace Cresta
 		{
 			for (auto& entity : m_EntityMap)
 			{
-				if (m_Registry.has<BoxCollider>(entity.second))
+				if (m_Registry.has<BoxCollider>(*entity.second))
 				{
-					auto& transform = m_Registry.get<Transform>(entity.second);
+					auto& transform = m_Registry.get<Transform>(*entity.second);
 					if (std::abs(transform.Scale.x)  > 0.1f && std::abs(transform.Scale.y) > 0.1f && std::abs(transform.Scale.z) > 0.1f)
 					{
 						Physics::SetBodyScale(entity.first, transform.Scale);
@@ -248,8 +248,9 @@ namespace Cresta
 	{
 		for (auto& entity : m_EntityMap)
 		{
-			auto& transform = m_Registry.get<Transform>(entity.second);
-			if (m_Registry.has<Rigidbody>(entity.second))
+			entity.second->OnUpdate();
+			auto& transform = m_Registry.get<Transform>(*entity.second);
+			if (m_Registry.has<Rigidbody>(*entity.second))
 			{
 				if (m_Running)
 				{
@@ -260,14 +261,14 @@ namespace Cresta
 				}
 			}
 			Renderer::DrawGizmoIndexed(m_Shader, m_PrimitiveCube, transform.GetTransform());
-			if (m_Registry.has<MeshRenderer>(entity.second))
+			/*if (m_Registry.has<MeshRenderer>(entity.second))
 			{
 				auto& meshRenderer = m_Registry.get<MeshRenderer>(entity.second);
 				meshRenderer.Draw(transform.GetTransform());
-			}
-			if (m_Registry.has<SpriteRenderer>(entity.second))
+			}*/
+			if (m_Registry.has<SpriteRenderer>(*entity.second))
 			{
-				auto& spriteRenderer = m_Registry.get<SpriteRenderer>(entity.second);
+				auto& spriteRenderer = m_Registry.get<SpriteRenderer>(*entity.second);
 				Renderer::DrawSprite(spriteRenderer.Color, spriteRenderer.Texture, transform.GetTransform(), spriteRenderer.MixFactor);
 			}
 		}
