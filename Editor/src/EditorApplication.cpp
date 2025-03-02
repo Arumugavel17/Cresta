@@ -90,7 +90,7 @@ namespace Editor
 		if (!filepath.empty())
 		{
 			string strpath = filepath;
-			p_ActiveProjectPath.first = strpath.substr(strpath.find_last_of("\\") + 1, strpath.length());
+			p_ActiveProjectPath.first = strpath.substr(strpath.find_last_of("/") + 1, strpath.length());
 			p_ActiveProjectPath.second = strpath;
 		}
 	}
@@ -101,8 +101,8 @@ namespace Editor
 		if (!filepath.empty())
 		{
 			string strpath = filepath;
-			p_ActiveProjectPath.first = strpath.substr(strpath.find_last_of("\\") + 1, strpath.length());
-			p_ActiveProjectPath.second = strpath.substr(0,strpath.find_last_of("\\"));
+			p_ActiveProjectPath.first = strpath.substr(strpath.find_last_of("/") + 1, strpath.length());
+			p_ActiveProjectPath.second = strpath.substr(0,strpath.find_last_of("/"));
 
 			std::ifstream IProjectList("assets/Projects.json");
 			json j;
@@ -258,7 +258,7 @@ namespace Editor
 									}
 									outFile.close();
 
-									std::ofstream Create(strProjectPath + "\\" + strProjectName + ".cproj");
+									std::ofstream Create(strProjectPath + "/" + strProjectName + ".cproj");
 									Create.close();
 
 									p_ActiveProjectPath.first = strProjectName;

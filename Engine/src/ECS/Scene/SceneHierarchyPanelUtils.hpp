@@ -11,7 +11,7 @@ namespace Cresta
 {
 	namespace Utils
 	{
-		void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f);
+		bool DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f);
 
 		template<typename T>
 		static void DrawComponent(std::string name, Entity& entity)

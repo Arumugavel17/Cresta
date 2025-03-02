@@ -1,5 +1,4 @@
 #include "Model.hpp"
-#include "Model.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Shader.hpp"
 #include <future>
@@ -21,6 +20,12 @@ namespace Cresta
 	Model::Model(const std::string& Path)
 	{
 		m_Shader = Shader::Create("assets/shaders/BindlessTextureShader.glsl");
+
+		for (const auto& pair : s_ModelsLoaded) 
+		{
+			CRESTA_CORE_INFO("Stored key: '{}'", pair.first);
+		}
+		CRESTA_CORE_INFO("Checking key: '{}'", Path);
 
 		if (s_ModelsLoaded.find(Path) == s_ModelsLoaded.end())
 		{
@@ -244,7 +249,25 @@ namespace Cresta
 
 		for (int i = 0;i < m_VAOs.size();i++)
 		{
+			m_Shader->Bind();
+			m_Shader->SetInt("o_EntityID", 0);
 			Renderer::DrawGizmoIndexed(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
+		}
+	}
+
+	void Model::DrawWireFrame(const glm::mat4& position)
+	{
+		if (!m_UniformBuffer || m_VAOs.size() <= 0 || m_IsStatic)
+		{
+			return;
+		}
+		m_UniformBuffer->Bind();
+
+		for (int i = 0;i < m_VAOs.size();i++)
+		{
+			m_Shader->Bind();
+			m_Shader->SetInt("o_EntityID", 0);
+			Renderer::DrawGizmoIndexed(m_Shader, m_VAOs[i], position);
 		}
 	}
 
@@ -282,5 +305,10 @@ namespace Cresta
 	Ref<Model> Model::Create(const std::string& Path)
 	{
 		return CreateRef<Model>(Path);
+	}
+
+	Model::~Model()
+	{
+		std::cout << "\n";
 	}
 }

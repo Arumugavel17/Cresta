@@ -5,8 +5,9 @@ namespace Cresta
 {
 	namespace Utils
 	{
-		void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue, float columnWidth)
+		bool DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue, float columnWidth)
 		{
+			bool changed = false;
 			ImGuiIO& io = ImGui::GetIO();
 			auto boldFont = io.Fonts->Fonts[0];
 
@@ -45,7 +46,10 @@ namespace Cresta
 				ImGui::PushFont(boldFont);
 
 				if (ImGui::Button(buttonLabel.substr(2, -1).c_str(), buttonSize))
+				{
 					*value = resetValue;
+					changed = true;
+				}
 
 				ImGui::PopFont();
 				ImGui::PopStyleColor(3);
@@ -54,7 +58,10 @@ namespace Cresta
 
 				float dragWidth = availableWidth * 0.2f;
 				ImGui::PushItemWidth(dragWidth);  // Set width for DragFloat
-				ImGui::DragFloat(dragFloatID.c_str(), value, 0.1f, 0.0f, 0.0f, "%.2f");
+				if (ImGui::DragFloat(dragFloatID.c_str(), value, 0.1f, 0.0f, 0.0f, "%.2f"))
+				{
+					changed = true;
+				}
 				ImGui::PopItemWidth(); // Restore the previous width
 				};
 
@@ -70,7 +77,8 @@ namespace Cresta
 			ImGui::PopStyleVar();
 			ImGui::Columns(1);
 			ImGui::PopID();
-		}
 
+			return changed;
+		}
 	}
 }

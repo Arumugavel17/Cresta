@@ -1,5 +1,6 @@
 #include "Scene.hpp"
 #include "Core/Physics/Physics.hpp"
+#include "Renderer/PrimitiveMeshes.hpp"
 #include "ECS/Entity.hpp"
 #include <glm/glm.hpp>
 
@@ -211,8 +212,8 @@ namespace Cresta
 				auto& rigidbody = m_Registry.get<Rigidbody>(*entity.second);
 			}
 
-			Physics::SetBodyPosition(entity.first, transform.Translation);
-			Physics::SetBodyRotation(entity.first, transform.Rotation);
+			Physics::SetBodyPosition(entity.first, transform.GetTranslation());
+			Physics::SetBodyRotation(entity.first, transform.GetRotation());
 		}
 		Physics::Start();
 		m_Running = true;
@@ -231,14 +232,15 @@ namespace Cresta
 		{
 			for (auto& entity : m_EntityMap)
 			{
-				if (m_Registry.has<BoxCollider>(*entity.second))
-				{
-					auto& transform = m_Registry.get<Transform>(*entity.second);
-					if (std::abs(transform.Scale.x)  > 0.1f && std::abs(transform.Scale.y) > 0.1f && std::abs(transform.Scale.z) > 0.1f)
-					{
-						Physics::SetBodyScale(entity.first, transform.Scale);
-					}
-				}
+				//if (m_Registry.has<BoxCollider>(*entity.second))
+				//{
+				//	auto& transform = m_Registry.get<Transform>(*entity.second);
+				//	if (std::abs(transform.Scale.x)  > 0.1f && std::abs(transform.Scale.y) > 0.1f && std::abs(transform.Scale.z) > 0.1f)
+				//	{
+				//		Physics::SetBodyScale(entity.first, transform.Scale);
+				//	}
+				//}
+				entity.second->OnFixedUpdate();
 			}
 			Physics::Step();
 		}
@@ -248,24 +250,9 @@ namespace Cresta
 	{
 		for (auto& entity : m_EntityMap)
 		{
+			auto& transform = m_Registry.get<Transform>(*entity.second);	
 			entity.second->OnUpdate();
-			auto& transform = m_Registry.get<Transform>(*entity.second);
-			if (m_Registry.has<Rigidbody>(*entity.second))
-			{
-				if (m_Running)
-				{
-					glm::quat Rotation;
-					Physics::GetBodyPosition(entity.first, transform.Translation);
-					Physics::GetBodyRotation(entity.first, Rotation);
-					transform.SetRotation(Rotation);
-				}
-			}
-			Renderer::DrawGizmoIndexed(m_Shader, m_PrimitiveCube, transform.GetTransform());
-			/*if (m_Registry.has<MeshRenderer>(entity.second))
-			{
-				auto& meshRenderer = m_Registry.get<MeshRenderer>(entity.second);
-				meshRenderer.Draw(transform.GetTransform());
-			}*/
+
 			if (m_Registry.has<SpriteRenderer>(*entity.second))
 			{
 				auto& spriteRenderer = m_Registry.get<SpriteRenderer>(*entity.second);

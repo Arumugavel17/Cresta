@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Application.hpp"
 #include "EditorLayer.hpp"
+#include "Renderer/PrimitiveMeshes.hpp"
 
 namespace Editor 
 {
@@ -11,6 +12,7 @@ namespace Editor
 		{
 			m_EditorLayer = new EditorLayer(sp_ActiveScene);
 			PushLayer(m_EditorLayer);
+			Primitive::Init();
 		}
 
 		~EditorApplication() = default;

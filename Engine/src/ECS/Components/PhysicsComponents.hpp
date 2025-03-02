@@ -20,10 +20,13 @@ namespace Cresta
 			return "Rigid Body";
 		}
 
+		void OnStart() override;
+		void OnFixedUpdate() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
 
 	private:
+
 		glm::vec3 m_Velocity = glm::vec3(0.0f);
 		glm::vec3 m_CenterOfMass = glm::vec3(0.0f);
 		float m_Density = 0.1f;
@@ -47,28 +50,22 @@ namespace Cresta
 	class BoxCollider : public Collider
 	{
 	public:
-		BoxCollider(Entity* entity) : Collider(entity,ColliderShape::BoxCollider) {}
+		BoxCollider(Entity* entity);
 		void UI() override;
 
 		void SetCenter(const glm::vec3& center)
 		{
-			m_Center.x = center.x;
-			m_Center.y = center.y;
-			m_Center.z = center.z;
+			m_Center = center;
 		}
 
 		void SetRotation(const glm::vec3& rotation)
 		{
-			m_Rotation.x = rotation.x;
-			m_Rotation.y = rotation.y;
-			m_Rotation.z = rotation.z;
+			m_Rotation = rotation;
 		}
 
 		void SetSize(const glm::vec3& size)
 		{
-			m_Size.x = size.x;
-			m_Size.y = size.y;
-			m_Size.z = size.z;
+			m_Size = size;
 		}
 
 		std::string ToString() override
@@ -76,13 +73,31 @@ namespace Cresta
 			return "Box Collider";
 		}
 
+		static void Revaluate(Entity* entity);
+
+		void OnStart() override;
+		void OnUpdate() override;
+		void OnFixedUpdate() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
 
+		glm::mat4 GetTransform() const
+		{
+			return glm::translate(glm::mat4(1.0f), m_Center)
+				* glm::toMat4(glm::quat(m_Rotation))
+				* glm::scale(glm::mat4(1.0f), m_Size);
+		}
+
+
 	private:
-		glm::vec3 m_Rotation = glm::vec3(0.0f);
-		glm::vec3 m_Center = glm::vec3(0.0f);
-		glm::vec3 m_Size = glm::vec3(0.0f);
+		
+		glm::vec3 m_Rotation;
+		glm::vec3 m_Center;
+		glm::vec3 m_Size;
+
+		glm::vec3 OffestLocalCenter;
+		glm::vec3 OffestLocalRotation;
+		glm::vec3 OffestLocalSize;
 	};
 
 	class SphereCollider : public Collider

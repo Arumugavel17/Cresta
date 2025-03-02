@@ -1,12 +1,29 @@
 #include "Entity.hpp"
+#include "Entity.hpp"
 
 namespace Cresta 
 {
+	void Entity::OnStart()
+	{
+		for (auto StartFunction : OnStartFunctions)
+		{
+			StartFunction.second();
+		}
+	}
+
 	void Entity::OnUpdate()
 	{
-		for (auto i : OnUpdateFunctions)
+		for (auto UpdateFunction : OnUpdateFunctions)
 		{
-			i.second();
+			UpdateFunction.second();
+		}
+	}
+
+	void Entity::OnFixedUpdate()
+	{
+		for (auto FixedUpdateFunction : OnFixedUpdateFunctions)
+		{
+			FixedUpdateFunction.second();
 		}
 	}
 }

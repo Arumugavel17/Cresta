@@ -1,1 +1,1 @@
-Go through the Components and Make sure there is no problem with Mesh Render Component and establish a relation between component and entity so the component can access the entity through entity variable but make it immutable.
+Read Through the Event Dispatcher System and Use Cherno's Event System and modify it so it can be used for Internal events of the project.

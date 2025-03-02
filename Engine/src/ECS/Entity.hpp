@@ -3,6 +3,7 @@
 #include "Scene/Scene.hpp"
 #include "Components/ComponentHeader.hpp"
 #include "entt/entt.hpp"
+#include "Core/Events/Event.hpp"
 
 namespace Cresta 
 {
@@ -32,9 +33,19 @@ namespace Cresta
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle,this, std::forward<Args>(args)...);
 			component.OnComponentAdded();
 
+			if constexpr (has_overridden_OnStart<ComponentTemplate, T>::value)
+			{
+				OnStartFunctions.emplace_back(typeid(T).name(), [&]() { this->GetComponent<T>().OnStart(); });
+			}
+
 			if constexpr (has_overridden_OnUpdate<ComponentTemplate, T>::value)
 			{
 				OnUpdateFunctions.emplace_back(typeid(T).name(), [&]() { this->GetComponent<T>().OnUpdate(); });
+			}
+
+			if constexpr (has_overridden_OnFixedUpdate<ComponentTemplate, T>::value)
+			{
+				OnFixedUpdateFunctions.emplace_back(typeid(T).name(), [&]() { this->GetComponent<T>().OnFixedUpdate(); });
 			}
 
 			return component;
@@ -61,10 +72,20 @@ namespace Cresta
 			component.OnComponentRemoved();
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 
+			OnStartFunctions.erase(
+				std::remove_if(OnStartFunctions.begin(), OnStartFunctions.end(),
+					[&](const auto& pair) { return pair.first == typeid(T).name(); }),
+				OnStartFunctions.end());
+
 			OnUpdateFunctions.erase(
 				std::remove_if(OnUpdateFunctions.begin(), OnUpdateFunctions.end(),
 					[&](const auto& pair) { return pair.first == typeid(T).name(); }),
 				OnUpdateFunctions.end());
+
+			OnFixedUpdateFunctions.erase(
+				std::remove_if(OnFixedUpdateFunctions.begin(), OnFixedUpdateFunctions.end(),
+					[&](const auto& pair) { return pair.first == typeid(T).name(); }),
+				OnFixedUpdateFunctions.end());
 		}
 
 		operator entt::entity() const { return m_EntityHandle; }
@@ -84,12 +105,15 @@ namespace Cresta
 		{
 			return !(*this == other);
 		}
-
+		
+		void OnStart();
 		void OnUpdate();
+		void OnFixedUpdate();
 
 	private:
-		std::vector<std::pair<std::string,std::function<void()>>> OnUpdateFunctions;
-		std::vector<std::pair<std::string,std::function<void()>>> OnFixedUpdateFunctions;
+		std::vector<std::pair<std::string, std::function<void()>>> OnStartFunctions;
+		std::vector<std::pair<std::string, std::function<void()>>> OnUpdateFunctions;
+		std::vector<std::pair<std::string, std::function<void()>>> OnFixedUpdateFunctions;
 
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;

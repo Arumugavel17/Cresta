@@ -57,9 +57,6 @@ namespace Cresta
 		std::string m_Path;
 		Ref<Model> m_Model;
 
-	public:
-		MeshRenderer(Entity* entity, const std::string& path = std::string(), int id = -1);
-
 		void PathChanged()
 		{
 			if (!m_Path.empty())
@@ -67,6 +64,9 @@ namespace Cresta
 				m_Model = Model::Create(m_Path);
 			}
 		}
+
+	public:
+		MeshRenderer(Entity* entity, const std::string& path = std::string(), int id = -1);
 
 		void const SetID(int ID) { m_ID = ID; }
 		void const SetPath(std::string path) { m_Path = path; }
@@ -76,7 +76,7 @@ namespace Cresta
 		{ 
 			if (m_Model)
 			{
-				m_Model->Draw(transform,m_ID); 
+				m_Model->Draw(transform,m_ID);	
 			}
 		}
 

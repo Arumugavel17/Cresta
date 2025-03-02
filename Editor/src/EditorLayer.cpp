@@ -218,10 +218,11 @@ namespace Editor
                 glm::vec3 translation, rotation, scale;
                 DecomposeTransform(transform, translation, rotation, scale);
 
-                glm::vec3 deltaRotation = rotation - tc.Rotation;
-                tc.Translation = translation;
-                tc.Rotation += deltaRotation;
-                tc.Scale = scale;
+                glm::vec3 deltaRotation = rotation - tc.GetRotation();
+                tc.SetTranslation(translation);
+                tc.SetRotation(tc.GetRotation() += deltaRotation);
+                tc.SetScale(scale);
+                tc.OnValidate.post();
             }
         }
 

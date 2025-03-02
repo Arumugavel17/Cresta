@@ -25,36 +25,28 @@ namespace Cresta
 	void Transform::UI()
 	{
 		constexpr float roundFactor = 1000.0f;
-		Cresta::Utils::DrawVec3Control("Translation", Translation);
-		glm::vec3 rotation = glm::degrees(Rotation);
-		Cresta::Utils::DrawVec3Control("Rotation", rotation);
-		Rotation = glm::radians(rotation);
-		Cresta::Utils::DrawVec3Control("Scale", Scale, 1.0f);
-
-		if (HasChanged(TransformPosition, Translation, roundFactor))
+		if (Cresta::Utils::DrawVec3Control("Translation", m_Translation))
 		{
-			CRESTA_INFO("Position Changed {0} {1} {2} : {3} {4} {5}",
-				TransformPosition.x, TransformPosition.y, TransformPosition.z,
-				Translation.x, Translation.y, Translation.z);
+			OnValidate.post();
 		}
 
-		if (HasChanged(TransformRotation, Rotation, roundFactor))
+		glm::vec3 rotation = glm::degrees(m_Rotation);
+		
+		if (Cresta::Utils::DrawVec3Control("Rotation", rotation))
 		{
-			CRESTA_INFO("Rotation Changed {0} {1} {2} : {3} {4} {5}",
-				TransformRotation.x, TransformRotation.y, TransformRotation.z,
-				Rotation.x, Rotation.y, Rotation.z);
+			OnValidate.post();
 		}
 
-		if (HasChanged(TransformScale, Scale, roundFactor))
+		m_Rotation = glm::radians(rotation);
+		
+		if (Cresta::Utils::DrawVec3Control("Scale", m_Scale, 1.0f))
 		{
-			CRESTA_INFO("Scale Changed {0} {1} {2} : {3} {4} {5}",
-				TransformScale.x, TransformScale.y, TransformScale.z,
-				Scale.x, Scale.y, Scale.z);
+			OnValidate.post();
 		}
 
-		TransformPosition = Translation;
-		TransformRotation = Rotation;
-		TransformScale = Scale;
+		TransformPosition = m_Translation;
+		TransformRotation = m_Rotation;
+		TransformScale = m_Scale;
 	}
 	
 	void SpriteRenderer::UI()
@@ -98,7 +90,7 @@ namespace Cresta
 			if (payload != nullptr)
 			{
 				std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
-				SetPath(tempString); // Assign directly to the std::string
+				SetPath(tempString); 
 				PathChanged();
 			}
 			ImGui::EndDragDropTarget();
@@ -112,8 +104,18 @@ namespace Cresta
 
 	void BoxCollider::UI()
 	{
-		Cresta::Utils::DrawVec3Control("Center", m_Center);
-		Cresta::Utils::DrawVec3Control("Size", m_Size, 1.0f);
+		if (Cresta::Utils::DrawVec3Control("Center", OffestLocalCenter))
+		{
+			Revaluate(p_Entity);
+		}
+		if (Cresta::Utils::DrawVec3Control("Size", OffestLocalSize, 1.0f))
+		{
+			Revaluate(p_Entity);
+		}
+		if (Cresta::Utils::DrawVec3Control("Rotation", OffestLocalRotation, 1.0f))
+		{
+			Revaluate(p_Entity);
+		}
 	}
 
 	void CapsuleCollider::UI()
