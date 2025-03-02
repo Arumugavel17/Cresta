@@ -20,8 +20,8 @@ namespace Cresta
 		static void AddCollider(const UUID& EntityID,const ColliderShape& shape);
 		static void RemoveCollider(const UUID& EntityID);
 
-		static void GetBodyPosition(const UUID& EntityID, glm::vec3& position);
-		static void GetBodyRotation(const UUID& EntityID, glm::quat& rotation);
+		static glm::vec3 GetBodyPosition(const UUID& EntityID);
+		static glm::quat GetBodyRotation(const UUID& EntityID);
 		static void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
 		static void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
 		static void SetBodyScale(const UUID& EntityID, const glm::vec3& scale);

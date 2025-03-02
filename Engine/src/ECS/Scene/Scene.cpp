@@ -205,15 +205,7 @@ namespace Cresta
 		Save();
 		for (auto& entity : m_EntityMap)
 		{
-			auto& transform = m_Registry.get<Transform>(*entity.second);
-
-			if (m_Registry.has<Rigidbody>(*entity.second))
-			{
-				auto& rigidbody = m_Registry.get<Rigidbody>(*entity.second);
-			}
-
-			Physics::SetBodyPosition(entity.first, transform.GetTranslation());
-			Physics::SetBodyRotation(entity.first, transform.GetRotation());
+			entity.second->OnStart();
 		}
 		Physics::Start();
 		m_Running = true;
@@ -232,21 +224,13 @@ namespace Cresta
 		{
 			for (auto& entity : m_EntityMap)
 			{
-				//if (m_Registry.has<BoxCollider>(*entity.second))
-				//{
-				//	auto& transform = m_Registry.get<Transform>(*entity.second);
-				//	if (std::abs(transform.Scale.x)  > 0.1f && std::abs(transform.Scale.y) > 0.1f && std::abs(transform.Scale.z) > 0.1f)
-				//	{
-				//		Physics::SetBodyScale(entity.first, transform.Scale);
-				//	}
-				//}
 				entity.second->OnFixedUpdate();
 			}
 			Physics::Step();
 		}
 	}
 
-	void Scene::RenderScene()
+	void Scene::OnUpdate()
 	{
 		for (auto& entity : m_EntityMap)
 		{

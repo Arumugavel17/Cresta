@@ -7,19 +7,21 @@ namespace Cresta
 {
 	void Rigidbody::OnStart()
 	{
-
+		Physics::SetBodyPosition(p_Entity->GetUUID(), p_Entity->GetComponent<Transform>().GetTranslation());
+		Physics::SetBodyRotation(p_Entity->GetUUID(), p_Entity->GetComponent<Transform>().GetRotation());
 	}
 
 	void Rigidbody::OnFixedUpdate()
 	{
-		glm::quat Rotation;
-		glm::vec3 Translation(0.0f);
-		Physics::GetBodyPosition(p_Entity->GetUUID(), Translation);
-		Physics::GetBodyRotation(p_Entity->GetUUID(), Rotation);
+		p_Entity->GetComponent<Transform>().SetTranslation(
+			Physics::GetBodyPosition(p_Entity->GetUUID()
+		));
 
-		p_Entity->GetComponent<Transform>().SetTranslation(Translation);
-		p_Entity->GetComponent<Transform>().SetRotation(Rotation);
+		p_Entity->GetComponent<Transform>().SetRotation(
+			Physics::GetBodyRotation(p_Entity->GetUUID()
+		));
 	}
+
 	void Rigidbody::OnComponentAdded()
 	{
 		Scene::AddRigidBody(p_Entity->GetComponent<IDComponent>().GetUUID());
@@ -27,46 +29,53 @@ namespace Cresta
 
 	BoxCollider::BoxCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider)
 	{
-		Transform& transform = p_Entity->GetComponent<Transform>();
-		transform.OnValidate.subscribe(typeid(BoxCollider).name(), [entity = p_Entity]()
-			{
-				BoxCollider::Revaluate(entity);
-			});
-
-		m_Rotation = transform.GetRotation(); 
-		m_Center = transform.GetTranslation();
-		m_Size = transform.GetScale();
-
-		OffestLocalRotation = transform.GetRotation();
-		OffestLocalCenter = transform.GetTranslation();
-		OffestLocalSize = transform.GetScale();
+	
 	}
 
 	void BoxCollider::OnComponentAdded()
 	{
 		Scene::AddCollider(p_Entity->GetComponent<IDComponent>().GetUUID(), m_Shape);
+
+		m_Rotation = glm::vec3(0.0f);
+		m_Center = glm::vec3(0.0f);
+		m_Scale = glm::vec3(1.0f);
+
+		Transform& transform = p_Entity->GetComponent<Transform>();
+		transform.OnValidate.Subscribe(typeid(BoxCollider).name(), [entity = p_Entity]()
+			{
+				BoxCollider::Revaluate(entity);
+			});
+
+		OffestLocalCenter = glm::vec3(0.0f);
+		OffestLocalRotation = transform.GetRotation();
+		OffestLocalScale = transform.GetScale();
 	}
 
 	void BoxCollider::Revaluate(Entity* entity)
 	{
-		BoxCollider& collider = entity->GetComponent<BoxCollider>();
-
+		auto& collider = entity->GetComponent<BoxCollider>();
 		auto& transform = entity->GetComponent<Transform>();
+
 		// Apply transformation to the stored local values
 		glm::mat4 transformMatrix = transform.GetTransform();
 
 		glm::quat parentRotation = glm::quat(transform.GetRotation()); // Parent rotation
 		glm::quat childRotation = glm::quat(collider.OffestLocalRotation); // Local rotation
+
 		collider.m_Center = glm::vec3(transformMatrix * glm::vec4(collider.OffestLocalCenter, 1.0f));
 		collider.m_Rotation = glm::eulerAngles(parentRotation * childRotation);
-		collider.m_Size = transform.GetScale() * collider.OffestLocalSize; // Scale transformation
-
-		Physics::SetBodyScale(entity->GetUUID(), collider.m_Size);
+		collider.m_Scale = transform.GetScale() * collider.OffestLocalScale; // Scale transformation
 	}
 
 	void BoxCollider::OnStart()
 	{
-		Physics::SetBodyPosition(p_Entity->GetUUID(),m_Center);
+		Physics::SetBodyPosition(p_Entity->GetUUID(), m_Center);
+		Physics::SetBodyRotation(p_Entity->GetUUID(), m_Rotation);
+
+		if (std::abs(m_Scale.x) > 0.1f && std::abs(m_Scale.y) > 0.1f && std::abs(m_Scale.z) > 0.1f)
+		{
+			Physics::SetBodyScale(p_Entity->GetUUID(), m_Scale);
+		}
 	}
 
 	void BoxCollider::OnUpdate()
@@ -76,6 +85,7 @@ namespace Cresta
 	
 	void BoxCollider::OnFixedUpdate()
 	{
+		
 	}
 
 	void SphereCollider::OnComponentAdded()
@@ -103,6 +113,8 @@ namespace Cresta
 	void BoxCollider::OnComponentRemoved()
 	{
 		Scene::RemoveCollider(p_Entity->GetUUID());
+
+		p_Entity->GetComponent<Transform>().OnValidate.UnSubscribe(typeid(BoxCollider).name());
 	}
 
 	void SphereCollider::OnComponentRemoved()

@@ -39,8 +39,9 @@ namespace Cresta
 		void CreateBody(const UUID& EntityID);
 		void AddCollider(const UUID& EntityID, const ColliderShape& shape);
 
-		void GetBodyPosition(const UUID& EntityID, glm::vec3& position);
-		void GetBodyRotation(const UUID& EntityID, glm::quat& rotation);
+		glm::vec3 GetBodyPosition(const UUID& EntityID);
+		glm::quat GetBodyRotation(const UUID& EntityID);
+
 		void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
 		void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
 		void SetBodyScale(const UUID& EntityID, const glm::vec3& scale);

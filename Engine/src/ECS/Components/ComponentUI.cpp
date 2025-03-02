@@ -108,7 +108,7 @@ namespace Cresta
 		{
 			Revaluate(p_Entity);
 		}
-		if (Cresta::Utils::DrawVec3Control("Size", OffestLocalSize, 1.0f))
+		if (Cresta::Utils::DrawVec3Control("Size", OffestLocalScale, 1.0f))
 		{
 			Revaluate(p_Entity);
 		}

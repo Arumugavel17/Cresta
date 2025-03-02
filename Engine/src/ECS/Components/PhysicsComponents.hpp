@@ -65,7 +65,7 @@ namespace Cresta
 
 		void SetSize(const glm::vec3& size)
 		{
-			m_Size = size;
+			m_Scale = size;
 		}
 
 		std::string ToString() override
@@ -85,7 +85,7 @@ namespace Cresta
 		{
 			return glm::translate(glm::mat4(1.0f), m_Center)
 				* glm::toMat4(glm::quat(m_Rotation))
-				* glm::scale(glm::mat4(1.0f), m_Size);
+				* glm::scale(glm::mat4(1.0f), m_Scale);
 		}
 
 
@@ -93,11 +93,11 @@ namespace Cresta
 		
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Center;
-		glm::vec3 m_Size;
+		glm::vec3 m_Scale;
 
 		glm::vec3 OffestLocalCenter;
 		glm::vec3 OffestLocalRotation;
-		glm::vec3 OffestLocalSize;
+		glm::vec3 OffestLocalScale;
 	};
 
 	class SphereCollider : public Collider

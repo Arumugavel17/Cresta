@@ -46,9 +46,9 @@ namespace Cresta
 		sm_PhysicsController->SetBodyScale(EntityID, scale);
 	}
 
-	void Physics::GetBodyRotation(const UUID& EntityID, glm::quat& rotation)
+	glm::quat Physics::GetBodyRotation(const UUID& EntityID)
 	{
-		sm_PhysicsController->GetBodyRotation(EntityID, rotation);
+		return sm_PhysicsController->GetBodyRotation(EntityID);
 	}
 
 	void Physics::SetBodyRotation(const UUID& EntityID, const glm::quat& rotation)
@@ -56,9 +56,9 @@ namespace Cresta
 		sm_PhysicsController->SetBodyRotation(EntityID, rotation);
 	}
 
-	void Physics::GetBodyPosition(const UUID& EntityID, glm::vec3& position)
+	glm::vec3 Physics::GetBodyPosition(const UUID& EntityID)
 	{
-		sm_PhysicsController->GetBodyPosition(EntityID, position);
+		return sm_PhysicsController->GetBodyPosition(EntityID);
 	}
 
 	void Physics::Step()

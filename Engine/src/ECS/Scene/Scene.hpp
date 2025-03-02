@@ -48,7 +48,7 @@ namespace Cresta
 		void SetPaused(bool paused) { m_Paused = paused; }
 
 		void FixedUpate();
-		void RenderScene();
+		void OnUpdate();
 
 		void DestroyEntity(Entity& entity);
 		void AddSceneUpdateCallBack(const std::function<void()>& func);

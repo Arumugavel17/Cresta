@@ -85,7 +85,7 @@ namespace Editor
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
             {
-                p_ActiveScene->RenderScene();
+                p_ActiveScene->OnUpdate();
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
 
                 m_EntityID = m_Framebuffer->ReadPixel(1, m_MouseX, m_MouseY);

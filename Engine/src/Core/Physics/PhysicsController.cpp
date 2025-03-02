@@ -186,13 +186,17 @@ namespace Cresta
 		}
 	}
 
-	void PhysicsController::GetBodyRotation(const UUID& EntityID, glm::quat& rotation)
+	glm::quat PhysicsController::GetBodyRotation(const UUID& EntityID)
 	{
 		Quat bodyRotation = m_BodyInterface->GetRotation(m_EntityToBody[EntityID]);
+
+		glm::quat rotation;
 		rotation.x = bodyRotation.GetX();
 		rotation.y = bodyRotation.GetY();
 		rotation.z = bodyRotation.GetZ();
 		rotation.w = bodyRotation.GetW();
+
+		return rotation;
 	}
 
 	void PhysicsController::SetBodyRotation(const UUID& EntityID, const glm::quat& rotation)
@@ -200,12 +204,17 @@ namespace Cresta
 		m_BodyInterface->SetRotation(m_EntityToBody[EntityID], { rotation.x, rotation.y, rotation.z , rotation.w }, EActivation::Activate);
 	}
 
-	void PhysicsController::GetBodyPosition(const UUID& EntityID, glm::vec3& position)
+	glm::vec3 PhysicsController::GetBodyPosition(const UUID& EntityID)
 	{
 		RVec3 bodyPosition = m_BodyInterface->GetCenterOfMassPosition(m_EntityToBody[EntityID]);
+		
+		glm::vec3 position;
+		
 		position.x = bodyPosition.GetX();
 		position.y = bodyPosition.GetY();
 		position.z = bodyPosition.GetZ();
+
+		return position;
 	}
 
 	void PhysicsController::Step()

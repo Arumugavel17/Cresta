@@ -59,7 +59,7 @@ namespace Cresta
 		}
 
 		template<typename T>
-		bool HasComponent()
+		bool HasComponent() 
 		{
 			return m_Scene->m_Registry.has<T>(m_EntityHandle);
 		}

@@ -19,9 +19,14 @@ namespace Cresta
 	class Dispatcher
 	{
 	public:		
-		void subscribe(std::string key, std::function<void()> function)
+		void Subscribe(const std::string& key, std::function<void()> function)
 		{
 			Observers[key] = function;
+		}
+
+		void UnSubscribe(const std::string& key)
+		{
+			Observers.erase(key);
 		}
 
 		void post() const
@@ -101,20 +106,15 @@ namespace Cresta
 	private:
 		UUID m_ID;
 	public:
-
-		IDComponent() = default; // Ensure default constructibility
-		IDComponent(Entity* entity) { std::cout << "Construct"; }
-		IDComponent(IDComponent&& other) noexcept
+		IDComponent()
 		{
-			std::cout << "Move Constructor Called\n";
+			std::cout << "Default Construct\n";
+		}
+		IDComponent(Entity* entity) 
+		{ 
+			std::cout << "Entity* entity Construct\n"; 
 		}
 
-		// Move Assignment Operator (Debugging Output)
-		IDComponent& operator=(IDComponent&& other) noexcept
-		{
-			std::cout << "Move Assignment Called\n";
-			return *this;
-		}
 		void OnComponentAdded();
 		void OnComponentRemoved();
 
@@ -157,11 +157,12 @@ namespace Cresta
 			m_Translation = Save_Translation;
 			m_Rotation = Save_Rotation;
 			m_Scale = Save_Scale;
+			OnValidate.post();
 		}
 
-		inline void SetTranslation(const glm::vec3& Position) { m_Translation = Position; }
-		inline void SetScale(const glm::vec3& Scale) { m_Scale = Scale; }
-		inline void SetRotation(const glm::quat& rotation) { m_Rotation = glm::eulerAngles(rotation); }
+		inline void SetTranslation(const glm::vec3& Position) { m_Translation = Position; OnValidate.post(); }
+		inline void SetScale(const glm::vec3& Scale) { m_Scale = Scale; OnValidate.post(); }
+		inline void SetRotation(const glm::quat& rotation) { m_Rotation = glm::eulerAngles(rotation); OnValidate.post(); }
 
 		inline constexpr glm::vec3 GetTranslation() const { return m_Translation; }
 		inline constexpr glm::vec3 GetRotation() const { return m_Rotation; }

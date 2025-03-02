@@ -1,1 +1,1 @@
-Read Through the Event Dispatcher System and Use Cherno's Event System and modify it so it can be used for Internal events of the project.
+Go through the JOLT engine documentation and figure out how to separate collision from rigid body.
