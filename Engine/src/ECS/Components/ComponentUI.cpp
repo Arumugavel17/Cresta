@@ -104,10 +104,10 @@ namespace Cresta
 
 	void BoxCollider::UI()
 	{
-		if (Cresta::Utils::DrawVec3Control("Center", OffestLocalCenter))
-		{
-			Revaluate(p_Entity);
-		}
+		//if (Cresta::Utils::DrawVec3Control("Center", OffestLocalCenter))
+		//{
+		//	Revaluate(p_Entity);
+		//}
 		if (Cresta::Utils::DrawVec3Control("Size", OffestLocalScale, 1.0f))
 		{
 			Revaluate(p_Entity);

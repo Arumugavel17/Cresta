@@ -90,7 +90,6 @@ namespace Cresta
 
 
 	private:
-		
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Center;
 		glm::vec3 m_Scale;

@@ -41,9 +41,14 @@ namespace Cresta
 		sm_PhysicsController->SetBodyPosition(EntityID, position);
 	}
 
-	void Physics::SetBodyScale(const UUID& EntityID, const glm::vec3& scale)
+	void Physics::SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& scale)
 	{
-		sm_PhysicsController->SetBodyScale(EntityID, scale);
+		sm_PhysicsController->SetBodyShapeOffset(EntityID, scale);
+	}
+
+	void Physics::SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale)
+	{
+		sm_PhysicsController->SetBodyShapeScale(EntityID, scale);
 	}
 
 	glm::quat Physics::GetBodyRotation(const UUID& EntityID)

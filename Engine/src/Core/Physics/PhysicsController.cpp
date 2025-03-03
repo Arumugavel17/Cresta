@@ -1,6 +1,7 @@
 #include "PhysicsController.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
+#include <Jolt/Physics/Collision/Shape/CompoundShape.h>
 
 namespace Cresta
 {
@@ -154,34 +155,41 @@ namespace Cresta
 		m_BodyInterface->SetPosition(m_EntityToBody[EntityID], { position.x, position.y, position.z }, EActivation::Activate);
 	}
 
-	void PhysicsController::SetBodyScale(const UUID& EntityID, const glm::vec3& scale)
+	void PhysicsController::SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& CenterOfMass)
 	{
-		BodyID body_id = m_EntityToBody[EntityID];
-		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), body_id);
-		Body* body;
+
+	}
+
+	void PhysicsController::SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale)
+	{
+		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), m_EntityToBody[EntityID]);
+
 		if (lock.Succeeded())
 		{
 			Vec3 Scale({ scale.x,scale.y,scale.z });
-			body = &lock.GetBody();
-			Vec3 BodyScale = body->GetShape()->GetLocalBounds().GetExtent();
-			if (Scale == BodyScale)
+
+			Body& body = lock.GetBody();
+			Vec3 BodyScale = body.GetShape()->GetLocalBounds().GetExtent();
+			Vec3 CenterOfMass = body.GetShape()->GetCenterOfMass();
+
+			if (Scale == BodyScale) 
 			{
 				lock.ReleaseLock();
 				return;
 			}
 			BodyScale = Scale / BodyScale;
-			Shape::ShapeResult new_shape = body->GetShape()->ScaleShape(BodyScale);
+			Shape::ShapeResult new_shape = body.GetShape()->ScaleShape(BodyScale);
 			if (new_shape.IsValid())
 			{
-				m_PhysicsSystem->GetBodyInterfaceNoLock().SetShape(body->GetID(), new_shape.Get(), true, EActivation::Activate);
+				m_PhysicsSystem->GetBodyInterfaceNoLock().SetShape(body.GetID(), new_shape.Get(), true, EActivation::Activate);
 			}
 			lock.ReleaseLock();
-			AABox Box = body->GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
+			AABox Box = body.GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
 
 			m_BodyInterface->ActivateBodiesInAABox(
 				Box,
-				m_PhysicsSystem->GetDefaultBroadPhaseLayerFilter(body->GetObjectLayer()),
-				m_PhysicsSystem->GetDefaultLayerFilter(body->GetObjectLayer())
+				m_PhysicsSystem->GetDefaultBroadPhaseLayerFilter(body.GetObjectLayer()),
+				m_PhysicsSystem->GetDefaultLayerFilter(body.GetObjectLayer())
 			);
 		}
 	}

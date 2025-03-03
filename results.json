@@ -1,1 +1,1 @@
-{"otherData": {},"traceEvents":[{},{"cat":"function","dur":54788840,"name":"void Cresta::Application::Run(void)","ph":"X","pid":0,"tid":20804,"ts":45379121634.400}]}
+{"otherData": {},"traceEvents":[{},{"cat":"function","dur":130368345,"name":"void Cresta::Application::Run(void)","ph":"X","pid":0,"tid":17496,"ts":5297397359.100}]}

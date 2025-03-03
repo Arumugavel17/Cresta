@@ -27,10 +27,7 @@ namespace Cresta
 		Scene::AddRigidBody(p_Entity->GetComponent<IDComponent>().GetUUID());
 	}
 
-	BoxCollider::BoxCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider)
-	{
-	
-	}
+	BoxCollider::BoxCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
 
 	void BoxCollider::OnComponentAdded()
 	{
@@ -49,6 +46,8 @@ namespace Cresta
 		OffestLocalCenter = glm::vec3(0.0f);
 		OffestLocalRotation = transform.GetRotation();
 		OffestLocalScale = transform.GetScale();
+
+		Revaluate(p_Entity);
 	}
 
 	void BoxCollider::Revaluate(Entity* entity)
@@ -65,16 +64,21 @@ namespace Cresta
 		collider.m_Center = glm::vec3(transformMatrix * glm::vec4(collider.OffestLocalCenter, 1.0f));
 		collider.m_Rotation = glm::eulerAngles(parentRotation * childRotation);
 		collider.m_Scale = transform.GetScale() * collider.OffestLocalScale; // Scale transformation
+
+		Physics::SetBodyPosition(entity->GetUUID(), collider.m_Center);
+		Physics::SetBodyRotation(entity->GetUUID(), collider.m_Rotation);
+
+		if (std::abs(collider.m_Scale.x) > 0.1f && std::abs(collider.m_Scale.y) > 0.1f && std::abs(collider.m_Scale.z) > 0.1f)
+		{
+			Physics::SetBodyShapeScale(entity->GetUUID(), collider.m_Scale);
+		}
 	}
 
 	void BoxCollider::OnStart()
 	{
-		Physics::SetBodyPosition(p_Entity->GetUUID(), m_Center);
-		Physics::SetBodyRotation(p_Entity->GetUUID(), m_Rotation);
-
 		if (std::abs(m_Scale.x) > 0.1f && std::abs(m_Scale.y) > 0.1f && std::abs(m_Scale.z) > 0.1f)
 		{
-			Physics::SetBodyScale(p_Entity->GetUUID(), m_Scale);
+			Physics::SetBodyShapeScale(p_Entity->GetUUID(), m_Scale);
 		}
 	}
 

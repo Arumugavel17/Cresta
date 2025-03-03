@@ -160,9 +160,9 @@ namespace Cresta
 			OnValidate.post();
 		}
 
-		inline void SetTranslation(const glm::vec3& Position) { m_Translation = Position; OnValidate.post(); }
-		inline void SetScale(const glm::vec3& Scale) { m_Scale = Scale; OnValidate.post(); }
-		inline void SetRotation(const glm::quat& rotation) { m_Rotation = glm::eulerAngles(rotation); OnValidate.post(); }
+		inline void SetTranslation(const glm::vec3& Position) { m_Translation = Position;				 OnValidate.post();	}
+		inline void SetScale(const glm::vec3& Scale)		  { m_Scale = Scale;						 OnValidate.post();	}
+		inline void SetRotation(const glm::quat& rotation)	  { m_Rotation = glm::eulerAngles(rotation); OnValidate.post(); }
 
 		inline constexpr glm::vec3 GetTranslation() const { return m_Translation; }
 		inline constexpr glm::vec3 GetRotation() const { return m_Rotation; }
@@ -187,8 +187,9 @@ namespace Cresta
 		glm::vec3 m_Translation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 m_Rotation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 m_Scale = { 1.0f, 1.0f, 1.0f };
+
 	public:
-		glm::quat RotationQuat = { 0.0f, 0.0f, 0.0f, 0.0f };
+		glm::quat RotationQuat = { 1.0f, 0.0f, 0.0f, 0.0f };
 
 		glm::vec3 Save_Translation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Save_Rotation = { 0.0f, 0.0f, 0.0f };
