@@ -7,31 +7,32 @@ namespace Cresta
 {
 	void Rigidbody::OnStart()
 	{
-		Physics::SetBodyPosition(p_Entity->GetUUID(), p_Entity->GetComponent<Transform>().GetTranslation());
-		Physics::SetBodyRotation(p_Entity->GetUUID(), p_Entity->GetComponent<Transform>().GetRotation());
+		Physics::SetBodyPosition(m_EnityID, p_Entity->GetComponent<Transform>().GetTranslation());
+		Physics::SetBodyRotation(m_EnityID, p_Entity->GetComponent<Transform>().GetRotation());
 	}
 
 	void Rigidbody::OnFixedUpdate()
 	{
 		p_Entity->GetComponent<Transform>().SetTranslation(
-			Physics::GetBodyPosition(p_Entity->GetUUID()
+			Physics::GetBodyPosition(m_EnityID
 		));
 
 		p_Entity->GetComponent<Transform>().SetRotation(
-			Physics::GetBodyRotation(p_Entity->GetUUID()
+			Physics::GetBodyRotation(m_EnityID
 		));
 	}
 
 	void Rigidbody::OnComponentAdded()
 	{
-		Scene::AddRigidBody(p_Entity->GetComponent<IDComponent>().GetUUID());
+		m_EnityID = p_Entity->GetUUID();
+		Scene::AddRigidBody(m_EnityID);
 	}
 
 	BoxCollider::BoxCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
 
 	void BoxCollider::OnComponentAdded()
 	{
-		Scene::AddCollider(p_Entity->GetComponent<IDComponent>().GetUUID(), m_Shape);
+		Scene::AddCollider(p_Entity->GetUUID(), m_Shape);
 
 		m_Rotation = glm::vec3(0.0f);
 		m_Center = glm::vec3(0.0f);
@@ -43,9 +44,9 @@ namespace Cresta
 				BoxCollider::Revaluate(entity);
 			});
 
-		OffestLocalCenter = glm::vec3(0.0f);
-		OffestLocalRotation = transform.GetRotation();
-		OffestLocalScale = transform.GetScale();
+		m_OffestLocalCenter = glm::vec3(0.0f);
+		m_OffestLocalRotation = transform.GetRotation();
+		m_OffestLocalScale = transform.GetScale();
 
 		Revaluate(p_Entity);
 	}
@@ -59,11 +60,11 @@ namespace Cresta
 		glm::mat4 transformMatrix = transform.GetTransform();
 
 		glm::quat parentRotation = glm::quat(transform.GetRotation()); // Parent rotation
-		glm::quat childRotation = glm::quat(collider.OffestLocalRotation); // Local rotation
+		glm::quat childRotation = glm::quat(collider.m_OffestLocalRotation); // Local rotation
 
-		collider.m_Center = glm::vec3(transformMatrix * glm::vec4(collider.OffestLocalCenter, 1.0f));
+		collider.m_Center = glm::vec3(transformMatrix * glm::vec4(collider.m_OffestLocalCenter, 1.0f));
 		collider.m_Rotation = glm::eulerAngles(parentRotation * childRotation);
-		collider.m_Scale = transform.GetScale() * collider.OffestLocalScale; // Scale transformation
+		collider.m_Scale = transform.GetScale() * collider.m_OffestLocalScale; // Scale transformation
 
 		Physics::SetBodyPosition(entity->GetUUID(), collider.m_Center);
 		Physics::SetBodyRotation(entity->GetUUID(), collider.m_Rotation);

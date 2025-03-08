@@ -29,7 +29,7 @@ namespace Editor
 		// Check if the file is empty
 		if (AlreadyOpenedProject.peek() == std::ifstream::traits_type::eof()) 
 		{
-			std::cout << "File is empty, skipping parsing.\n";
+			CRESTA_TRACE("File is empty, skipping parsing.");
 			AlreadyOpenedProject.close();
 			return;
 		}

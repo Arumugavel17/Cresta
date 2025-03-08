@@ -10,7 +10,7 @@ namespace Cresta
 
 	void Log::Shutdown()
 	{
-		std::cout << "Shutting down Log";
+		CRESTA_TRACE("Shutting down Log");
 		spdlog::shutdown();
 	}
 

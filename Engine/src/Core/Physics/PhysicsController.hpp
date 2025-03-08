@@ -38,6 +38,7 @@ namespace Cresta
 
 		void CreateBody(const UUID& EntityID);
 		void AddCollider(const UUID& EntityID, const ColliderShape& shape);
+		void SetColliderTrigger(const UUID& EntityID,bool IsTrigger);
 
 		glm::vec3 GetBodyPosition(const UUID& EntityID);
 		glm::quat GetBodyRotation(const UUID& EntityID);
@@ -80,7 +81,7 @@ namespace Cresta
 
 		Scope<JobSystem> m_JobSystem;
 		Scope<TempAllocator> m_TempAllocator;
-		Scope<PhysicsSystem> m_PhysicsSystem;
+		PhysicsSystem m_PhysicsSystem;
 
 		BodyInterface* m_BodyInterface;
 
@@ -93,5 +94,8 @@ namespace Cresta
 		std::unordered_map<UUID, JPH::BodyID> m_EntityToBody;
 
 		friend class Physics;
+
+		ColliderBodyActivationListener CBAL;
+		ColliderContactListener CCL;
 	};
 }

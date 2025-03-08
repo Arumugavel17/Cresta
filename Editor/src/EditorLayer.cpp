@@ -15,10 +15,10 @@
 
 namespace Editor
 {
-
     Cresta::Ref<Cresta::VertexArray> m_PrimitiveCube;
     Cresta::Ref<Cresta::Shader> m_Shader;
-    EditorLayer::EditorLayer(Cresta::Ref<Scene> scene) : Layer("Editor Layer",scene)
+
+    EditorLayer::EditorLayer(Cresta::Ref<Scene> scene) : Layer("Editor Layer",scene) ,m_MouseX(0), m_MouseY(0)
     {
         m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 
@@ -290,7 +290,6 @@ namespace Editor
         {
             if (m_EntityID >= 0)
             {
-                std::cout << "Entity ID: " << m_EntityID;
                 m_HierarchyPanel->SetSelectedEntity((entt::entity)m_EntityID);
                 return true;
             }

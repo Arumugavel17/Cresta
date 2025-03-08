@@ -10,46 +10,7 @@ namespace Cresta
 
 	Scene::Scene()
 	{
-		float vertices[] = {
-			// Front face
-			-1.0f, -1.0f, -1.0f, // 0
-			 1.0f, -1.0f, -1.0f, // 1
-			 1.0f,  1.0f, -1.0f, // 2
-			-1.0f,  1.0f, -1.0f, // 3
-
-			// Back face
-			-1.0f, -1.0f,  1.0f, // 4
-			 1.0f, -1.0f,  1.0f, // 5
-			 1.0f,  1.0f,  1.0f, // 6
-			-1.0f,  1.0f,  1.0f  // 7
-		};
-
-		uint32_t indices[] = {
-			// Front face
-			0, 1, 2,  2, 3, 0,
-			// Back face
-			4, 5, 6,  6, 7, 4,
-			// Left face
-			0, 3, 7,  7, 4, 0,
-			// Right face
-			1, 5, 6,  6, 2, 1,
-			// Top face
-			3, 2, 6,  6, 7, 3,
-			// Bottom face
-			0, 1, 5,  5, 4, 0
-		};
-
-		Cresta::Ref<VertexBuffer> VBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
-		Cresta::Ref<IndexBuffer> IBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
-
-		VBuffer->SetLayout({
-			{ShaderDataType::FVec3,"aPos"}
-			});
-		m_PrimitiveCube = VertexArray::Create();
-		m_PrimitiveCube->AddVertexBuffer(VBuffer);
-		m_PrimitiveCube->SetIndexBuffer(IBuffer);
-
-		m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
+		Physics::ClearBodies();
 	}
 
 	Scene::~Scene()

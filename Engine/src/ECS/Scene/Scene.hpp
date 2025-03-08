@@ -72,8 +72,6 @@ namespace Cresta
 		bool m_Running = false;
 		bool m_Paused = false;
 
-		Ref<VertexArray> m_PrimitiveCube;
-		Ref<Shader> m_Shader;
 		uint32_t m_ViewportWidth = 0;
 		uint32_t m_ViewportHeight = 0;
 

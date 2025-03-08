@@ -18,8 +18,8 @@ namespace Cresta
 
 		static void AddRigidBody(const UUID& EntityID);
 		static void AddCollider(const UUID& EntityID,const ColliderShape& shape);
+		static void SetColliderTrigger(const UUID& EntityID,bool IsTrigger);
 		static void RemoveCollider(const UUID& EntityID);
-
 		
 		static glm::vec3 GetBodyPosition(const UUID& EntityID);
 		static glm::quat GetBodyRotation(const UUID& EntityID);

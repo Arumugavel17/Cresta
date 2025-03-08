@@ -1,4 +1,5 @@
 #include "PhysicsController.hpp"
+#include "PhysicsController.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Collision/Shape/CompoundShape.h>
@@ -12,7 +13,7 @@ namespace Cresta
 		char buffer[1024];
 		vsnprintf(buffer, sizeof(buffer), inFMT, list);
 		va_end(list);
-		std::cout << buffer << std::endl;
+		CRESTA_TRACE("{}", buffer);
 	}
 
 #ifdef JPH_ENABLE_ASSERTS
@@ -29,6 +30,15 @@ namespace Cresta
 
 	PhysicsController::PhysicsController()
 	{
+		RegisterDefaultAllocator();
+		Factory::sInstance = new Factory();
+		RegisterTypes();
+
+		m_JobSystem = CreateScope<JobSystemThreadPool>(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
+		m_TempAllocator = CreateScope<TempAllocatorImpl>(32 * 1024 * 1024);
+
+		m_BodyInterface = &m_PhysicsSystem.GetBodyInterface();
+
 		Init();
 	}
 
@@ -42,17 +52,7 @@ namespace Cresta
 
 	void PhysicsController::Init()
 	{
-		RegisterDefaultAllocator();
-		Factory::sInstance = new Factory();
-		RegisterTypes();
-
-		m_JobSystem = CreateScope<JobSystemThreadPool>(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
-		m_TempAllocator = CreateScope<TempAllocatorImpl>(32 * 1024 * 1024);
-		m_PhysicsSystem = CreateScope<PhysicsSystem>();
-
-		m_BodyInterface = &m_PhysicsSystem->GetBodyInterface();
-
-		m_PhysicsSystem->Init(
+		m_PhysicsSystem.Init(
 			cm_NumBodies,
 			cm_NumBodyMutexes,
 			cm_MaxBodyPairs,
@@ -61,7 +61,8 @@ namespace Cresta
 			m_ObjectVsBroadPhaseLayerFilter,
 			m_ObjectVsObjectLayerFilter);
 
-		//m_DebugRenderer = CreateScope<DebugRenderer>();
+		m_PhysicsSystem.SetBodyActivationListener(&CBAL);
+		m_PhysicsSystem.SetContactListener(&CCL);
 	}
 
 	void PhysicsController::MakeBodyStatic(const UUID& EntityID)
@@ -115,7 +116,7 @@ namespace Cresta
 		CreateBody(EntityID);
 		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::Colliders);
 
-		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), m_EntityToBody[EntityID]);
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
 		if (lock.Succeeded())
 		{
 			Body& body = lock.GetBody();
@@ -131,6 +132,17 @@ namespace Cresta
 				body.SetShapeInternal(new CapsuleShape(cm_CapsuleHalfHeight, cm_Radius), true);
 				break;
 			}
+			lock.ReleaseLock();
+		}
+	}
+
+	void PhysicsController::SetColliderTrigger(const UUID& EntityID, bool IsTrigger)
+	{
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
+		if (lock.Succeeded())
+		{
+			Body& body = lock.GetBody();
+			body.SetIsSensor(IsTrigger);
 			lock.ReleaseLock();
 		}
 	}
@@ -162,7 +174,7 @@ namespace Cresta
 
 	void PhysicsController::SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale)
 	{
-		BodyLockWrite lock(m_PhysicsSystem->GetBodyLockInterface(), m_EntityToBody[EntityID]);
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
 
 		if (lock.Succeeded())
 		{
@@ -181,15 +193,15 @@ namespace Cresta
 			Shape::ShapeResult new_shape = body.GetShape()->ScaleShape(BodyScale);
 			if (new_shape.IsValid())
 			{
-				m_PhysicsSystem->GetBodyInterfaceNoLock().SetShape(body.GetID(), new_shape.Get(), true, EActivation::Activate);
+				m_PhysicsSystem.GetBodyInterfaceNoLock().SetShape(body.GetID(), new_shape.Get(), true, EActivation::Activate);
 			}
 			lock.ReleaseLock();
 			AABox Box = body.GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
 
 			m_BodyInterface->ActivateBodiesInAABox(
 				Box,
-				m_PhysicsSystem->GetDefaultBroadPhaseLayerFilter(body.GetObjectLayer()),
-				m_PhysicsSystem->GetDefaultLayerFilter(body.GetObjectLayer())
+				m_PhysicsSystem.GetDefaultBroadPhaseLayerFilter(body.GetObjectLayer()),
+				m_PhysicsSystem.GetDefaultLayerFilter(body.GetObjectLayer())
 			);
 		}
 	}
@@ -228,18 +240,18 @@ namespace Cresta
 	void PhysicsController::Step()
 	{
 		const int cCollisionSteps = 1;
-		m_PhysicsSystem->OptimizeBroadPhase();
-		m_PhysicsSystem->Update(cm_DeltaTime, cCollisionSteps, m_TempAllocator.get(), m_JobSystem.get());
+		m_PhysicsSystem.OptimizeBroadPhase();
+		m_PhysicsSystem.Update(cm_DeltaTime, cCollisionSteps, m_TempAllocator.get(), m_JobSystem.get());
 	}
 
 	void PhysicsController::Start()
 	{
 		m_InitialStateRecorder.Clear();
-		m_PhysicsSystem->SaveState(m_InitialStateRecorder);
+		m_PhysicsSystem.SaveState(m_InitialStateRecorder);
 	}
 
-	void Cresta::PhysicsController::Stop()
+	void PhysicsController::Stop()
 	{
-		m_PhysicsSystem->RestoreState(m_InitialStateRecorder);
+		m_PhysicsSystem.RestoreState(m_InitialStateRecorder);
 	}
 }

@@ -104,17 +104,17 @@ namespace Cresta
 
 	void BoxCollider::UI()
 	{
-		//if (Cresta::Utils::DrawVec3Control("Center", OffestLocalCenter))
-		//{
-		//	Revaluate(p_Entity);
-		//}
-		if (Cresta::Utils::DrawVec3Control("Size", OffestLocalScale, 1.0f))
+		if (Cresta::Utils::DrawVec3Control("Size", m_OffestLocalScale, 1.0f))
 		{
 			Revaluate(p_Entity);
 		}
-		if (Cresta::Utils::DrawVec3Control("Rotation", OffestLocalRotation, 1.0f))
+		if (Cresta::Utils::DrawVec3Control("Rotation", m_OffestLocalRotation, 1.0f))
 		{
 			Revaluate(p_Entity);
+		}
+		if (ImGui::Checkbox("IsTrigger", &m_IsTrigger))
+		{
+			Physics::SetColliderTrigger(p_Entity->GetUUID(), m_IsTrigger);
 		}
 	}
 

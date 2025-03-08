@@ -26,11 +26,12 @@ namespace Cresta
 		void OnComponentRemoved() override;
 
 	private:
-
 		glm::vec3 m_Velocity = glm::vec3(0.0f);
 		glm::vec3 m_CenterOfMass = glm::vec3(0.0f);
 		float m_Density = 0.1f;
 		bool m_IsStatic = false;
+
+		UUID m_EnityID;
 	};
 
 	class Collider : public ComponentTemplate
@@ -51,30 +52,16 @@ namespace Cresta
 	{
 	public:
 		BoxCollider(Entity* entity);
-		void UI() override;
 
-		void SetCenter(const glm::vec3& center)
-		{
-			m_Center = center;
-		}
+		void SetCenter(const glm::vec3& center) { m_Center = center; }
+		void SetRotation(const glm::vec3& rotation) { m_Rotation = rotation; }
+		void SetSize(const glm::vec3& size) { m_Scale = size; }
 
-		void SetRotation(const glm::vec3& rotation)
-		{
-			m_Rotation = rotation;
-		}
-
-		void SetSize(const glm::vec3& size)
-		{
-			m_Scale = size;
-		}
-
-		std::string ToString() override
-		{
-			return "Box Collider";
-		}
+		std::string ToString() override { return "Box Collider"; }
 
 		static void Revaluate(Entity* entity);
 
+		void UI() override;
 		void OnStart() override;
 		void OnUpdate() override;
 		void OnFixedUpdate() override;
@@ -88,15 +75,15 @@ namespace Cresta
 				* glm::scale(glm::mat4(1.0f), m_Scale);
 		}
 
-
 	private:
+		bool m_IsTrigger = false;
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Center;
 		glm::vec3 m_Scale;
 
-		glm::vec3 OffestLocalCenter;
-		glm::vec3 OffestLocalRotation;
-		glm::vec3 OffestLocalScale;
+		glm::vec3 m_OffestLocalCenter;
+		glm::vec3 m_OffestLocalRotation;
+		glm::vec3 m_OffestLocalScale;
 	};
 
 	class SphereCollider : public Collider

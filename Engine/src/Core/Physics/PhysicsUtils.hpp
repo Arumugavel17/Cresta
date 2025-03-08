@@ -121,13 +121,13 @@ namespace Cresta
 	};
 
 	// An example contact listener
-	class MyContactListener : public ContactListener
+	class ColliderContactListener : public ContactListener
 	{
 	public:
 		// See: ContactListener
 		virtual ValidateResult	OnContactValidate(const Body& inBody1, const Body& inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override
 		{
-			std::cout << "Contact validate callback" << std::endl;
+			CRESTA_TRACE("Contact validate callback");
 
 			// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
 			return ValidateResult::AcceptAllContactsForThisBodyPair;
@@ -135,32 +135,32 @@ namespace Cresta
 
 		virtual void OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 		{
-			std::cout << "A contact was added" << std::endl;
+			CRESTA_TRACE("A contact was added");
 		}
 
 		virtual void OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 		{
-			std::cout << "A contact was persisted" << std::endl;
+			CRESTA_TRACE("A contact was persisted");
 		}
 
 		virtual void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override
 		{
-			std::cout << "A contact was removed" << std::endl;
+			CRESTA_TRACE("A contact was removed");
 		}
 	};
 
 	// An example activation listener
-	class MyBodyActivationListener : public BodyActivationListener
+	class ColliderBodyActivationListener : public BodyActivationListener
 	{
 	public:
 		virtual void OnBodyActivated(const BodyID& inBodyID, uint64 inBodyUserData) override
 		{
-			std::cout << "A body got activated" << std::endl;
+			CRESTA_TRACE("{} Body Activated", inBodyID.GetIndexAndSequenceNumber());
 		}
 
 		virtual void OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override
 		{
-			std::cout << "A body went to sleep" << std::endl;
+			CRESTA_TRACE("{} Body De-Activated", inBodyID.GetIndexAndSequenceNumber());
 		}
 	};
 }

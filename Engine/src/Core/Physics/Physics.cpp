@@ -1,4 +1,5 @@
 #include "Physics.hpp"
+#include "Physics.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
@@ -34,6 +35,11 @@ namespace Cresta
 	void Physics::AddCollider(const UUID& EntityID, const ColliderShape& shape)
 	{
 		sm_PhysicsController->AddCollider(EntityID, shape);
+	}
+
+	void Physics::SetColliderTrigger(const UUID& EntityID, bool IsTrigger)
+	{
+		sm_PhysicsController->SetColliderTrigger(EntityID,IsTrigger);
 	}
 
 	void Physics::SetBodyPosition(const UUID& EntityID, const glm::vec3& position)

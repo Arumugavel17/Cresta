@@ -15,7 +15,6 @@ namespace Cresta
 		void SpriteRendererUI(SpriteRenderer& component);
 		void MeshRendererUI(MeshRenderer& component);
 		void RigidbodyUI(Rigidbody& component);
-		void RigidbodyUI(Rigidbody& component);
 		void BoxColliderUI(BoxCollider& component);
 		void CapsuleColliderUI(CapsuleCollider& component);
 		void SphereColliderUI(SphereCollider& component);
