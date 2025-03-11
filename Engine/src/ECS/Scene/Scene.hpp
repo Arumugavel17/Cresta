@@ -38,8 +38,8 @@ namespace Cresta
 
 		Entity& CreateEntity(const std::string& name = std::string());
 		Entity& CreateEntity(UUID& ID,const std::string& name = std::string());
-		Entity* FindEntityByName(std::string name);
-		Entity* FindEntityByID(entt::entity entitiyID);
+		Entity& FindEntityByName(std::string name);
+		Entity& FindEntityByID(entt::entity entitiyID);
 
 		Entity* GetPrimaryCameraEntity();
 
@@ -61,6 +61,8 @@ namespace Cresta
 		static void RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID);
 		static void RemoveRigidBody(const UUID& entity);
 		static void RemoveCollider(const UUID& entity);
+
+		void SerializeScene(const std::filesystem::path& path);
 
 	private:
 		void InvokeSceneUpdateCallBacks();

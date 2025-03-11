@@ -53,7 +53,18 @@ namespace Cresta
 	public:
 		BoxCollider(Entity* entity);
 
-		void SetCenter(const glm::vec3& center) { m_Center = center; }
+		glm::vec3 GetCenter()	{ return m_Center;   }
+		glm::vec3 GetRotation() { return m_Rotation; }
+		glm::vec3 GetSize()		{ return m_Scale;    }
+
+		void SetTrigger(bool isTrigger) { m_IsTrigger = isTrigger; }
+		bool IsTrigger() { return m_IsTrigger; }
+		void SetCenter(const glm::vec3& center) 
+		{ 
+			m_Center.x = center.x;
+			m_Center.y = center.y;
+			m_Center.z = center.z;
+		}
 		void SetRotation(const glm::vec3& rotation) { m_Rotation = rotation; }
 		void SetSize(const glm::vec3& size) { m_Scale = size; }
 

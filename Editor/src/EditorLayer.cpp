@@ -80,7 +80,7 @@ namespace Editor
             m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
 
-        Renderer::BeginScene((Camera)*m_EditorCamera);
+        Renderer::BeginScene(*m_EditorCamera);
         {
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
@@ -177,7 +177,8 @@ namespace Editor
             viewportPanelSize.x,
             viewportPanelSize.y };
 
-        auto& [mouseX, mouseY] = Input::GetMousePosition();
+        auto mousePos = Input::GetMousePosition();
+        auto [mouseX, mouseY] = mousePos;
 
         ImVec2 windowPos = ImGui::GetWindowPos();
         ImVec2 windowSize = ImGui::GetWindowSize();

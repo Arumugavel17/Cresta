@@ -23,7 +23,6 @@ namespace Cresta
 		virtual void OpenProject(){}
 		virtual void OpenProject(const std::filesystem::path& path){}
 
-		void SerializeScene(const Ref<Scene>& scene, const std::filesystem::path& path);
 		void SetSceneForLayers();
 
 		void Init();
