@@ -104,24 +104,6 @@ namespace Cresta
 		SceneSerializer::Serialize(*this,path.string());
 	}
 
-	void Scene::Save()
-	{
-		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.second.string() + "\\temp";
-		// Ensure the folder exists
-		if (!std::filesystem::exists(tempFolderPath)) {
-			std::filesystem::create_directories(tempFolderPath);
-		}
-
-		SerializeScene(tempFolderPath + "\\TempFile.cresta");
-	}
-
-	void Scene::Reset()
-	{
-		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.second.string() + "\\temp";
-
-		SceneSerializer::Deserialize(*this, tempFolderPath + "\\TempFile.cresta",EDIT_ENTITIES);
-	}
-
 	Entity* Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();
@@ -170,6 +152,24 @@ namespace Cresta
 		}
 		Physics::Start();
 		m_Running = true;
+	}
+
+	void Scene::Save()
+	{
+		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.second.string() + "\\temp";
+		// Ensure the folder exists
+		if (!std::filesystem::exists(tempFolderPath)) {
+			std::filesystem::create_directories(tempFolderPath);
+		}
+
+		SerializeScene(tempFolderPath + "\\TempFile.cresta");
+	}
+
+	void Scene::Reset()
+	{
+		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.second.string() + "\\temp";
+
+		SceneSerializer::Deserialize(*this, tempFolderPath + "\\TempFile.cresta", EDIT_ENTITIES);
 	}
 
 	void Scene::OnRuntimeStop()

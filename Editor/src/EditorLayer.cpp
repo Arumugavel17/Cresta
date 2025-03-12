@@ -457,7 +457,7 @@ namespace Editor
 
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoPreviewTooltip))
                 {
-                    std::string payload = currentPath + "/" + filename;
+                    std::string payload = currentPath + "\\" + filename;
                     // Set the drag payload to the file path
                     ImGui::SetDragDropPayload("FILE_PATH", payload.c_str(), payload.length() + 1);
                     ImGui::Text(filename.c_str()); // Display file name as label 
