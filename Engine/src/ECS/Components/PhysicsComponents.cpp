@@ -7,13 +7,13 @@ namespace Cresta
 {
 	void Rigidbody::OnStart()
 	{
-		Physics::SetBodyPosition(m_EnityID, p_Entity->GetComponent<Transform>().GetTranslation());
+		Physics::SetBodyPosition(m_EnityID, p_Entity->GetComponent<Transform>().GetPosition());
 		Physics::SetBodyRotation(m_EnityID, p_Entity->GetComponent<Transform>().GetRotation());
 	}
 
 	void Rigidbody::OnFixedUpdate()
 	{
-		p_Entity->GetComponent<Transform>().SetTranslation(
+		p_Entity->GetComponent<Transform>().SetPosition(
 			Physics::GetBodyPosition(m_EnityID
 		));
 
@@ -83,7 +83,7 @@ namespace Cresta
 		}
 	}
 
-	void BoxCollider::OnUpdate()
+	void BoxCollider::OnRender()
 	{
 		Primitive::DrawCubeGuizmo(GetTransform());
 	}

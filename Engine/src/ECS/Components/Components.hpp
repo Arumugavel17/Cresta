@@ -41,13 +41,22 @@ namespace Cresta
 		std::map<std::string, std::function<void()>> Observers;
 	};
 
-	// Helper to check if a class overrides OnUpdate
+	// Helper to check if a class overrides OnStart
 	template <typename Base, typename Derived, typename = void>
 	struct has_overridden_OnStart : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
 
 	template <typename Base, typename Derived>
 	struct has_overridden_OnStart <Base, Derived, std::void_t<decltype(&Base::OnStart), decltype(&Derived::OnStart)>> {
 		static constexpr bool value = !std::is_same_v<decltype(&Base::OnStart), decltype(&Derived::OnStart)>;
+	};
+
+	// Helper to check if a class overrides OnRender
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnRender : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnRender<Base, Derived, std::void_t<decltype(&Base::OnRender), decltype(&Derived::OnRender)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnRender), decltype(&Derived::OnRender)>;
 	};
 
 	// Helper to check if a class overrides OnUpdate
@@ -59,7 +68,7 @@ namespace Cresta
 		static constexpr bool value = !std::is_same_v<decltype(&Base::OnUpdate), decltype(&Derived::OnUpdate)>;
 	};
 
-	// Helper to check if a class overrides OnUpdate
+	// Helper to check if a class overrides OnFixedUpdate
 	template <typename Base, typename Derived, typename = void>
 	struct has_overridden_OnFixedUpdate : std::false_type {}; // Defaults to false if OnFixedUpdate doesn't exist
 
@@ -87,6 +96,7 @@ namespace Cresta
 
 		virtual void UI() = 0;
 		virtual void OnStart() {}
+		virtual void OnRender() {}
 		virtual void OnUpdate() {}
 		virtual void OnFixedUpdate() {}
 		virtual void OnGizmo() {}
@@ -160,13 +170,13 @@ namespace Cresta
 			OnValidate.post();
 		}
 
-		inline void SetTranslation(const glm::vec3& Position) { m_Translation = Position;				 OnValidate.post();	}
+		inline void SetPosition(const glm::vec3& Position) { m_Translation = Position;				 OnValidate.post();	}
 		inline void SetScale(const glm::vec3& Scale)		  { m_Scale = Scale;						 OnValidate.post();	}
 		inline void SetRotation(const glm::quat& rotation)	  { m_Rotation = glm::eulerAngles(rotation); OnValidate.post(); }
 
-		inline constexpr glm::vec3 GetTranslation() const { return m_Translation; }
-		inline constexpr glm::vec3 GetRotation() const { return m_Rotation; }
-		inline constexpr glm::vec3 GetScale() const { return m_Scale; }
+		inline constexpr glm::vec3& GetPosition() const { return *(new glm::vec3(m_Translation)); }
+		inline constexpr glm::vec3& GetRotation() const { return *(new glm::vec3(m_Rotation));	}
+		inline constexpr glm::vec3& GetScale()	  const { return *(new glm::vec3(m_Scale));		}
 
 		glm::mat4 GetTransform() const
 		{

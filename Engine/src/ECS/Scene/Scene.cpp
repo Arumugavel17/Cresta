@@ -195,9 +195,12 @@ namespace Cresta
 	{
 		for (auto& entity : m_EntityMap)
 		{
-			auto& transform = m_Registry.get<Transform>(*entity.second);	
-			entity.second->OnUpdate();
-
+			auto& transform = m_Registry.get<Transform>(*entity.second);
+			entity.second->OnRender();
+			if (m_Running)
+			{
+				entity.second->OnUpdate();
+			}
 			if (m_Registry.has<SpriteRenderer>(*entity.second))
 			{
 				auto& spriteRenderer = m_Registry.get<SpriteRenderer>(*entity.second);

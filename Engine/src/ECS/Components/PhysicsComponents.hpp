@@ -70,7 +70,7 @@ namespace Cresta
 
 		void UI() override;
 		void OnStart() override;
-		void OnUpdate() override;
+		void OnRender() override;
 		void OnFixedUpdate() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;

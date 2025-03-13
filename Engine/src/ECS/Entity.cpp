@@ -11,6 +11,14 @@ namespace Cresta
 		}
 	}
 
+	void Entity::OnRender()
+	{
+		for (auto RenderFunction : OnRenderFunctions)
+		{
+			RenderFunction.second();
+		}
+	}
+
 	void Entity::OnUpdate()
 	{
 		for (auto UpdateFunction : OnUpdateFunctions)

@@ -16,12 +16,8 @@ namespace Cresta
 			m_Path[path.size()] = '\0';
 			PathChanged();
 		}
+		inline std::string GetPath() const { return m_Path; }
 		
-		void OnUpdate() override
-		{
-
-		}
-
 		std::string ToString() override
 		{
 			return "Sprite Renderer Component";
@@ -68,10 +64,9 @@ namespace Cresta
 	public:
 		MeshRenderer(Entity* entity, const std::string& path = std::string(), int id = -1);
 
-		void const SetID(int ID) { m_ID = ID; }
-		void const SetPath(std::string path) { m_Path = path; }
-		void const SetPath(char* path) { m_Path = std::string(path); }
-
+		inline void const SetID(int ID) { m_ID = ID; }
+		inline void const SetPath(std::string path) { m_Path = path; }
+	
 		void const Draw(const glm::mat4& transform) 
 		{ 
 			if (m_Model)
@@ -84,7 +79,7 @@ namespace Cresta
 		inline const std::string& GetPath() const { return m_Path; }
 		inline const Ref<Model>& GetModel() const { return m_Model; }
 
-		void OnUpdate() override;
+		void OnRender() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
 

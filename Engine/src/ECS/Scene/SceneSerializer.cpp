@@ -163,7 +163,7 @@ namespace Cresta
 			out << YAML::BeginMap; // TransformComponent
 
 			auto& tc = entity.GetComponent<Transform>();
-			out << YAML::Key << "Translation" << YAML::Value << tc.GetTranslation();
+			out << YAML::Key << "Translation" << YAML::Value << tc.GetPosition();
 			out << YAML::Key << "Rotation" << YAML::Value << tc.GetRotation();
 			out << YAML::Key << "Scale" << YAML::Value << tc.GetScale();
 
@@ -288,7 +288,7 @@ namespace Cresta
 					{
 						// Entities always have transforms
 						auto& tc = deserializedEntity.GetComponent<Transform>();
-						tc.SetTranslation(transformComponent["Translation"].as<glm::vec3>());
+						tc.SetPosition(transformComponent["Translation"].as<glm::vec3>());
 						tc.SetRotation(transformComponent["Rotation"].as<glm::vec3>());
 						tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
 					}
@@ -374,7 +374,7 @@ namespace Cresta
 					{
 						// Entities always have transforms
 						auto& tc = deserializedEntity.GetComponent<Transform>();
-						tc.SetTranslation(transformComponent["Translation"].as<glm::vec3>());
+						tc.SetPosition(transformComponent["Translation"].as<glm::vec3>());
 						tc.SetRotation(transformComponent["Rotation"].as<glm::vec3>());
 						tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
 					}

@@ -38,6 +38,11 @@ namespace Cresta
 				OnStartFunctions.emplace_back(typeid(T).name(), [&]() { this->GetComponent<T>().OnStart(); });
 			}
 
+			if constexpr (has_overridden_OnRender<ComponentTemplate, T>::value)
+			{
+				OnRenderFunctions.emplace_back(typeid(T).name(), [&]() { this->GetComponent<T>().OnRender(); });
+			}
+
 			if constexpr (has_overridden_OnUpdate<ComponentTemplate, T>::value)
 			{
 				OnUpdateFunctions.emplace_back(typeid(T).name(), [&]() { this->GetComponent<T>().OnUpdate(); });
@@ -107,11 +112,13 @@ namespace Cresta
 		}
 		
 		void OnStart();
+		void OnRender();
 		void OnUpdate();
 		void OnFixedUpdate();
 
 	private:
 		std::vector<std::pair<std::string, std::function<void()>>> OnStartFunctions;
+		std::vector<std::pair<std::string, std::function<void()>>> OnRenderFunctions;
 		std::vector<std::pair<std::string, std::function<void()>>> OnUpdateFunctions;
 		std::vector<std::pair<std::string, std::function<void()>>> OnFixedUpdateFunctions;
 

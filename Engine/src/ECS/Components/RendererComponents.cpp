@@ -15,7 +15,7 @@ namespace Cresta
 		PathChanged();
 	}
 
-	void MeshRenderer::OnUpdate()
+	void MeshRenderer::OnRender()
 	{
 		Draw(p_Entity->GetComponent<Transform>().GetTransform());
 	}
