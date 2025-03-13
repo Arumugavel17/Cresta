@@ -1,8 +1,7 @@
 #include "SceneHierarchyPanel.hpp"
-#include "ECS/Components/Components.hpp"
-#include "ECS/Components/ComponentUI.hpp"
-
+#include "SceneHierarchyPanelUtils.hpp"
 #include "Core/Input.hpp"
+#include "ECS/Components/ScriptComponent.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)
@@ -16,18 +15,13 @@ namespace Cresta
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
+		m_SelectedEntity = nullptr;
 		SetScene(scene);
 	}
 
 	void SceneHierarchyPanel::PrepareEntity()
 	{
-		m_SelectedEntity = {};
-		m_EntityList.clear();
-
-		m_Scene->m_Registry->each([&](auto entityID)
-			{
-				m_EntityList.push_back(new Entity{ entityID , m_Scene.get() });
-			});
+		m_SelectedEntity = nullptr;
 	}
 
 	void SceneHierarchyPanel::SetScene(const Ref<Scene>& scene)
@@ -45,19 +39,16 @@ namespace Cresta
 
 		if (m_Scene)
 		{
-
-			for (Entity* i : m_EntityList)
+			for (auto& i : m_Scene->m_EntityMap)
 			{
-				DrawEntityNode(*i);
+				DrawEntityNode(*i.second);
 			}
 
-			// Deselect entity when clicking on blank space
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
 			{
-				m_SelectedEntity = {};
+				m_SelectedEntity = nullptr;
 			}
 
-			// Right-click on blank space
 			if (ImGui::BeginPopupContextWindow("SceneHierarchyBlankContext", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
@@ -73,24 +64,24 @@ namespace Cresta
 		DrawInspectorWindow();
 	}
 
-	Entity SceneHierarchyPanel::GetSelectedEntity() const
+	Entity* SceneHierarchyPanel::GetSelectedEntity()
 	{
 		return m_SelectedEntity;
 	}
 
-	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	void SceneHierarchyPanel::SetSelectedEntity(Entity& entity)
 	{
-		m_SelectedEntity = entity;
+		m_SelectedEntity = &entity;
 	}
 
 	void SceneHierarchyPanel::SetSelectedEntity(entt::entity entity)
 	{
-		for (Entity* i : m_EntityList)
+		for (auto& i : m_Scene->m_EntityMap)
 		{
-			entt::entity k = (entt::entity)*i;
+			entt::entity k = (entt::entity)*i.second;
 			if (k == entity)
 			{
-				m_SelectedEntity = *i;
+				m_SelectedEntity = i.second.get();
 			}
 		}
 	}
@@ -110,28 +101,13 @@ namespace Cresta
 		}	
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::DrawEntityNode(Entity& entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
 		ImGuiTreeNodeFlags flags;
-		if (m_SelectedEntity == entity)
+		if (m_SelectedEntity && m_SelectedEntity->IsValid() && *m_SelectedEntity == entity)
 		{
-			//ImVec2 viewportMinRegion = ImGui::GetWindowContentRegionMin();
-			//ImVec2 viewportMaxRegion = ImGui::GetWindowContentRegionMax();
-			//ImVec2 viewportOffset = ImGui::GetWindowPos();
-
-			//ImVec2 ViewportBoundsMin = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-			//ImVec2 ViewportBoundsMax = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
-			//ImGuizmo::SetOrthographic(false);
-			//ImGuizmo::SetDrawlist();
-
-			//ImGuizmo::SetRect(ViewportBoundsMin.x, ViewportBoundsMin.y, ViewportBoundsMax.x - ViewportBoundsMin.x, ViewportBoundsMin.y - ViewportBoundsMin.y);
-			//glm::mat4 camView = m_Camera->GetViewMatrix();
-			//glm::mat4 camProj = m_Camera->GetProjectionMatrix();
-			//EditTransform(&camView[0][0], &camProj[0][0], &entity.GetComponent<Transform>().GetTransform()[0][0]);
-
 			flags = ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_OpenOnArrow;
 
 		}
@@ -144,7 +120,7 @@ namespace Cresta
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
-			m_SelectedEntity = entity;
+			m_SelectedEntity = &entity;
 		}
 
 		bool entityDeleted = false;
@@ -170,9 +146,9 @@ namespace Cresta
 		if (entityDeleted)
 		{
 			m_Scene->DestroyEntity(entity);
-			if (m_SelectedEntity == entity)
+			if (m_SelectedEntity && m_SelectedEntity->IsValid() && *m_SelectedEntity == entity)
 			{
-				m_SelectedEntity = {};
+				m_SelectedEntity = nullptr;
 			}
 		}
 	}
@@ -180,13 +156,13 @@ namespace Cresta
 	void SceneHierarchyPanel::DrawInspectorWindow()
 	{
 		ImGui::Begin("Inspector");
-		if (!m_SelectedEntity || !m_SelectedEntity.HasComponent<TagComponent>())
+		if (!m_SelectedEntity || !m_SelectedEntity->IsValid() || !m_SelectedEntity->HasComponent<TagComponent>())
 		{
 			ImGui::End();
 			return;
 		}
 
-		auto& tag = m_SelectedEntity.GetComponent<TagComponent>().Tag;
+		auto& tag = m_SelectedEntity->GetComponent<TagComponent>().Tag;
 
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
@@ -215,46 +191,30 @@ namespace Cresta
 			DisplayAddComponentEntry<SphereCollider>("SphereCollider");
 			DisplayAddComponentEntry<CapsuleCollider>("CapsuleCollider");
 			DisplayAddComponentEntry<MeshCollider>("MeshCollider");
+			DisplayAddComponentEntry<ScriptComponent>("Script Component");
 			ImGui::EndPopup();
 		}
 
-		Utils::DrawComponent<Transform>("Transform", m_SelectedEntity, Utils::TransformUI);
-		Utils::DrawComponent<SpriteRenderer>("Sprite Renderer", m_SelectedEntity, Utils::SpriteRendererUI);
-		Utils::DrawComponent<MeshRenderer>("Mesh Renderer", m_SelectedEntity, Utils::MeshRendererUI);
-		Utils::DrawComponent<Rigidbody>("RigidBody", m_SelectedEntity, Utils::RigidbodyUI);
-		Utils::DrawComponent<BoxCollider>("BoxCollider", m_SelectedEntity, Utils::BoxColliderUI);
-		Utils::DrawComponent<SphereCollider>("SphereCollider", m_SelectedEntity, Utils::SphereColliderUI);
-		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider", m_SelectedEntity, Utils::CapsuleColliderUI);
-		Utils::DrawComponent<MeshCollider>("MeshCollider", m_SelectedEntity, Utils::MeshColliderUI);
+		Utils::DrawComponent<Transform>("Transform",			 *m_SelectedEntity);
+		Utils::DrawComponent<SpriteRenderer>("Sprite Renderer",  *m_SelectedEntity);
+		Utils::DrawComponent<MeshRenderer>("Mesh Renderer",		 *m_SelectedEntity);
+		Utils::DrawComponent<Rigidbody>("RigidBody",			 *m_SelectedEntity);
+		Utils::DrawComponent<BoxCollider>("BoxCollider",		 *m_SelectedEntity);
+		Utils::DrawComponent<SphereCollider>("SphereCollider",	 *m_SelectedEntity);
+		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider", *m_SelectedEntity);
+		Utils::DrawComponent<MeshCollider>("MeshCollider",		 *m_SelectedEntity);
+		Utils::DrawComponent<ScriptComponent>("Script Component",*m_SelectedEntity);
 		
 		ImGui::End();
 	}
 
 	template<typename T>
 	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
-		if (!m_SelectedEntity.HasComponent<T>())
+		if (!m_SelectedEntity->HasComponent<T>())
 		{
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
-				m_SelectedEntity.AddComponent<T>();
-			//	if (std::is_base_of<PhysicsComponent, T>::value)
-			//	{
-			//		PhysicsComponent* physicscomponent = dynamic_cast<PhysicsComponent*>(component);
-			//		m_Scene->AddPhysicsObject(m_SelectedEntity.GetUUID(), physicscomponent->BodyID);
-			//		Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(physicscomponent);
-			//		if (rigidbody)
-			//		{
-			//			m_Scene->AddRigidBody(rigidbody->BodyID);
-			//		}
-			//		else if (std::is_base_of<Collider, T>::value)
-			//		{
-			//			Collider* collider = dynamic_cast<Collider*>(component);
-			//			if (collider)
-			//			{
-			//				m_Scene->AddCollider(collider->BodyID,collider->m_Shape);
-			//			}
-			//		}
-			//	}	
+				m_SelectedEntity->AddComponent<T>();
 				ImGui::CloseCurrentPopup();
 			}
 		}

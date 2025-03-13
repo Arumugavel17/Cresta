@@ -188,9 +188,12 @@ namespace Cresta
 			// Sets the default extension by extracting it from the filter
 			ofn.lpstrDefExt = strchr(filter, '\0') + 1;
 
-			if (GetSaveFileNameA(&ofn) == TRUE)
-				return ofn.lpstrFile;
-
+            if (GetSaveFileNameA(&ofn) == TRUE)
+            {
+                std::string filePath = ofn.lpstrFile;
+                std::replace(filePath.begin(), filePath.end(), '\\', '/'); // Replace backslashes with forward slashes
+                return filePath;
+            }
 			return std::string();
 		}
 

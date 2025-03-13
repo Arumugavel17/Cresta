@@ -1,60 +1,18 @@
 #include "Scene.hpp"
-#include "ECS/Scene/Scene.hpp"
+#include "Core/Application.hpp"
+#include "Core/Physics/Physics.hpp"
+#include "Renderer/PrimitiveMeshes.hpp"
+#include "ECS/Scene/SceneSerializer.hpp"
 #include "ECS/Entity.hpp"
-
-#include "Core/Physics/LinearMovement.hpp"
-
 #include <glm/glm.hpp>
 
 namespace Cresta 
 {
 	int Scene::sm_Count = 0;
-	Scope<Physics> Scene::m_Physics = nullptr;
 
 	Scene::Scene()
 	{
-		float vertices[] = {
-			// Front face
-			-1.0f, -1.0f, -1.0f, // 0
-			 1.0f, -1.0f, -1.0f, // 1
-			 1.0f,  1.0f, -1.0f, // 2
-			-1.0f,  1.0f, -1.0f, // 3
-
-			// Back face
-			-1.0f, -1.0f,  1.0f, // 4
-			 1.0f, -1.0f,  1.0f, // 5
-			 1.0f,  1.0f,  1.0f, // 6
-			-1.0f,  1.0f,  1.0f  // 7
-		};
-
-		uint32_t indices[] = {
-			// Front face
-			0, 1, 2,  2, 3, 0,
-			// Back face
-			4, 5, 6,  6, 7, 4,
-			// Left face
-			0, 3, 7,  7, 4, 0,
-			// Right face
-			1, 5, 6,  6, 2, 1,
-			// Top face
-			3, 2, 6,  6, 7, 3,
-			// Bottom face
-			0, 1, 5,  5, 4, 0
-		};
-
-		Cresta::Ref<VertexBuffer> VBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
-		Cresta::Ref<IndexBuffer> IBuffer = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
-
-		VBuffer->SetLayout({
-			{ShaderDataType::FVec3,"aPos"}
-			});
-		m_PrimitiveCube = VertexArray::Create();
-		m_PrimitiveCube->AddVertexBuffer(VBuffer);
-		m_PrimitiveCube->SetIndexBuffer(IBuffer);
-
-		m_Shader = Shader::Create("assets/shaders/FlatShader.glsl");
-		m_Physics = CreateScope<Physics>();
-		m_Registry = CreateRef<entt::registry>();
+		Physics::ClearBodies();
 	}
 
 	Scene::~Scene()
@@ -62,47 +20,50 @@ namespace Cresta
 		sm_Count--;
 	}
 
-	Entity Scene::CreateEntity(UUID& ID, const std::string& name)
+	Entity& Scene::CreateEntity(UUID& ID, const std::string& name)
 	{
-		Entity entity = CreateEntity(name);
+		Entity& entity = CreateEntity(name);
 		return entity;
 	}
 
-	Entity Scene::CreateEntity(const std::string& name)
+	Entity& Scene::CreateEntity(const std::string& name)
 	{
-		Entity entity = { m_Registry->create(), this };
-
+		Ref<Entity> entity1 = CreateRef<Entity>(m_Registry.create(), this);
+		Entity& entity = *entity1;
 		entity.AddComponent<IDComponent>();
 		entity.AddComponent<Transform>();
-
-		auto& tag = entity.AddComponent<TagComponent>();
-		tag.Tag = name.empty() ? "Entity" : name;
-		m_EntityMap[entity.GetComponent<IDComponent>().m_ID] = entity;
+		
+		auto& tag = entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
+		m_EntityMap[entity.GetComponent<IDComponent>().GetUUID()] = entity1;
 
 		InvokeSceneUpdateCallBacks();
+
+		int num = m_Registry.size();
+		CRESTA_TRACE("{}", num);
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity& entity)
 	{
 		m_EntityMap.erase(entity.GetUUID());
-		m_Registry->destroy(entity);
+		m_Registry.destroy(entity);
 		InvokeSceneUpdateCallBacks();
 	}
 
 	void Scene::AssignPhysicsBody(const UUID& entityID)
 	{
-		m_Physics->CreateBody(entityID);
+		Physics::CreateBody(entityID);
 	}
 
 	void Scene::AddRigidBody(const UUID& entity)
 	{
-		m_Physics->AddRigidBody(entity);
+		Physics::AddRigidBody(entity);
 	}
 
 	void Scene::AddCollider(const UUID& entity, const ColliderShape& shape)
 	{
-		m_Physics->AddCollider(entity, shape);
+		Physics::AddCollider(entity, shape);
 	}
 
 	void Scene::RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID)
@@ -112,12 +73,12 @@ namespace Cresta
 
 	void Scene::RemoveRigidBody(const UUID& entity)
 	{
-		m_Physics->MakeBodyStatic(entity);
+		Physics::MakeBodyStatic(entity);
 	}
 
 	void Scene::RemoveCollider(const UUID& entity)
 	{
-		m_Physics->RemoveCollider(entity);
+		Physics::RemoveCollider(entity);
 	}
 
 	void Scene::AddSceneUpdateCallBack(const std::function<void()>& func)
@@ -138,35 +99,14 @@ namespace Cresta
 		}
 	}
 
-	void Scene::Save()
+	void Scene::SerializeScene(const std::filesystem::path& path)
 	{
-		auto m_RigidbodyView = m_Registry->view<Transform>();
-		if (m_RigidbodyView.size() > 0)
-		{
-			for (auto entity : m_RigidbodyView)
-			{
-				auto& transfromComponent = m_RigidbodyView.get<Transform>(entity);
-				transfromComponent.Save();
-			}
-		}
-	}
-
-	void Scene::Reset()
-	{
-		auto m_RigidbodyView = m_Registry->view<Transform>();
-		if (m_RigidbodyView.size() > 0)
-		{
-			for (auto entity : m_RigidbodyView)
-			{
-				auto& transfromComponent = m_RigidbodyView.get<Transform>(entity);
-				transfromComponent.Reset();
-			}
-		}
+		SceneSerializer::Serialize(*this,path.string());
 	}
 
 	Entity* Scene::GetPrimaryCameraEntity()
 	{
-		auto view = m_Registry->view<CameraComponent>();
+		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
 			const auto& camera = view.get<CameraComponent>(entity);
@@ -178,32 +118,29 @@ namespace Cresta
 		return nullptr;
 	}
 
-	Entity* Scene::FindEntityByName(std::string name)
+	Entity& Scene::FindEntityByName(std::string name)
 	{
-		auto view = m_Registry->view<TagComponent>();
+		auto view = m_Registry.view<TagComponent>();
 		for (auto entity : view)
 		{
 			const TagComponent& tc = view.get<TagComponent>(entity);
 			if (tc.Tag == name)
 			{
-				return new Entity{ entity, this };
+				return *m_EntityMap[m_Registry.get<IDComponent>(entity).GetUUID()];
 			}
 		}
-		return nullptr;
 	}
 
-	Entity* Scene::FindEntityByID(entt::entity entitiyID)
+	Entity& Scene::FindEntityByID(entt::entity entitiyID)
 	{
-		auto view = m_Registry->view<TagComponent>();
+		auto view = m_Registry.view<TagComponent>();
 		for (auto entity : view)
 		{
 			if (entity == entitiyID)
 			{
-				return new Entity(entity, this);
+				return *m_EntityMap[m_Registry.get<IDComponent>(entity).GetUUID()];
 			}
 		}
-
-		return nullptr;
 	}
 
 	void Scene::OnRuntimeStart()
@@ -211,25 +148,34 @@ namespace Cresta
 		Save();
 		for (auto& entity : m_EntityMap)
 		{
-			auto transform = m_Registry->get<Transform>(entity.second);
-
-			if (m_Registry->has<Rigidbody>(entity.second))
-			{
-				auto& rigidbody = m_Registry->get<Rigidbody>(entity.second);
-				SetUpCuboid(rigidbody);
-			}
-
-			m_Physics->SetBodyPosition(entity.first, transform.Translation);
-			m_Physics->SetBodyRotation(entity.first, transform.Rotation);
+			entity.second->OnStart();
 		}
-		m_Physics->Start();
+		Physics::Start();
 		m_Running = true;
+	}
+
+	void Scene::Save()
+	{
+		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.second.string() + "\\temp";
+		// Ensure the folder exists
+		if (!std::filesystem::exists(tempFolderPath)) {
+			std::filesystem::create_directories(tempFolderPath);
+		}
+
+		SerializeScene(tempFolderPath + "\\TempFile.cresta");
+	}
+
+	void Scene::Reset()
+	{
+		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.second.string() + "\\temp";
+
+		SceneSerializer::Deserialize(*this, tempFolderPath + "\\TempFile.cresta", EDIT_ENTITIES);
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		m_Running = false;
-		m_Physics->Stop();
+		Physics::Stop();
 		Reset();
 	}
 
@@ -239,46 +185,25 @@ namespace Cresta
 		{
 			for (auto& entity : m_EntityMap)
 			{
-				if (m_Registry->has<BoxCollider>(entity.second))
-				{
-					auto transform = m_Registry->get<Transform>(entity.second);
-					if (std::abs(transform.Scale.x)  > 0.1f && std::abs(transform.Scale.y) > 0.1f && std::abs(transform.Scale.z) > 0.1f)
-					{
-						m_Physics->SetBodyScale(entity.first, transform.Scale);
-					}
-				}
+				entity.second->OnFixedUpdate();
 			}
-			m_Physics->Step();
+			Physics::Step();
 		}
 	}
 
-	void Scene::RenderScene()
+	void Scene::OnUpdate()
 	{
 		for (auto& entity : m_EntityMap)
 		{
-			auto& transform = m_Registry->get<Transform>(entity.second);
-			if (m_Registry->has<Rigidbody>(entity.second))
+			auto& transform = m_Registry.get<Transform>(*entity.second);
+			entity.second->OnRender();
+			if (m_Running)
 			{
-				if (m_Running)
-				{
-					glm::quat Rotation;
-					m_Physics->GetBodyPosition(entity.first, transform.Translation);
-					m_Physics->GetBodyRotation(entity.first, Rotation);
-					transform.SetRotation(Rotation);
-				}
+				entity.second->OnUpdate();
 			}
-			Renderer::DrawGizmoIndexed(m_Shader, m_PrimitiveCube, transform.GetTransform());
-			if (m_Registry->has<MeshRenderer>(entity.second))
+			if (m_Registry.has<SpriteRenderer>(*entity.second))
 			{
-				auto meshRenderer = m_Registry->get<MeshRenderer>(entity.second);
-				if (meshRenderer.GetModel())
-				{
-					meshRenderer.GetModel()->Draw(transform.GetTransform(), meshRenderer.GetID());
-				}
-			}
-			if (m_Registry->has<SpriteRenderer>(entity.second))
-			{
-				auto spriteRenderer = m_Registry->get<SpriteRenderer>(entity.second);
+				auto& spriteRenderer = m_Registry.get<SpriteRenderer>(*entity.second);
 				Renderer::DrawSprite(spriteRenderer.Color, spriteRenderer.Texture, transform.GetTransform(), spriteRenderer.MixFactor);
 			}
 		}

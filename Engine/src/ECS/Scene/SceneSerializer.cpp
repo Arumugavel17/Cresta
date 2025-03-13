@@ -163,9 +163,9 @@ namespace Cresta
 			out << YAML::BeginMap; // TransformComponent
 
 			auto& tc = entity.GetComponent<Transform>();
-			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
-			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
-			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
+			out << YAML::Key << "Translation" << YAML::Value << tc.GetPosition();
+			out << YAML::Key << "Rotation" << YAML::Value << tc.GetRotation();
+			out << YAML::Key << "Scale" << YAML::Value << tc.GetScale();
 
 			out << YAML::EndMap; // TransformComponent
 		}
@@ -203,8 +203,14 @@ namespace Cresta
 		}
 		if (entity.HasComponent<BoxCollider>())
 		{
+			auto& BoxCollComp = entity.GetComponent<BoxCollider>();
+
 			out << YAML::Key << "BoxCollider";
 			out << YAML::BeginMap;
+			out << YAML::Key << "Center" << YAML::Value << BoxCollComp.GetCenter();
+			out << YAML::Key << "Rotation" << YAML::Value << BoxCollComp.GetRotation();
+			out << YAML::Key << "Size" << YAML::Value << BoxCollComp.GetSize();
+			out << YAML::Key << "Trigger" << YAML::Value << BoxCollComp.IsTrigger();
 			out << YAML::EndMap; 
 		}
 		if (entity.HasComponent<SphereCollider>())
@@ -222,25 +228,15 @@ namespace Cresta
 		out << YAML::EndMap; // Entity
 	}
 
-
-	SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
-		: m_Scene(scene)
-	{
-
-	}
-
-	void SceneSerializer::Serialize(const std::string& filepath)
+	void SceneSerializer::Serialize(Scene& scene, const std::string& filepath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		m_Scene->m_Registry->each([&](auto entityID)
+		scene.m_Registry.each([&](auto entityID)
 			{
-				Entity entity = { entityID, m_Scene.get() };
-				if (!entity)
-					return;
-
+				Entity entity = { entityID, &scene };
 				SerializeEntity(out, entity);
 			});
 		out << YAML::EndSeq;
@@ -250,12 +246,7 @@ namespace Cresta
 		fout << out.c_str();
 	}
 
-	void SceneSerializer::SerializeRuntime(const std::string& filepath)
-	{
-
-	}
-
-	bool SceneSerializer::Deserialize(const std::string& filepath)
+	bool SceneSerializer::Deserialize(Scene& scene, const std::string& filepath, int option)
 	{
 		YAML::Node data;
 		try
@@ -288,74 +279,181 @@ namespace Cresta
 
 				CRESTA_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-				Entity deserializedEntity = m_Scene->CreateEntity(name);
-				
-				auto transformComponent = entity["TransformComponent"];
-				if (transformComponent)
+				if (option == CREATE_ENTITIES)
 				{
-					// Entities always have transforms
-					auto& tc = deserializedEntity.GetComponent<Transform>();
-					tc.Translation = transformComponent["Translation"].as<glm::vec3>();
-					tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
-					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
-				}
+					Entity& deserializedEntity = scene.CreateEntity(name);
 
-				auto spriteRendererComponent = entity["SpriteRendererComponent"];
-				if (spriteRendererComponent)
-				{
-					auto& src = deserializedEntity.AddComponent<SpriteRenderer>();
-					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
-					if (spriteRendererComponent["TexturePath"])
+					auto transformComponent = entity["TransformComponent"];
+					if (transformComponent)
 					{
-						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						src.Texture = Texture2D::Create(texturePath);
+						// Entities always have transforms
+						auto& tc = deserializedEntity.GetComponent<Transform>();
+						tc.SetPosition(transformComponent["Translation"].as<glm::vec3>());
+						tc.SetRotation(transformComponent["Rotation"].as<glm::vec3>());
+						tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
 					}
 
-					if (spriteRendererComponent["MixFactor "])
+					auto spriteRendererComponent = entity["SpriteRendererComponent"];
+					if (spriteRendererComponent)
 					{
-						src.MixFactor = spriteRendererComponent["MixFactor "].as<float>();
+						auto& src = deserializedEntity.AddComponent<SpriteRenderer>();
+						src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+						if (spriteRendererComponent["TexturePath"])
+						{
+							std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
+							src.Texture = Texture2D::Create(texturePath);
+						}
+
+						if (spriteRendererComponent["MixFactor "])
+						{
+							src.MixFactor = spriteRendererComponent["MixFactor "].as<float>();
+						}
+					}
+
+					auto MeshRendererComponenet = entity["MeshRenderer"];
+					if (MeshRendererComponenet)
+					{
+						std::string path = MeshRendererComponenet["path"].as<std::string>();
+
+						auto& comp = deserializedEntity.AddComponent<MeshRenderer>(path, (int)(entt::entity)deserializedEntity);
+					}
+
+					auto RigibodyComponent = entity["Rigidbody"];
+					if (RigibodyComponent)
+					{
+						auto& rigidbody = deserializedEntity.AddComponent<Rigidbody>();
+					}
+
+					auto SphereColliderComponent = entity["SphereCollider"];
+					if (SphereColliderComponent)
+					{
+						auto& spherecollider = deserializedEntity.AddComponent<SphereCollider>();
+					}
+
+					auto CapsuleColliderComponenet = entity["CapsuleCollider"];
+					if (CapsuleColliderComponenet)
+					{
+						auto& Capsulecollider = deserializedEntity.AddComponent<CapsuleCollider>();
+					}
+
+					auto BoxColliderComponent = entity["BoxCollider"];
+					if (BoxColliderComponent)
+					{
+						auto& boxcollider = deserializedEntity.AddComponent<BoxCollider>();
+						auto Center = BoxColliderComponent["Center"];
+						auto Rotation = BoxColliderComponent["Rotation"];
+						auto Size = BoxColliderComponent["Size"];
+						auto Trigger = BoxColliderComponent["Trigger"];
+
+						boxcollider.SetCenter({
+							Center[0].as<float>(),
+							Center[1].as<float>(),
+							Center[2].as<float>()
+							});
+
+						boxcollider.SetRotation({
+							Rotation[0].as<float>(),
+							Rotation[1].as<float>(),
+							Rotation[2].as<float>()
+							});
+						boxcollider.SetSize({
+							Size[0].as<float>(),
+							Size[1].as<float>(),
+							Size[2].as<float>()
+							});
+
+						boxcollider.SetTrigger(Trigger.as<bool>());
 					}
 				}
-
-				auto MeshRendererComponenet = entity["MeshRenderer"];
-				if (MeshRendererComponenet)
+				else if(option == EDIT_ENTITIES)
 				{
-					std::string path = MeshRendererComponenet["path"].as<std::string>();
+					Entity& deserializedEntity = scene.FindEntityByName(name);
 
-					auto comp = deserializedEntity.AddComponent<MeshRenderer>(path, (int)(entt::entity)deserializedEntity);
-				}
+					auto transformComponent = entity["TransformComponent"];
+					if (transformComponent)
+					{
+						// Entities always have transforms
+						auto& tc = deserializedEntity.GetComponent<Transform>();
+						tc.SetPosition(transformComponent["Translation"].as<glm::vec3>());
+						tc.SetRotation(transformComponent["Rotation"].as<glm::vec3>());
+						tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
+					}
 
-				auto RigibodyComponent = entity["Rigidbody"];
-				if (RigibodyComponent)
-				{
-					auto& rigidbody = deserializedEntity.AddComponent<Rigidbody>();
-				}
+					auto spriteRendererComponent = entity["SpriteRendererComponent"];
+					if (spriteRendererComponent)
+					{
+						auto& src = deserializedEntity.GetComponent<SpriteRenderer>();
+						src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+						if (spriteRendererComponent["TexturePath"])
+						{
+							std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
+							src.Texture = Texture2D::Create(texturePath);
+						}
 
-				auto SphereColliderComponent = entity["SphereCollider"];
-				if (SphereColliderComponent)
-				{
-					auto& spherecollider = deserializedEntity.AddComponent<SphereCollider>();
-				}
+						if (spriteRendererComponent["MixFactor "])
+						{
+							src.MixFactor = spriteRendererComponent["MixFactor "].as<float>();
+						}
+					}
 
-				auto CapsuleColliderComponenet = entity["CapsuleCollider"];
-				if (CapsuleColliderComponenet)
-				{
-					auto& Capsulecollider = deserializedEntity.AddComponent<CapsuleCollider>();
-				}
+					auto MeshRendererComponenet = entity["MeshRenderer"];
+					if (MeshRendererComponenet)
+					{
+						std::string path = MeshRendererComponenet["path"].as<std::string>();
 
-				auto BoxColliderComponent = entity["BoxCollider"];
-				if (BoxColliderComponent)
-				{
-					auto& boxcollider = deserializedEntity.AddComponent<BoxCollider>();
+						auto& comp = deserializedEntity.GetComponent<MeshRenderer>();
+					}
+
+					auto RigibodyComponent = entity["Rigidbody"];
+					if (RigibodyComponent)
+					{
+						auto& rigidbody = deserializedEntity.GetComponent<Rigidbody>();
+					}
+
+					auto SphereColliderComponent = entity["SphereCollider"];
+					if (SphereColliderComponent)
+					{
+						auto& spherecollider = deserializedEntity.GetComponent<SphereCollider>();
+					}
+
+					auto CapsuleColliderComponenet = entity["CapsuleCollider"];
+					if (CapsuleColliderComponenet)
+					{
+						auto& Capsulecollider = deserializedEntity.GetComponent<CapsuleCollider>();
+					}
+
+					auto BoxColliderComponent = entity["BoxCollider"];
+					if (BoxColliderComponent)
+					{
+						auto& boxcollider = deserializedEntity.GetComponent<BoxCollider>();
+						auto Center = BoxColliderComponent["Center"];
+						auto Rotation = BoxColliderComponent["Rotation"];
+						auto Size = BoxColliderComponent["Size"];
+						auto Trigger = BoxColliderComponent["Trigger"];
+
+						boxcollider.SetCenter({ 
+							Center[0].as<float>(), 
+							Center[1].as<float>(),
+							Center[2].as<float>() 
+							});
+
+						boxcollider.SetRotation({
+							Rotation[0].as<float>(),
+							Rotation[1].as<float>(),
+							Rotation[2].as<float>()
+							});
+						boxcollider.SetSize({
+							Size[0].as<float>(),
+							Size[1].as<float>(),
+							Size[2].as<float>()
+							});
+
+						boxcollider.SetTrigger(Trigger.as<bool>());
+					}
 				}
 			}
 		}
 
 		return true;
-	}
-
-	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
-	{
-		return false;
 	}
 }

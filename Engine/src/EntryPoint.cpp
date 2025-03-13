@@ -1,13 +1,10 @@
 #include "Core/Application.hpp"
 #include "Crestaph.hpp"
 #include "Debug/Profiler.hpp"
-#include "ScriptEngine/LuaManager.hpp"
+#include "ECS/Components/ScriptComponent.hpp"
 
 int main() 
 {
-
-	Cresta::LuaManager::PrepareScriptComponent("C:/dev/CrestaProjectFolder/test.lua");
-
 	CRESTA_PROFILE_BEGIN_SESSION("app","C:\\dev\\Cresta\\results.json");
 	Cresta::Application* App = Cresta::CreateApplication();
 	App->Run();

@@ -18,18 +18,18 @@ namespace Cresta
 
 		void OnImGuiRender();
 
-		Entity GetSelectedEntity() const;
-		void SetSelectedEntity(Entity entity);
+		Entity* GetSelectedEntity();
+		void SetSelectedEntity(Entity& entity);
 		void SetSelectedEntity(entt::entity entity);
 	
 	private:
 		Ref<Camera> m_Camera;
-		void DrawEntityNode(Entity entity);
+		void DrawEntityNode(Entity& entity);
 		void DrawInspectorWindow();
+
 	private:
 		Ref<Scene> m_Scene;
-		std::vector<Entity*> m_EntityList;
-		Entity m_SelectedEntity;
+		Entity* m_SelectedEntity;
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
 	};

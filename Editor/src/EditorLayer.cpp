@@ -15,10 +15,10 @@
 
 namespace Editor
 {
-
     Cresta::Ref<Cresta::VertexArray> m_PrimitiveCube;
     Cresta::Ref<Cresta::Shader> m_Shader;
-    EditorLayer::EditorLayer(Cresta::Ref<Scene> scene) : Layer("Editor Layer",scene)
+
+    EditorLayer::EditorLayer(Cresta::Ref<Scene> scene) : Layer("Editor Layer",scene) ,m_MouseX(0), m_MouseY(0)
     {
         m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 
@@ -80,12 +80,12 @@ namespace Editor
             m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
 
-        Renderer::BeginScene((Camera)*m_EditorCamera);
+        Renderer::BeginScene(*m_EditorCamera);
         {
             m_EditorCamera->OnUpdate();
             m_Framebuffer->Bind();
             {
-                p_ActiveScene->RenderScene();
+                p_ActiveScene->OnUpdate();
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
 
                 m_EntityID = m_Framebuffer->ReadPixel(1, m_MouseX, m_MouseY);
@@ -177,7 +177,8 @@ namespace Editor
             viewportPanelSize.x,
             viewportPanelSize.y };
 
-        auto& [mouseX, mouseY] = Input::GetMousePosition();
+        auto mousePos = Input::GetMousePosition();
+        auto [mouseX, mouseY] = mousePos;
 
         ImVec2 windowPos = ImGui::GetWindowPos();
         ImVec2 windowSize = ImGui::GetWindowSize();
@@ -196,16 +197,17 @@ namespace Editor
         ImVec2 m_ViewportBoundsMin = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
         ImVec2 m_ViewportBoundsMax = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-        Entity selectedEntity = m_HierarchyPanel->GetSelectedEntity();
-        if (selectedEntity && m_GizmoType != -1)
+        Entity* selectedEntity = m_HierarchyPanel->GetSelectedEntity();
+        if (selectedEntity && selectedEntity->IsValid() && m_GizmoType != -1)
         {
+
             ImGuizmo::SetDrawlist();
             ImGuizmo::SetRect(m_ViewportBoundsMin.x, m_ViewportBoundsMin.y, m_ViewportBoundsMax.x - m_ViewportBoundsMin.x, m_ViewportBoundsMax.y - m_ViewportBoundsMin.y);
 
             const glm::mat4& cameraProjection = m_EditorCamera->GetProjectionMatrix();
             glm::mat4 cameraView = m_EditorCamera->GetViewMatrix();
 
-            auto& tc = selectedEntity.GetComponent<Transform>();
+            auto& tc = selectedEntity->GetComponent<Transform>();
             glm::mat4 transform = tc.GetTransform();
 
             ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
@@ -217,10 +219,11 @@ namespace Editor
                 glm::vec3 translation, rotation, scale;
                 DecomposeTransform(transform, translation, rotation, scale);
 
-                glm::vec3 deltaRotation = rotation - tc.Rotation;
-                tc.Translation = translation;
-                tc.Rotation += deltaRotation;
-                tc.Scale = scale;
+                glm::vec3 deltaRotation = rotation - tc.GetRotation();
+                tc.SetPosition(translation);
+                tc.SetRotation(tc.GetRotation() += deltaRotation);
+                tc.SetScale(scale);
+                tc.OnValidate.post();
             }
         }
 
@@ -288,7 +291,6 @@ namespace Editor
         {
             if (m_EntityID >= 0)
             {
-                std::cout << "Entity ID: " << m_EntityID;
                 m_HierarchyPanel->SetSelectedEntity((entt::entity)m_EntityID);
                 return true;
             }
@@ -455,7 +457,7 @@ namespace Editor
 
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoPreviewTooltip))
                 {
-                    std::string payload = currentPath + "/" + filename;
+                    std::string payload = currentPath + "\\" + filename;
                     // Set the drag payload to the file path
                     ImGui::SetDragDropPayload("FILE_PATH", payload.c_str(), payload.length() + 1);
                     ImGui::Text(filename.c_str()); // Display file name as label 

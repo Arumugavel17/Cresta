@@ -10,129 +10,221 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Jolt/Physics/Body/BodyID.h>
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
 namespace Cresta 
 {
+	class Dispatcher
+	{
+	public:		
+		void Subscribe(const std::string& key, std::function<void()> function)
+		{
+			Observers[key] = function;
+		}
+
+		void UnSubscribe(const std::string& key)
+		{
+			Observers.erase(key);
+		}
+
+		void post() const
+		{
+			for (auto& observer : Observers)
+			{
+				observer.second();
+			}
+		}
+
+	private:
+		std::map<std::string, std::function<void()>> Observers;
+	};
+
+	// Helper to check if a class overrides OnStart
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnStart : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnStart <Base, Derived, std::void_t<decltype(&Base::OnStart), decltype(&Derived::OnStart)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnStart), decltype(&Derived::OnStart)>;
+	};
+
+	// Helper to check if a class overrides OnRender
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnRender : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnRender<Base, Derived, std::void_t<decltype(&Base::OnRender), decltype(&Derived::OnRender)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnRender), decltype(&Derived::OnRender)>;
+	};
+
+	// Helper to check if a class overrides OnUpdate
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnUpdate : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnUpdate<Base, Derived, std::void_t<decltype(&Base::OnUpdate), decltype(&Derived::OnUpdate)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnUpdate), decltype(&Derived::OnUpdate)>;
+	};
+
+	// Helper to check if a class overrides OnFixedUpdate
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnFixedUpdate : std::false_type {}; // Defaults to false if OnFixedUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnFixedUpdate<Base, Derived, std::void_t<decltype(&Base::OnFixedUpdate), decltype(&Derived::OnFixedUpdate)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnFixedUpdate), decltype(&Derived::OnFixedUpdate)>;
+	};
+
+
 	class Entity;
 
-	class Component
+	class ComponentTemplate 
 	{
 	public:
-		template<typename... Dependencies>
-		struct Require {};
+		explicit ComponentTemplate(Entity* entity) : p_Entity(entity) {}
+		virtual ~ComponentTemplate() = default;
 
-		virtual ~Component() = default;
-		Component() = default;
+		ComponentTemplate(ComponentTemplate&& other) noexcept : p_Entity(std::exchange(other.p_Entity, nullptr)) {}
+		ComponentTemplate& operator=(ComponentTemplate&& other) noexcept {
+			if (this != &other) {
+				p_Entity = std::exchange(other.p_Entity, nullptr);
+			}
+			return *this;
+		}
 
-		virtual void OnComponentAdded(Entity& entity) {}
-		virtual void OnComponentRemoved(Entity& entity) {}
+		virtual void UI() = 0;
+		virtual void OnStart() {}
+		virtual void OnRender() {}
+		virtual void OnUpdate() {}
+		virtual void OnFixedUpdate() {}
+		virtual void OnGizmo() {}
+		virtual void OnComponentAdded() {}
+		virtual void OnComponentRemoved() {}
 		virtual std::string ToString() = 0;
+
+		Entity* GetEntity() { return p_Entity; }
+		const Entity* GetEntity() const { return p_Entity; }
+
+	protected:
+		Entity* p_Entity;
 	};
 
 	class IDComponent
 	{
-	public:
+	private:
 		UUID m_ID;
 	public:
-		IDComponent() = default;
-		void OnComponentAdded(Entity& entity);
-		void OnComponentRemoved(Entity& entity);
+		IDComponent()
+		{
+			std::cout << "Default Construct\n";
+		}
+		IDComponent(Entity* entity) 
+		{ 
+			std::cout << "Entity* entity Construct\n"; 
+		}
 
+		void OnComponentAdded();
+		void OnComponentRemoved();
+
+		inline const UUID& GetUUID() const { return m_ID; }
 		std::string ToString()
 		{
 			return "IDComponent";
 		}
 	};
 
-	class TagComponent : public Component 
+	class TagComponent : public ComponentTemplate
 	{
 	public:
 		std::string Tag;
+		TagComponent(Entity* entity, const std::string& tag) : ComponentTemplate(entity),Tag(tag) {}
 
-		TagComponent() = default;
-		TagComponent(const std::string& tag)
-			: Tag(tag) {}
-
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
-
+		void UI() override {}
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 		std::string ToString() override
 		{
 			return "Tag Component";
 		}
 	};
 
-	class Transform : public Component 
+	class Transform : public ComponentTemplate 
 	{
 	public:
-		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
+		Transform(Entity* entity) : ComponentTemplate(entity) {}
 
-		glm::quat RotationQuat = { 0.0f, 0.0f, 0.0f, 0.0f};
+		void Save()
+		{
+			Save_Translation = m_Translation;
+			Save_Rotation = m_Rotation;
+			Save_Scale = m_Scale;
+		}
+
+		void Reset()
+		{
+			m_Translation = Save_Translation;
+			m_Rotation = Save_Rotation;
+			m_Scale = Save_Scale;
+			OnValidate.post();
+		}
+
+		inline void SetPosition(const glm::vec3& Position) { m_Translation = Position;				 OnValidate.post();	}
+		inline void SetScale(const glm::vec3& Scale)		  { m_Scale = Scale;						 OnValidate.post();	}
+		inline void SetRotation(const glm::quat& rotation)	  { m_Rotation = glm::eulerAngles(rotation); OnValidate.post(); }
+
+		inline constexpr glm::vec3& GetPosition() const { return *(new glm::vec3(m_Translation)); }
+		inline constexpr glm::vec3& GetRotation() const { return *(new glm::vec3(m_Rotation));	}
+		inline constexpr glm::vec3& GetScale()	  const { return *(new glm::vec3(m_Scale));		}
+
+		glm::mat4 GetTransform() const
+		{
+			glm::mat4 rotation = glm::toMat4(glm::quat(m_Rotation));
+
+			return glm::translate(glm::mat4(1.0f), m_Translation)
+				* rotation
+				* glm::scale(glm::mat4(1.0f), m_Scale);
+		}
+
+		std::string ToString() override { return "Transform Component"; }
+
+		void UI() override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
+
+	private:
+		glm::vec3 m_Translation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 m_Rotation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 m_Scale = { 1.0f, 1.0f, 1.0f };
+
+	public:
+		glm::quat RotationQuat = { 1.0f, 0.0f, 0.0f, 0.0f };
 
 		glm::vec3 Save_Translation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Save_Rotation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Save_Scale = { 1.0f, 1.0f, 1.0f };
 
-		Transform() = default;
- 		Transform(const glm::vec3& translation)
-			: Translation(translation) {}
-
-		void Save()
-		{
-			Save_Translation = Translation;
-			Save_Rotation = Rotation;
-			Save_Scale = Scale;
-		}
-
-		void Reset()
-		{
-			Translation = Save_Translation;
-			Rotation = Save_Rotation;
-			Scale = Save_Scale;
-		}
-
-		void SetRotation(const glm::quat& rotation)
-		{
-			Rotation = glm::eulerAngles(rotation);
-		}
-
-		glm::mat4 GetTransform() const
-		{
-			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
-
-			return glm::translate(glm::mat4(1.0f), Translation)
-				* rotation
-				* glm::scale(glm::mat4(1.0f), Scale);
-		}
-
-		std::string ToString() override
-		{
-			return "Transform Component";
-		}
-		
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		Dispatcher OnValidate;
 	};
 
-	class CameraComponent : public Component
+	class CameraComponent : public ComponentTemplate
 	{
 	public:
+		CameraComponent(Entity* entity) : ComponentTemplate(entity) {}
+
 		Camera Camera;
 		bool Primary = true; // TODO: think about moving to Scene
 		bool FixedAspectRatio = false;
 
-		CameraComponent() = default;
 
 		std::string ToString() override
 		{
 			return "Camera Component";
 		}
 
-		void OnComponentAdded(Entity& entity) override;
-		void OnComponentRemoved(Entity& entity) override;
+		void UI() override {}
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
 	};
 }

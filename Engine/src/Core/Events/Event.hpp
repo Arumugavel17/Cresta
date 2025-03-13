@@ -15,7 +15,8 @@ namespace Cresta
 		WindowMoved,
 
 		AppTick, 
-		AppUpdate, 
+		AppUpdate,
+		AppFixedUpdate,
 		AppRender,
 		
 		KeyPressed, 

@@ -3,20 +3,18 @@
 #include "Crestaph.hpp"
 #include "Scene.hpp"
 
-namespace Cresta {
+#define EDIT_ENTITIES 0
+#define CREATE_ENTITIES 1
 
+#include <yaml-cpp/yaml.h>
+
+namespace Cresta 
+{
 	class SceneSerializer
 	{
 	public:
-		SceneSerializer(const Ref<Scene>& scene);
-
-		void Serialize(const std::string& filepath);
-		void SerializeRuntime(const std::string& filepath);
-
-		bool Deserialize(const std::string& filepath);
-		bool DeserializeRuntime(const std::string& filepath);
-	private:
-		Ref<Scene> m_Scene;
+		static void Serialize(Scene& scene,const std::string& filepath);
+		static bool Deserialize(Scene& scene,const std::string& filepath, int option = CREATE_ENTITIES);
 	};
 
 }

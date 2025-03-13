@@ -1,7 +1,7 @@
 #include "Application.hpp"
 #include "Core/Time.hpp"
-#include "ECS/Scene/SceneSerializer.hpp"
 #include "Platform/OpenGL/Utils.hpp"
+#include "ECS/Scene/SceneSerializer.hpp"
 
 #include "Crestaph.hpp"
 
@@ -153,8 +153,7 @@ namespace Cresta
 		}
 
 		Ref<Scene> newScene = CreateRef<Scene>();
-		SceneSerializer serializer(newScene);
-		if (serializer.Deserialize(path.string()))
+		if (SceneSerializer::Deserialize(*newScene ,path.string()))
 		{
 			//Ref<Scene> temp = sp_ActiveScene;
 			sp_ActiveScene = newScene;
@@ -164,12 +163,6 @@ namespace Cresta
 		}
 
 		CRESTA_CORE_WARN("Could not load {0} - not a scene file", path.filename().string());
-	}
-
-	void Application::SerializeScene(const Ref<Scene>& scene, const std::filesystem::path& path)
-	{
-		SceneSerializer serializer(scene);
-		serializer.Serialize(path.string());
 	}
 
 	//All the layer has a local Reference to the scene this method updates all the Layer
@@ -185,7 +178,7 @@ namespace Cresta
 	{
 		if (!p_ActiveScenePath.empty())
 		{
-			SerializeScene(sp_ActiveScene, p_ActiveScenePath);
+			sp_ActiveScene->SerializeScene(p_ActiveScenePath);
 		}
 		else
 		{
@@ -198,7 +191,7 @@ namespace Cresta
 		std::string filepath = Utils::FileDialogs::SaveScene("Cresta Scene (*.cresta)\0*.cresta\0");
 		if (!filepath.empty())
 		{
-			SerializeScene(sp_ActiveScene, filepath);
+			sp_ActiveScene->SerializeScene(filepath);
 			p_ActiveScenePath = filepath;
 		}
 	}

@@ -76,7 +76,7 @@ namespace Cresta
 	Shader::Shader(const std::string& filepath) 
 		: p_filepath (filepath)
 	{
-		std::string& source = ReadFile(filepath);
+		const std::string& source = ReadFile(filepath);
 
 		p_ShaderSrc = PreProcess(source);
 	}

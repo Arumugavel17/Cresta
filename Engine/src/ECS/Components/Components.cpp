@@ -1,49 +1,40 @@
-#include "ECS/Components/Components.hpp"
+#include "Components.hpp"
 #include "ECS/Entity.hpp"
 #include "ECS/Scene/Scene.hpp"
 
 namespace Cresta
 {
-	void IDComponent::OnComponentAdded(Entity& entity)
+	void IDComponent::OnComponentAdded()
 	{
-		entity.GetComponent<IDComponent>().m_ID = UUID();
-		CRESTA_INFO("IDComponent OnComponentAdded");
 	}
 
-	void TagComponent::OnComponentAdded(Entity& entity)
+	void TagComponent::OnComponentAdded()
 	{
-		CRESTA_INFO("TagComponent OnComponentAdded");
 	}
 
-	void Transform::OnComponentAdded(Entity& entity)
+	void Transform::OnComponentAdded()
 	{
-		CRESTA_INFO("Transform OnComponentAdded");
 	}
 
-	void CameraComponent::OnComponentAdded(Entity& entity)
+	void CameraComponent::OnComponentAdded()
 	{
-		CRESTA_INFO("CameraComponent OnComponentAdded");
 	}
 
 	//Removed////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void IDComponent::OnComponentRemoved(Entity& entity)
+	void IDComponent::OnComponentRemoved()
 	{
-		CRESTA_INFO("IDComponent OnComponentRemoved");
 	}
 
-	void TagComponent::OnComponentRemoved(Entity& entity)
+	void TagComponent::OnComponentRemoved()
 	{
-		CRESTA_INFO("TagComponent OnComponentRemoved");
 	}
 
-	void Transform::OnComponentRemoved(Entity& entity)
+	void Transform::OnComponentRemoved()
 	{
-		CRESTA_INFO("Transform OnComponentRemoved");
 	}
 
-	void CameraComponent::OnComponentRemoved(Entity& entity)
+	void CameraComponent::OnComponentRemoved()
 	{
-		CRESTA_INFO("CameraComponent OnComponentRemoved");
 	}
 }
