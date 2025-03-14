@@ -1,11 +1,12 @@
 #pragma once
 #include "Crestaph.hpp"
 #include "Components.hpp"
-#include "ScriptEngine/LuaManager.hpp"
 #include "RendererComponents.hpp"
 #include "PhysicsComponents.hpp"
 #include "ECS/Entity.hpp"
 
+#define SOL_ALL_SAFETIES_ON 1
+#include <sol/sol.hpp>
 
 namespace Cresta
 {
@@ -30,7 +31,7 @@ namespace Cresta
 
 		inline void SetPosition(const vec3& Position) { TransformComponent->SetPosition({ Position.x,Position.y,Position.z }); }
 		inline void SetScale(const vec3& Scale) { TransformComponent->SetScale({ Scale.x,Scale.y,Scale.z }); }
-		inline void SetRotation(const quat& Position) { TransformComponent->SetRotation({ Position.x,Position.y,Position.z,Position.w }); }
+		inline void SetRotation(const quat& Rotation) { TransformComponent->SetRotation({ Rotation.x,Rotation.y,Rotation.z,Rotation.w }); }
 
 		inline constexpr vec3& GetPosition() const 
 		{ 
@@ -38,10 +39,10 @@ namespace Cresta
 			return *(new vec3(position.x, position.y, position.z));
 		}
 
-		inline constexpr vec3& GetRotation() const 
+		inline constexpr quat& GetRotation() const 
 		{
-			glm::vec3 rotation = TransformComponent->GetRotation();
-			return *(new vec3(rotation.x, rotation.y, rotation.z));
+			glm::quat rotation = TransformComponent->GetRotation();
+			return *(new quat(rotation.x, rotation.y, rotation.z, rotation.w));
 		}
 
 		inline constexpr vec3& GetScale() const 

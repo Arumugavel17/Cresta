@@ -23,6 +23,8 @@ namespace Cresta
 
 	void Application::Init()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		sp_ActiveScene = CreateRef<Scene>();
 		p_ImGUILayer = new ImGUILayer(sp_ActiveScene);
 
@@ -37,12 +39,16 @@ namespace Cresta
 	
 	void Application::PushLayer(Layer* layer)
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		p_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		p_LayerStack.PushOverlay(layer);
 		layer->OnAttach();
 	}

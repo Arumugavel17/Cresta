@@ -39,7 +39,7 @@ namespace Cresta
 		Entity& CreateEntity(const std::string& name = std::string());
 		Entity& CreateEntity(UUID& ID,const std::string& name = std::string());
 		Entity& FindEntityByName(std::string name);
-		Entity& FindEntityByID(entt::entity entitiyID);
+		Entity& FindEntityByID(UUID& ID);
 
 		Entity* GetPrimaryCameraEntity();
 

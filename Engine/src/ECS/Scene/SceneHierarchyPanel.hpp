@@ -24,7 +24,7 @@ namespace Cresta
 	
 	private:
 		Ref<Camera> m_Camera;
-		void DrawEntityNode(Entity& entity);
+		bool DrawEntityNode(Entity& entity); // Returns False if Entity is nolonger valide i.e it has been deleted
 		void DrawInspectorWindow();
 
 	private:

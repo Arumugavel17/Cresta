@@ -35,13 +35,31 @@ namespace Cresta
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		ImGui::Begin("Scene Hierarchy");
 
 		if (m_Scene)
 		{
+			bool DeleteEntity = false;
+			Ref<Entity> EntityToDelete;
+			
 			for (auto& i : m_Scene->m_EntityMap)
 			{
-				DrawEntityNode(*i.second);
+				DeleteEntity = !DrawEntityNode(*i.second);
+				if (DeleteEntity)
+				{
+					EntityToDelete = i.second;
+				}
+			}
+
+			if (DeleteEntity)
+			{
+				m_Scene->DestroyEntity(*EntityToDelete);
+				if (m_SelectedEntity && m_SelectedEntity->IsValid() && *m_SelectedEntity == *EntityToDelete)
+				{
+					m_SelectedEntity = nullptr;
+				}
 			}
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
@@ -91,6 +109,8 @@ namespace Cresta
 
 	void EditTransform(float* cameraView, float* cameraProjection, float* matrix)
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		ImGuizmo::BeginFrame();
 		if (ImGuizmo::IsUsing())
 		{
@@ -101,8 +121,10 @@ namespace Cresta
 		}	
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity& entity)
+	bool SceneHierarchyPanel::DrawEntityNode(Entity& entity)
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
 		ImGuiTreeNodeFlags flags;
@@ -123,12 +145,12 @@ namespace Cresta
 			m_SelectedEntity = &entity;
 		}
 
-		bool entityDeleted = false;
+		bool EntityAlive = true;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
 			{
-				entityDeleted = true;
+				EntityAlive = false;
 			}
 
 			ImGui::EndPopup();
@@ -143,18 +165,13 @@ namespace Cresta
 			ImGui::TreePop();
 		}
 
-		if (entityDeleted)
-		{
-			m_Scene->DestroyEntity(entity);
-			if (m_SelectedEntity && m_SelectedEntity->IsValid() && *m_SelectedEntity == entity)
-			{
-				m_SelectedEntity = nullptr;
-			}
-		}
+		return EntityAlive;
 	}
 
 	void SceneHierarchyPanel::DrawInspectorWindow()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		ImGui::Begin("Inspector");
 		if (!m_SelectedEntity || !m_SelectedEntity->IsValid() || !m_SelectedEntity->HasComponent<TagComponent>())
 		{
@@ -209,7 +226,10 @@ namespace Cresta
 	}
 
 	template<typename T>
-	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
+	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) 
+	{
+		CRESTA_PROFILE_FUNCTION();
+
 		if (!m_SelectedEntity->HasComponent<T>())
 		{
 			if (ImGui::MenuItem(entryName.c_str()))

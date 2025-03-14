@@ -53,44 +53,45 @@ namespace Cresta
 	public:
 		BoxCollider(Entity* entity);
 
-		glm::vec3 GetCenter()	{ return m_Center;   }
-		glm::vec3 GetRotation() { return m_Rotation; }
-		glm::vec3 GetSize()		{ return m_Scale;    }
+		glm::vec3 GetCenter()	{ return m_LocalCenter;   }
+		glm::quat GetRotation() { return m_LocalRotation; }
+		glm::vec3 GetSize()		{ return m_LocalScale;    }
 
 		void SetTrigger(bool isTrigger) { m_IsTrigger = isTrigger; }
 		bool IsTrigger() { return m_IsTrigger; }
 
-		void SetCenter(const glm::vec3& center)		{ m_Center = center;				Revaluate(p_Entity); }
-		void SetRotation(const glm::vec3& rotation) { m_OffestLocalRotation = rotation; Revaluate(p_Entity); }
-		void SetSize(const glm::vec3& size)			{ m_OffestLocalScale = size;		Revaluate(p_Entity); }
+		void SetCenter(const glm::vec3& center)		{ m_LocalCenter = center;		Revaluate(p_Entity); }
+		void SetRotation(const glm::quat& rotation) { m_LocalRotation = rotation;	Revaluate(p_Entity); }
+		void SetSize(const glm::vec3& size)			{ m_LocalScale = size;			Revaluate(p_Entity); }
 
 		std::string ToString() override { return "Box Collider"; }
 
-		static void Revaluate(Entity* entity);
+		static void Revaluate(Entity* entity, bool reflectphysics = false);
 
 		void UI() override;
 		void OnStart() override;
 		void OnRender() override;
-		void OnFixedUpdate() override;
+		void OnEnd();
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
 
 		glm::mat4 GetTransform() const
 		{
 			return glm::translate(glm::mat4(1.0f), m_Center)
-				* glm::toMat4(glm::quat(m_Rotation))
+				* glm::toMat4(m_Rotation)
 				* glm::scale(glm::mat4(1.0f), m_Scale);
 		}
 
 	private:
 		bool m_IsTrigger = false;
-		glm::vec3 m_Rotation;
+
+		glm::quat m_Rotation;
 		glm::vec3 m_Center;
 		glm::vec3 m_Scale;
 
-		glm::vec3 m_OffestLocalCenter;
-		glm::vec3 m_OffestLocalRotation;
-		glm::vec3 m_OffestLocalScale;
+		glm::vec3 m_LocalCenter;
+		glm::quat m_LocalRotation;
+		glm::vec3 m_LocalScale;
 	};
 
 	class SphereCollider : public Collider

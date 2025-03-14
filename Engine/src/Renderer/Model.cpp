@@ -1,11 +1,7 @@
 #include "Model.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Shader.hpp"
-#include <future>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <atomic>
+#include "vector"
 
 namespace Cresta
 {
@@ -117,6 +113,71 @@ namespace Cresta
 		ProcessNode(scene->mRootNode, scene);
 	}
 
+	void Model::SetVertexBoneDataToDefault(Vertex& vertex)
+	{
+		for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+		{
+			vertex.BoneIDs[i] = -1;
+			vertex.Weights[i] = 0.0f;
+		}
+	}
+
+	void Model::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
+	{
+		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+		{
+			if (vertex.BoneIDs[i] < 0)
+			{
+				vertex.Weights[i] = weight;
+				vertex.BoneIDs[i] = boneID;
+				break;
+			}
+		}
+	}
+
+	glm::mat4 ConvertAssimpMatrixToGLM(const aiMatrix4x4& aiMat) {
+		return glm::mat4(
+			aiMat.a1, aiMat.b1, aiMat.c1, aiMat.d1,
+			aiMat.a2, aiMat.b2, aiMat.c2, aiMat.d2,
+			aiMat.a3, aiMat.b3, aiMat.c3, aiMat.d3,
+			aiMat.a4, aiMat.b4, aiMat.c4, aiMat.d4
+		);
+	}
+
+	void Model::ExctractBoneInfo(std::vector<Vertex>& vertices,const aiMesh* mesh, const aiScene* scene)
+	{
+		for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+		{
+			int boneID = -1;
+			std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+			if (m_BoneInfoMap.find(boneName) == m_BoneInfoMap.end())
+			{
+				BoneInfo newBoneInfo;
+				newBoneInfo.id = m_BoneCounter;
+				newBoneInfo.offset = ConvertAssimpMatrixToGLM(
+					mesh->mBones[boneIndex]->mOffsetMatrix);
+				m_BoneInfoMap[boneName] = newBoneInfo;
+				boneID = m_BoneCounter;
+				m_BoneCounter++;
+			}
+			else
+			{
+				boneID = m_BoneInfoMap[boneName].id;
+			}
+			assert(boneID != -1);
+			auto weights = mesh->mBones[boneIndex]->mWeights;
+			int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+			for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+			{
+				int vertexId = weights[weightIndex].mVertexId;
+				float weight = weights[weightIndex].mWeight;
+				assert(vertexId <= vertices.size());
+				SetVertexBoneData(vertices[vertexId], boneID, weight);
+			}
+		}
+	}
+
 	void Model::ProcessNode(const aiNode* node, const aiScene* scene) 
 	{
 		for (uint32_t i = 0; i < node->mNumMeshes; i++)
@@ -159,9 +220,11 @@ namespace Cresta
 			aiVector3D position = mesh->mVertices[i];
 			aiVector3D texture = mesh->mTextureCoords[0] ? mesh->mTextureCoords[0][i] : aiVector3D(0.0f, 0.0f, 0.0f); 
 			vertices.push_back({
-					{ position.x,position.y,position.z },
-					{ texture.x,texture.y },
-					TextureIndex
+					{ position.x, position.y, position.z },  // glm::vec3 position
+					{ texture.x, texture.y },                // glm::vec2 texCoords
+					TextureIndex,                             // index
+					{ -1, -1, -1, -1 },                      // m_BoneIDs initialized properly
+					{ 0.0f, 0.0f, 0.0f, 0.0f }              // m_Weights initialized properly
 				});
 		}
 
@@ -174,6 +237,8 @@ namespace Cresta
 				indices.push_back(face.mIndices[j]);
 			}
 		}
+
+		ExctractBoneInfo(vertices, mesh, scene);
 
 		return Mesh(vertices, indices);
 	}
@@ -229,7 +294,9 @@ namespace Cresta
 			vertexBuffer->SetLayout({
 					{ ShaderDataType::FVec3, "aPos" },
 					{ ShaderDataType::FVec2, "aTexCoords" },
-					{ ShaderDataType::Int, "aTexIndex" }
+					{ ShaderDataType::Int, "aTexIndex" },
+					{ ShaderDataType::IVec4, "aBoneIDs" },
+					{ ShaderDataType::FVec4, "aWeights" }
 				});
 
 			m_VAOs[i]->AddVertexBuffer(vertexBuffer);

@@ -1,4 +1,5 @@
 #include "PhysicsComponents.hpp"
+#include "PhysicsComponents.hpp"
 #include "Renderer/PrimitiveMeshes.hpp"
 #include "ECS/Entity.hpp"
 #include "Renderer/Renderer.hpp"
@@ -7,19 +8,23 @@ namespace Cresta
 {
 	void Rigidbody::OnStart()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		Physics::SetBodyPosition(m_EnityID, p_Entity->GetComponent<Transform>().GetPosition());
 		Physics::SetBodyRotation(m_EnityID, p_Entity->GetComponent<Transform>().GetRotation());
 	}
 
 	void Rigidbody::OnFixedUpdate()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		p_Entity->GetComponent<Transform>().SetPosition(
-			Physics::GetBodyPosition(m_EnityID
-		));
+			Physics::GetBodyPosition(m_EnityID)
+		);
 
 		p_Entity->GetComponent<Transform>().SetRotation(
-			Physics::GetBodyRotation(m_EnityID
-		));
+			Physics::GetBodyRotation(m_EnityID)
+		);
 	}
 
 	void Rigidbody::OnComponentAdded()
@@ -29,7 +34,6 @@ namespace Cresta
 	}
 
 	BoxCollider::BoxCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
-
 	void BoxCollider::OnComponentAdded()
 	{
 		Scene::AddCollider(p_Entity->GetUUID(), m_Shape);
@@ -39,35 +43,39 @@ namespace Cresta
 		m_Scale = glm::vec3(1.0f);
 
 		Transform& transform = p_Entity->GetComponent<Transform>();
-		transform.OnValidate.Subscribe(typeid(BoxCollider).name(), [entity = p_Entity]()
+		transform.OnValidate.Subscribe(typeid(BoxCollider).name(), [entity = p_Entity](bool reflectphysics = false)
 			{
-				BoxCollider::Revaluate(entity);
+				BoxCollider::Revaluate(entity, reflectphysics);
 			});
 
-		m_OffestLocalCenter = glm::vec3(0.0f);
-		m_OffestLocalRotation = transform.GetRotation();
-		m_OffestLocalScale = transform.GetScale();
-
+		m_LocalCenter = glm::vec3(0.0f);
+		m_LocalRotation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f);
+		m_LocalScale = glm::vec3(1.0f);
 		Revaluate(p_Entity);
 	}
 
-	void BoxCollider::Revaluate(Entity* entity)
+	void BoxCollider::Revaluate(Entity* entity, bool reflectphysics )
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		auto& collider = entity->GetComponent<BoxCollider>();
 		auto& transform = entity->GetComponent<Transform>();
 
 		// Apply transformation to the stored local values
-		glm::mat4 transformMatrix = transform.GetTransform();
+		glm::vec3 parentPosition = transform.GetPosition();
+		glm::quat parentRotation = transform.GetRotation(); // Parent rotation
+		glm::vec3 parentScale = transform.GetScale();
 
-		glm::quat parentRotation = glm::quat(transform.GetRotation()); // Parent rotation
-		glm::quat childRotation = glm::quat(collider.m_OffestLocalRotation); // Local rotation
+		collider.m_Center = parentPosition;
+		collider.m_Rotation = parentRotation * collider.m_LocalRotation;
+		collider.m_Scale = parentScale * collider.m_LocalScale;
 
-		collider.m_Center = glm::vec3(transformMatrix * glm::vec4(collider.m_OffestLocalCenter, 1.0f));
-		collider.m_Rotation = glm::eulerAngles(parentRotation * childRotation);
-		collider.m_Scale = transform.GetScale() * collider.m_OffestLocalScale; // Scale transformation
-
-		Physics::SetBodyPosition(entity->GetUUID(), collider.m_Center);
-		Physics::SetBodyRotation(entity->GetUUID(), collider.m_Rotation);
+		if (reflectphysics)
+		{
+			std::cout << "Edited" << "\n";
+			Physics::SetBodyPosition(entity->GetUUID(), collider.m_Center);
+			Physics::SetBodyRotation(entity->GetUUID(), collider.m_Rotation);
+		}
 
 		if (std::abs(collider.m_Scale.x) > 0.1f && std::abs(collider.m_Scale.y) > 0.1f && std::abs(collider.m_Scale.z) > 0.1f)
 		{
@@ -77,6 +85,8 @@ namespace Cresta
 
 	void BoxCollider::OnStart()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		if (std::abs(m_Scale.x) > 0.1f && std::abs(m_Scale.y) > 0.1f && std::abs(m_Scale.z) > 0.1f)
 		{
 			Physics::SetBodyShapeScale(p_Entity->GetUUID(), m_Scale);
@@ -85,14 +95,14 @@ namespace Cresta
 
 	void BoxCollider::OnRender()
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Primitive::DrawCubeGuizmo(GetTransform());
 	}
-	
-	void BoxCollider::OnFixedUpdate()
-	{
-		
-	}
 
+	void BoxCollider::OnEnd()
+	{
+	}
+	
 	void SphereCollider::OnComponentAdded()
 	{
 		Scene::AddCollider(p_Entity->GetComponent<IDComponent>().GetUUID(), m_Shape);

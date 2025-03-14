@@ -1,7 +1,4 @@
 #include "Renderer.hpp"
-#include "Renderer.hpp"
-#include "Renderer.hpp"
-#include "Renderer.hpp"
 #include "Crestaph.hpp"
 
 namespace Cresta 
@@ -40,8 +37,6 @@ namespace Cresta
 
 		sm_SpriteVertexArray->AddVertexBuffer(VBO);
 		sm_SpriteVertexArray->SetIndexBuffer(IBO);
-
-		//RenderCommand::Init();
 	}
 
 	void Renderer::Shutdown()

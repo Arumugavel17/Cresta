@@ -77,6 +77,7 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 	return os << glm::to_string(quaternion);
 }
 
+#if 0
 // Core log macros
 #define CRESTA_CORE_TRACE(...)    ::Cresta::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define CRESTA_CORE_INFO(...)     ::Cresta::Log::GetCoreLogger()->info(__VA_ARGS__)
@@ -97,3 +98,21 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 
 #define CRESTA_ASSERT(x, ...) \
     if (x) { CRESTA_ERROR("Assertion Failed: " __VA_ARGS__); __debugbreak(); }
+#else
+// Core log macros
+#define CRESTA_CORE_TRACE(...)    
+#define CRESTA_CORE_INFO(...)     
+#define CRESTA_CORE_WARN(...)     
+#define CRESTA_CORE_ERROR(...)    
+#define CRESTA_CORE_CRITICAL(...) 
+#define CRESTA_CORE_LOG_WITH_TIME(...) 
+// Client log macros
+#define CRESTA_TRACE(...)         
+#define CRESTA_INFO(...)          
+#define CRESTA_WARN(...)          
+#define CRESTA_ERROR(...)         
+#define CRESTA_CRITICAL(...)      
+#define CRESTA_LOG_WITH_TIME(...) 
+
+#define CRESTA_ASSERT(x, ...) 
+#endif

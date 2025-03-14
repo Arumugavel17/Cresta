@@ -84,6 +84,33 @@ namespace YAML
 	};
 
 	template<>
+	struct convert<glm::quat>
+	{
+		static Node encode(const glm::quat& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			node.push_back(rhs.w);
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::quat& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 4)
+				return false;
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			rhs.w = node[3].as<float>();
+			return true;
+		}
+	};
+
+	template<>
 	struct convert<Cresta::UUID>
 	{
 		static Node encode(const Cresta::UUID& uuid)
@@ -139,8 +166,17 @@ namespace Cresta
 		return out;
 	}
 
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::quat& q)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << q.x << q.y << q.z << q.w << YAML::EndSeq;
+		return out;
+	}
+
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		CRESTA_ASSERT(!entity.HasComponent<IDComponent>());
 
 		out << YAML::BeginMap; // Entity
@@ -230,6 +266,8 @@ namespace Cresta
 
 	void SceneSerializer::Serialize(Scene& scene, const std::string& filepath)
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
@@ -248,6 +286,8 @@ namespace Cresta
 
 	bool SceneSerializer::Deserialize(Scene& scene, const std::string& filepath, int option)
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		YAML::Node data;
 		try
 		{
@@ -289,7 +329,7 @@ namespace Cresta
 						// Entities always have transforms
 						auto& tc = deserializedEntity.GetComponent<Transform>();
 						tc.SetPosition(transformComponent["Translation"].as<glm::vec3>());
-						tc.SetRotation(transformComponent["Rotation"].as<glm::vec3>());
+						tc.SetRotation(transformComponent["Rotation"].as<glm::quat>());
 						tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
 					}
 
@@ -354,8 +394,10 @@ namespace Cresta
 						boxcollider.SetRotation({
 							Rotation[0].as<float>(),
 							Rotation[1].as<float>(),
-							Rotation[2].as<float>()
+							Rotation[2].as<float>(),
+							Rotation[3].as<float>()
 							});
+
 						boxcollider.SetSize({
 							Size[0].as<float>(),
 							Size[1].as<float>(),
@@ -367,7 +409,7 @@ namespace Cresta
 				}
 				else if(option == EDIT_ENTITIES)
 				{
-					Entity& deserializedEntity = scene.FindEntityByName(name);
+					Entity& deserializedEntity = scene.FindEntityByID(*(new UUID(uuid)));
 
 					auto transformComponent = entity["TransformComponent"];
 					if (transformComponent)
@@ -375,7 +417,7 @@ namespace Cresta
 						// Entities always have transforms
 						auto& tc = deserializedEntity.GetComponent<Transform>();
 						tc.SetPosition(transformComponent["Translation"].as<glm::vec3>());
-						tc.SetRotation(transformComponent["Rotation"].as<glm::vec3>());
+						tc.SetRotation(transformComponent["Rotation"].as<glm::quat>());
 						tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
 					}
 
@@ -440,8 +482,10 @@ namespace Cresta
 						boxcollider.SetRotation({
 							Rotation[0].as<float>(),
 							Rotation[1].as<float>(),
-							Rotation[2].as<float>()
+							Rotation[2].as<float>(),
+							Rotation[3].as<float>()
 							});
+
 						boxcollider.SetSize({
 							Size[0].as<float>(),
 							Size[1].as<float>(),

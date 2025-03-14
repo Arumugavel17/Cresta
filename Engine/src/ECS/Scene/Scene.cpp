@@ -22,12 +22,14 @@ namespace Cresta
 
 	Entity& Scene::CreateEntity(UUID& ID, const std::string& name)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Entity& entity = CreateEntity(name);
 		return entity;
 	}
 
 	Entity& Scene::CreateEntity(const std::string& name)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Ref<Entity> entity1 = CreateRef<Entity>(m_Registry.create(), this);
 		Entity& entity = *entity1;
 		entity.AddComponent<IDComponent>();
@@ -46,53 +48,61 @@ namespace Cresta
 
 	void Scene::DestroyEntity(Entity& entity)
 	{
-		m_EntityMap.erase(entity.GetUUID());
+		CRESTA_PROFILE_FUNCTION();
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.GetUUID());
 		InvokeSceneUpdateCallBacks();
 	}
 
 	void Scene::AssignPhysicsBody(const UUID& entityID)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Physics::CreateBody(entityID);
 	}
 
 	void Scene::AddRigidBody(const UUID& entity)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Physics::AddRigidBody(entity);
 	}
 
 	void Scene::AddCollider(const UUID& entity, const ColliderShape& shape)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Physics::AddCollider(entity, shape);
 	}
 
 	void Scene::RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID)
 	{
-		
+		CRESTA_PROFILE_FUNCTION();
 	}
 
 	void Scene::RemoveRigidBody(const UUID& entity)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Physics::MakeBodyStatic(entity);
 	}
 
 	void Scene::RemoveCollider(const UUID& entity)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Physics::RemoveCollider(entity);
 	}
 
 	void Scene::AddSceneUpdateCallBack(const std::function<void()>& func)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		m_SceneUpdateCallBack.push_back(func);
 	}
 
 	void Scene::RemoveSceneUpdateCallBack(const std::function<void()>& func)
 	{
-
+		CRESTA_PROFILE_FUNCTION();
 	}
 
 	void Scene::InvokeSceneUpdateCallBacks()
 	{
+		CRESTA_PROFILE_FUNCTION();
 		for (auto CallBackFunc : m_SceneUpdateCallBack)
 		{
 			CallBackFunc();
@@ -101,11 +111,13 @@ namespace Cresta
 
 	void Scene::SerializeScene(const std::filesystem::path& path)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		SceneSerializer::Serialize(*this,path.string());
 	}
 
 	Entity* Scene::GetPrimaryCameraEntity()
 	{
+		CRESTA_PROFILE_FUNCTION();
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
@@ -120,6 +132,7 @@ namespace Cresta
 
 	Entity& Scene::FindEntityByName(std::string name)
 	{
+		CRESTA_PROFILE_FUNCTION();
 		auto view = m_Registry.view<TagComponent>();
 		for (auto entity : view)
 		{
@@ -131,20 +144,21 @@ namespace Cresta
 		}
 	}
 
-	Entity& Scene::FindEntityByID(entt::entity entitiyID)
+	Entity& Scene::FindEntityByID(UUID& ID)
 	{
-		auto view = m_Registry.view<TagComponent>();
-		for (auto entity : view)
+		CRESTA_PROFILE_FUNCTION();
+		for (auto& i : m_EntityMap)
 		{
-			if (entity == entitiyID)
+			if (i.first == ID)
 			{
-				return *m_EntityMap[m_Registry.get<IDComponent>(entity).GetUUID()];
+				return *i.second;
 			}
 		}
 	}
 
 	void Scene::OnRuntimeStart()
 	{
+		CRESTA_PROFILE_FUNCTION();
 		Save();
 		for (auto& entity : m_EntityMap)
 		{
@@ -156,7 +170,8 @@ namespace Cresta
 
 	void Scene::Save()
 	{
-		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.second.string() + "\\temp";
+		CRESTA_PROFILE_FUNCTION();
+		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.ProjectFolder.string() + "\\temp";
 		// Ensure the folder exists
 		if (!std::filesystem::exists(tempFolderPath)) {
 			std::filesystem::create_directories(tempFolderPath);
@@ -167,20 +182,27 @@ namespace Cresta
 
 	void Scene::Reset()
 	{
-		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.second.string() + "\\temp";
+		CRESTA_PROFILE_FUNCTION();
+		std::string tempFolderPath = Application::GetApplication().p_ActiveProjectPath.ProjectFolder.string() + "\\temp";
 
 		SceneSerializer::Deserialize(*this, tempFolderPath + "\\TempFile.cresta", EDIT_ENTITIES);
 	}
 
 	void Scene::OnRuntimeStop()
 	{
+		CRESTA_PROFILE_FUNCTION();
 		m_Running = false;
 		Physics::Stop();
+		for (auto& entity : m_EntityMap)
+		{
+			entity.second->OnEnd();
+		}
 		Reset();
 	}
 
 	void Scene::FixedUpate()
 	{
+		CRESTA_PROFILE_FUNCTION();
 		if (m_Running)	
 		{
 			for (auto& entity : m_EntityMap)
@@ -193,6 +215,7 @@ namespace Cresta
 
 	void Scene::OnUpdate()
 	{
+		CRESTA_PROFILE_FUNCTION();
 		for (auto& entity : m_EntityMap)
 		{
 			auto& transform = m_Registry.get<Transform>(*entity.second);

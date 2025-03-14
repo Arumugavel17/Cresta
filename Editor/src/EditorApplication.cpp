@@ -9,8 +9,15 @@ namespace Editor
 {
 	namespace fs = std::filesystem;
 	using json = nlohmann::json;
+
+	struct ProjectList
+	{
+		uint32_t TimeStamp;
+		std::string ProjectName;
+		std::string ProjectPath;
+	};
 	
-	static void ReadProjectsList(std::map<int, std::pair<string, string>, std::greater<int>>& output)
+	static void ReadProjectsList(std::vector<ProjectList>& output)
 	{
 		std::string filePath = "assets/Projects.json";
 		std::ifstream AlreadyOpenedProject(filePath);
@@ -43,8 +50,7 @@ namespace Editor
 			json::iterator ProjectData = it.value().begin();
 			std::string ProjectPath = ProjectData.value().get<std::string>(); // Directly get string
 			++ProjectData;
-
-			output[ProjectData.value()] = { it.key(), ProjectPath };
+			output.emplace_back(ProjectData.value().get<uint32_t>(), it.key(), ProjectPath);
 		}
 
 		AlreadyOpenedProject.close();
@@ -79,8 +85,8 @@ namespace Editor
 		{
 			std::ofstream save(filepath);
 			save.close();
-			p_ActiveProjectPath.first = filepath.substr(filepath.find_last_of("/")+1,filepath.length());
-			p_ActiveProjectPath.second = filepath;
+			p_ActiveProjectPath.ProjectFile = filepath.substr(filepath.find_last_of("\\")+1,filepath.length());
+			p_ActiveProjectPath.ProjectFolder = filepath;
 		}
 	}
 
@@ -89,9 +95,8 @@ namespace Editor
 		std::string filepath = Utils::FileDialogs::GetProjectFolder();
 		if (!filepath.empty())
 		{
-			string strpath = filepath;
-			p_ActiveProjectPath.first = strpath.substr(strpath.find_last_of("/") + 1, strpath.length());
-			p_ActiveProjectPath.second = strpath;
+			p_ActiveProjectPath.ProjectFile = filepath.substr(filepath.find_last_of("\\") + 1, filepath.length());
+			p_ActiveProjectPath.ProjectFolder = filepath;
 		}
 	}
 
@@ -101,16 +106,16 @@ namespace Editor
 		if (!filepath.empty())
 		{
 			string strpath = filepath;
-			p_ActiveProjectPath.first = strpath.substr(strpath.find_last_of("/") + 1, strpath.length());
-			p_ActiveProjectPath.second = strpath.substr(0,strpath.find_last_of("/"));
+			p_ActiveProjectPath.ProjectFile = strpath.substr(strpath.find_last_of("\\") + 1, strpath.length());
+			p_ActiveProjectPath.ProjectFolder = strpath.substr(0,strpath.find_last_of("\\"));
 
 			std::ifstream IProjectList("assets/Projects.json");
 			json j;
 			IProjectList >> j;
 			IProjectList.close();
 			std::ofstream OProjectList("assets/Projects.json");
-			j[p_ActiveProjectPath.first] = {
-				p_ActiveProjectPath.second,
+			j[p_ActiveProjectPath.ProjectFile] = {
+				p_ActiveProjectPath.ProjectFolder,
 				std::time(nullptr)
 			};
 			OProjectList << j;
@@ -151,8 +156,8 @@ namespace Editor
 
 	void EditorApplication::Run()
 	{
-		std::map<int,std::pair<string,string>, std::greater<int>> ProjectList;
-		ReadProjectsList(ProjectList);
+		std::vector<ProjectList> ProjectList_;
+		ReadProjectsList(ProjectList_);
 
 		RenderCommand::SetViewport(50, 50,400,400);
 		static char ProjectPath[256] = ""; // Make sure it's large enough to hold the path
@@ -169,12 +174,12 @@ namespace Editor
 			ImGui::Begin("Projects");
 			ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.01,0.5)); // Increase padding
 
-			for (auto& s : ProjectList)
+			for (ProjectList& i : ProjectList_)
 			{
-				if (ImGui::Button((s.second.first + "\n" + s.second.second).c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 50)))
+				if (ImGui::Button((i.ProjectName + "\n" + i.ProjectPath).c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 50)))
 				{
-					p_ActiveProjectPath.first = s.second.first;
-					p_ActiveProjectPath.second = s.second.second;
+					p_ActiveProjectPath.ProjectFile = i.ProjectName;
+					p_ActiveProjectPath.ProjectFolder = i.ProjectPath;
 					break;
 				}
 			}
@@ -218,9 +223,9 @@ namespace Editor
 						}
 						else
 						{
-							for (auto& i : ProjectList)
+							for (auto& i : ProjectList_)
 							{
-								if (i.second.second == strProjectPath)
+								if (i.ProjectPath == strProjectPath)
 								{
 									exits = true;
 								}
@@ -261,8 +266,8 @@ namespace Editor
 									std::ofstream Create(strProjectPath + "/" + strProjectName + ".cproj");
 									Create.close();
 
-									p_ActiveProjectPath.first = strProjectName;
-									p_ActiveProjectPath.second = strProjectPath;
+									p_ActiveProjectPath.ProjectFile = strProjectName;
+									p_ActiveProjectPath.ProjectFolder = strProjectPath;
 									ShowNewProjectWindow = false;
 								}
 							}
@@ -285,7 +290,7 @@ namespace Editor
 			p_ImGUILayer->End();
 			p_Window->End();
 
-			if (!p_ActiveProjectPath.first.empty() && !p_ActiveProjectPath.second.empty())
+			if (!p_ActiveProjectPath.ProjectFile.empty() && !p_ActiveProjectPath.ProjectFolder.empty())
 			{
 				Application::Run();
 				break;

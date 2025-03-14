@@ -13,13 +13,26 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#define MAX_BONE_INFLUENCE 4
+#define MAX_BONES = 100;
+
 namespace Cresta 
 {
+	struct BoneInfo
+	{
+		int id;
+		glm::mat4 offset;
+
+	};
+
 	struct Vertex
 	{
 		glm::vec3 position;
 		glm::vec2 texCoords;
 		int index;
+
+		int BoneIDs[MAX_BONE_INFLUENCE];
+		float Weights[MAX_BONE_INFLUENCE];
 	};
 
 	struct Mesh
@@ -53,6 +66,9 @@ namespace Cresta
 		static Ref<Model> Create(const std::string& Path);
 		
 	private:
+		void SetVertexBoneDataToDefault(Vertex& vertex);
+		void SetVertexBoneData(Vertex& vertex, int boneID, float weight);
+		void ExctractBoneInfo(std::vector<Vertex>& vertices,const aiMesh* mesh, const aiScene* scene);
 		
 		void SetupVAO();
 		void LoadModel(std::string Path);
@@ -65,6 +81,9 @@ namespace Cresta
 		
 		std::string m_Path = "";
 
+		std::map<std::string, BoneInfo> m_BoneInfoMap; //
+		int m_BoneCounter = 0;
+		
 		uint16_t m_TexIndex = 0;
 		uint8_t m_TextureCounter = 0;
 

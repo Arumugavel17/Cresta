@@ -35,6 +35,7 @@ namespace Editor
 
     void EditorLayer::OnAttach()
 	{
+        CRESTA_PROFILE_FUNCTION();
         m_IconPlay = Texture2D::Create("assets/Icons/PlayButton.png");
         m_IconStop = Texture2D::Create("assets/Icons/StopButton.png");
         m_EmptyFolder = Texture2D::Create("assets/Icons/EmptyFolder.png");
@@ -57,11 +58,13 @@ namespace Editor
 
     void EditorLayer::OnFixedUpdate()
     {
+        CRESTA_PROFILE_FUNCTION();
         p_ActiveScene->FixedUpate();
     }
 
     void EditorLayer::OnUpdate()
     {
+        CRESTA_PROFILE_FUNCTION();
         if (m_SceneActive)
         {
             if (Input::GetKeyDown(Key::Escape))
@@ -98,6 +101,7 @@ namespace Editor
 
     bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
     {
+        CRESTA_PROFILE_FUNCTION();
         using namespace glm;
         using T = float;
 
@@ -168,6 +172,7 @@ namespace Editor
 
     void EditorLayer::ShowScene()
     {
+        CRESTA_PROFILE_FUNCTION();
         ImGui::Begin("Scene");
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
@@ -210,20 +215,18 @@ namespace Editor
             auto& tc = selectedEntity->GetComponent<Transform>();
             glm::mat4 transform = tc.GetTransform();
 
-            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+            if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
                 (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
-                nullptr, nullptr);
-
-            if (ImGuizmo::IsUsing())
+                nullptr, nullptr))
             {
                 glm::vec3 translation, rotation, scale;
                 DecomposeTransform(transform, translation, rotation, scale);
 
-                glm::vec3 deltaRotation = rotation - tc.GetRotation();
+                glm::quat deltaRotation = glm::quat(rotation) - tc.GetRotation();
                 tc.SetPosition(translation);
                 tc.SetRotation(tc.GetRotation() += deltaRotation);
                 tc.SetScale(scale);
-                tc.OnValidate.post();
+                tc.OnValidate.post(true);
             }
         }
 
@@ -232,10 +235,12 @@ namespace Editor
 
 	void EditorLayer::OnDetach()
 	{
+        CRESTA_PROFILE_FUNCTION();
 	}
 
 	void EditorLayer::OnEvent(Event& e)
 	{
+        CRESTA_PROFILE_FUNCTION();
         m_EditorCamera->OnEvent(e);
 
         EventDispatcher dispatcher(e);
@@ -245,6 +250,7 @@ namespace Editor
 
     bool EditorLayer::OnKeyPressedEvent(KeyPressedEvent& e)
     {
+        CRESTA_PROFILE_FUNCTION();
         if (!e.Has(Key::LeftShift) && e.Has(Key::LeftControl, Key::O))
         {
             OpenScene();
@@ -252,6 +258,11 @@ namespace Editor
         if (!e.Has(Key::LeftShift) && e.Has(Key::LeftControl,Key::S))
         {
             SaveScene();
+        }
+
+        if (e.Has(Key::LeftShift))
+        {
+            std::cout << "\x1B[2J\x1B[H"; // ANSI escape sequence
         }
 
         if (e.Has(Key::LeftControl,Key::LeftShift, Key::O))
@@ -287,6 +298,7 @@ namespace Editor
 
     bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
     {
+        CRESTA_PROFILE_FUNCTION();
         if (e.GetMouseButton() == Mouse::ButtonLeft)
         {
             if (m_EntityID >= 0)
@@ -300,6 +312,8 @@ namespace Editor
 
     void EditorLayer::CreateDockSpace()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         ImVec4 customColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // RGBA
 
         // Store the previous color to restore later
@@ -327,7 +341,7 @@ namespace Editor
         // Add a menu bar
         if (ImGui::BeginMenuBar())
         {
-            std::pair<string,std::filesystem::path>& ProjectDetails = Application::GetApplication().p_ActiveProjectPath;
+            Application::ProjectPath& ProjectDetails = Application::GetApplication().p_ActiveProjectPath;
             
             if (ImGui::BeginMenu("File"))
             {
@@ -387,7 +401,7 @@ namespace Editor
                 ImGui::EndMenu();
             }
             
-            ImGui::Text((ProjectDetails.first + " " + ProjectDetails.second.string()).c_str());
+            ImGui::Text((ProjectDetails.ProjectFile + " " + ProjectDetails.ProjectFolder.string()).c_str());
 
             ImGui::EndMenuBar();
         }
@@ -402,9 +416,11 @@ namespace Editor
 
     void EditorLayer::OnImGUIRender()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         CreateDockSpace();
         UI_Toolbar();
-        string RootPath = Application::GetApplication().p_ActiveProjectPath.second.string();
+        string RootPath = Application::GetApplication().p_ActiveProjectPath.ProjectFolder.string();
 
         ShowFileManager(RootPath, RootPath);
         
@@ -431,6 +447,8 @@ namespace Editor
 
     void EditorLayer::ShowFileManager(const std::filesystem::path& directory, const std::string& currentPath)
     {
+        CRESTA_PROFILE_FUNCTION();
+
         ImGui::Begin("File Manager");
         ImGui::Text("File Manager - %s", currentPath.c_str());
 
@@ -472,6 +490,8 @@ namespace Editor
 
     void EditorLayer::SetupDockSpace()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;
 
         // Set the window flags for the main window
@@ -513,6 +533,8 @@ namespace Editor
 
     void EditorLayer::UI_Toolbar()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
         ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
@@ -600,6 +622,8 @@ namespace Editor
 
     void EditorLayer::NewScene()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         Application::GetApplication().NewScene(); 
         //p_ActiveScene will be updated by Application through SetSceneForLayers
         m_HierarchyPanel->SetScene(p_ActiveScene);
@@ -607,6 +631,8 @@ namespace Editor
 
     void EditorLayer::OpenScene()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         Application::GetApplication().OpenScene();
         //p_ActiveScene will be updated by Application through SetSceneForLayers
         m_HierarchyPanel->SetScene(p_ActiveScene); 
@@ -614,26 +640,36 @@ namespace Editor
 
     void EditorLayer::SaveScene()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         Application::GetApplication().SaveScene();
     }
 
     void EditorLayer::SaveProject()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         Application::GetApplication().SaveProject();
     }
 
     void EditorLayer::NewProject()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         Application::GetApplication().NewProject();
     }
 
     void EditorLayer::OpenProject()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         Application::GetApplication().OpenProject();
     }
 
     void EditorLayer::OnScenePlay()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         CRESTA_CORE_INFO("OnScenePlay");
         m_EditorState = EditorState::Play;
         p_ActiveScene->OnRuntimeStart();
@@ -641,11 +677,15 @@ namespace Editor
 
     void EditorLayer::OnSceneSimulate()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         CRESTA_CORE_INFO("OnSceneSimulate");
     }
 
     void EditorLayer::OnSceneStop()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         CRESTA_CORE_INFO("OnSceneStop");
         m_EditorState = EditorState::Edit;
         p_ActiveScene->OnRuntimeStop();
@@ -653,10 +693,13 @@ namespace Editor
 
     void EditorLayer::OnScenePause()
     {
+        CRESTA_PROFILE_FUNCTION();
+
         CRESTA_CORE_INFO("OnScenePause");
     }
 
     void EditorLayer::OnDuplicateEntity()
     {
+        CRESTA_PROFILE_FUNCTION();
     }
 }

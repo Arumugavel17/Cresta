@@ -11,7 +11,7 @@ namespace Cresta
 	{
 	public:
 		Entity() = default;
-		Entity(entt::entity handle, Scene* scene) : m_EntityHandle(handle), m_Scene(scene) {}
+		Entity(entt::entity handle, Scene* scene = nullptr) : m_EntityHandle(handle), m_Scene(scene) {}
 		Entity(const Entity& other)
 		{
 			OnFixedUpdateFunctions = other.OnFixedUpdateFunctions;
@@ -22,7 +22,6 @@ namespace Cresta
 
 		~Entity()
 		{
-			std::cout << "\n";
 		}
 
 		template<typename T, typename... Args>
@@ -51,6 +50,11 @@ namespace Cresta
 			if constexpr (has_overridden_OnFixedUpdate<ComponentTemplate, T>::value)
 			{
 				OnFixedUpdateFunctions.emplace_back(typeid(T).name(), [&]() { this->GetComponent<T>().OnFixedUpdate(); });
+			}
+
+			if constexpr (has_overridden_OnEnd<ComponentTemplate, T>::value)
+			{
+				OnEndFunctions.emplace_back(typeid(T).name(), [&]() { this->GetComponent<T>().OnEnd(); });
 			}
 
 			return component;
@@ -115,12 +119,14 @@ namespace Cresta
 		void OnRender();
 		void OnUpdate();
 		void OnFixedUpdate();
+		void OnEnd();
 
 	private:
 		std::vector<std::pair<std::string, std::function<void()>>> OnStartFunctions;
 		std::vector<std::pair<std::string, std::function<void()>>> OnRenderFunctions;
 		std::vector<std::pair<std::string, std::function<void()>>> OnUpdateFunctions;
 		std::vector<std::pair<std::string, std::function<void()>>> OnFixedUpdateFunctions;
+		std::vector<std::pair<std::string, std::function<void()>>> OnEndFunctions;
 
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;

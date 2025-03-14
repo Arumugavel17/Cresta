@@ -17,6 +17,8 @@ namespace Cresta
 
 	void MeshRenderer::OnRender()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		Draw(p_Entity->GetComponent<Transform>().GetTransform());
 	}
 

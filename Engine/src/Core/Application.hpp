@@ -48,8 +48,14 @@ namespace Cresta
 		std::filesystem::path p_ActiveScenePath;
 	
 	public:
-		std::pair<string,std::filesystem::path> p_ActiveProjectPath;
 
+		struct ProjectPath
+		{
+			std::string ProjectFile;
+			std::filesystem::path ProjectFolder;
+		};
+
+		ProjectPath p_ActiveProjectPath;
 	};
 
 	Application* CreateApplication();

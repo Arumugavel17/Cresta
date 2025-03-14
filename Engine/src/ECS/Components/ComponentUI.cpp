@@ -1,17 +1,13 @@
 #include "Components.hpp"
 #include "ECS/Scene/SceneHierarchyPanelUtils.hpp"
 #include "cmath"
-
+#include "Core/Application.hpp"
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Cresta
 {
-	static glm::vec3 TransformPosition = glm::vec3(0.0f);
-	static glm::vec3 TransformRotation = glm::vec3(0.0f);
-	static glm::vec3 TransformScale = glm::vec3(0.0f);
-
 	inline glm::vec3 Round(const glm::vec3& vec, float num)
 	{
 		return glm::round(vec * num);
@@ -24,33 +20,35 @@ namespace Cresta
 
 	void Transform::UI()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		constexpr float roundFactor = 1000.0f;
 		if (Cresta::Utils::DrawVec3Control("Translation", m_Translation))
 		{
-			OnValidate.post();
+			OnValidate.post(true);
 		}
 
-		glm::vec3 rotation = glm::degrees(m_Rotation);
-		
+		glm::vec3 rotation = glm::degrees(glm::eulerAngles(m_Rotation)); // Convert to degrees
+
 		if (Cresta::Utils::DrawVec3Control("Rotation", rotation))
 		{
-			OnValidate.post();
+			m_Rotation = glm::quat(glm::radians(rotation)); // Convert back to radians before creating quaternion
+			OnValidate.post(true);
 		}
+
 
 		m_Rotation = glm::radians(rotation);
 		
 		if (Cresta::Utils::DrawVec3Control("Scale", m_Scale, 1.0f))
 		{
-			OnValidate.post();
+			OnValidate.post(true);
 		}
-
-		TransformPosition = m_Translation;
-		TransformRotation = m_Rotation;
-		TransformScale = m_Scale;
 	}
 	
 	void SpriteRenderer::UI()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		float availableWidth = ImGui::GetContentRegionAvail().x;  // Get available width for the current window
 		float dragWidth = availableWidth * 0.5f;
 		ImGui::PushItemWidth(dragWidth);  // Set width for DragFloat
@@ -74,6 +72,8 @@ namespace Cresta
 
 	void MeshRenderer::UI()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		char buffer[128];
 		std::strncpy(buffer, GetPath().c_str(), sizeof(buffer) - 1);
 		buffer[sizeof(buffer) - 1] = '\0';
@@ -99,17 +99,30 @@ namespace Cresta
 	
 	void Rigidbody::UI()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		ImGui::Text("RigidBody");
 	}
 
 	void BoxCollider::UI()
 	{
-		if (Cresta::Utils::DrawVec3Control("Size", m_OffestLocalScale, 1.0f))
+		CRESTA_PROFILE_FUNCTION();
+
+		//if (!m_SceneIsActive)
+		//{
+		//	if (Cresta::Utils::DrawVec3Control("Center", m_Center, 1.0f))
+		//	{
+		//		Revaluate(p_Entity);
+		//	}
+		//}
+		if (Cresta::Utils::DrawVec3Control("Size", m_Scale, 1.0f))
 		{
 			Revaluate(p_Entity);
 		}
-		if (Cresta::Utils::DrawVec3Control("Rotation", m_OffestLocalRotation, 1.0f))
+		glm::vec3 rotation = glm::degrees(glm::eulerAngles(m_Rotation));
+		if (Cresta::Utils::DrawVec3Control("Rotation", rotation))
 		{
+			m_LocalRotation = glm::quat(glm::radians(rotation));
 			Revaluate(p_Entity);
 		}
 		if (ImGui::Checkbox("IsTrigger", &m_IsTrigger))
@@ -120,16 +133,22 @@ namespace Cresta
 
 	void CapsuleCollider::UI()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		ImGui::Text("Capsule Collider");
 	}
 
 	void SphereCollider::UI()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		ImGui::Text("Sphere Collider");
 	}
 
 	void MeshCollider::UI()
 	{
+		CRESTA_PROFILE_FUNCTION();
+
 		ImGui::Text("Mesh Collider");
 	}
 
