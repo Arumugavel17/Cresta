@@ -49,8 +49,9 @@ namespace Cresta
 	void Scene::DestroyEntity(Entity& entity)
 	{
 		CRESTA_PROFILE_FUNCTION();
+		const UUID& ID = entity.GetUUID();
 		m_Registry.destroy(entity);
-		m_EntityMap.erase(entity.GetUUID());
+		m_EntityMap.erase(ID);
 		InvokeSceneUpdateCallBacks();
 	}
 

@@ -48,10 +48,11 @@ namespace Cresta
 				BoxCollider::Revaluate(entity, reflectphysics);
 			});
 
-		m_LocalCenter = glm::vec3(0.0f);
+		m_Center = transform.GetPosition();
 		m_LocalRotation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f);
 		m_LocalScale = glm::vec3(1.0f);
-		Revaluate(p_Entity);
+
+		Revaluate(p_Entity,true);
 	}
 
 	void BoxCollider::Revaluate(Entity* entity, bool reflectphysics )
@@ -72,7 +73,10 @@ namespace Cresta
 
 		if (reflectphysics)
 		{
-			std::cout << "Edited" << "\n";
+			if ((uint32_t)entity == 1)
+			{
+				std::cout << collider.m_Center << " " << parentPosition << " " << "\n";
+			}
 			Physics::SetBodyPosition(entity->GetUUID(), collider.m_Center);
 			Physics::SetBodyRotation(entity->GetUUID(), collider.m_Rotation);
 		}

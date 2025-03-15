@@ -60,9 +60,9 @@ namespace Cresta
 		void SetTrigger(bool isTrigger) { m_IsTrigger = isTrigger; }
 		bool IsTrigger() { return m_IsTrigger; }
 
-		void SetCenter(const glm::vec3& center)		{ m_LocalCenter = center;		Revaluate(p_Entity); }
-		void SetRotation(const glm::quat& rotation) { m_LocalRotation = rotation;	Revaluate(p_Entity); }
-		void SetSize(const glm::vec3& size)			{ m_LocalScale = size;			Revaluate(p_Entity); }
+		void SetCenter(const glm::vec3& center)		{ m_LocalCenter = center;		Revaluate(p_Entity, true); }
+		void SetRotation(const glm::quat& rotation) { m_LocalRotation = rotation;	Revaluate(p_Entity, true); }
+		void SetSize(const glm::vec3& size)			{ m_LocalScale = size;			Revaluate(p_Entity, true); }
 
 		std::string ToString() override { return "Box Collider"; }
 
