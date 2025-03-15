@@ -164,7 +164,32 @@ namespace Cresta
 
 	void PhysicsController::SetBodyPosition(const UUID& EntityID, const glm::vec3& position)
 	{
-		m_BodyInterface->SetPosition(m_EntityToBody[EntityID], { position.x,position.y,position.z },EActivation::Activate);
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
+
+		if (lock.Succeeded())
+		{
+			Vec3 Pos({ position.x,position.y,position.z });
+
+			Body& body = lock.GetBody();
+			Vec3 BodyPos = body.GetPosition();
+			Vec3 CenterOfMass = body.GetShape()->GetCenterOfMass();
+
+			if (Pos == BodyPos)
+			{
+				lock.ReleaseLock();
+				return;
+			}
+
+			body.SetPositionAndRotationInternal(Pos,body.GetRotation());
+			lock.ReleaseLock();
+			AABox Box = body.GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
+
+			m_BodyInterface->ActivateBodiesInAABox(
+				Box,
+				m_PhysicsSystem.GetDefaultBroadPhaseLayerFilter(body.GetObjectLayer()),
+				m_PhysicsSystem.GetDefaultLayerFilter(body.GetObjectLayer())
+			);
+		}
 	}
 
 	void PhysicsController::SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& CenterOfMass)

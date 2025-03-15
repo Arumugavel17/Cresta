@@ -71,7 +71,7 @@ namespace Cresta
 		{ 
 			if (m_Model)
 			{
-				m_Model->Draw(transform,m_ID);	
+				m_Model->Draw(transform,m_ID);
 			}
 		}
 
@@ -84,7 +84,6 @@ namespace Cresta
 		void OnComponentRemoved() override;
 
 		void UI() override;
-
 		std::string ToString() override { return "Mesh Renderer"; }
 	};
 }
