@@ -68,11 +68,11 @@ namespace Cresta
 		while (p_Running)
 		{
 			float time = RenderCommand::GetTime();	 
-			float timestep = time - p_LastFrameTime; 
+			float deltatime = time - p_LastFrameTime; 
 			p_LastFrameTime = time;
-
-			accumulatedTime += timestep;
-			fpsTimer += timestep;       
+			Time::SetDeltaTime(p_LastFrameTime);
+			accumulatedTime += deltatime;
+			fpsTimer += deltatime;       
 			frameCount++;               
 
 			// Update FPS every second

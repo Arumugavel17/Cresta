@@ -2,12 +2,16 @@
 
 namespace Cresta
 {
+	class Application;
+	
 	class Time
 	{
 	public:
-		static void SetDeltaTime(float time);
 		static float DeltaTime();
 	private:
+		static void SetDeltaTime(float time);
 		static float s_Time;
+
+		friend class Application;
 	};
 }

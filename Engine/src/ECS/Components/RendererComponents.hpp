@@ -1,6 +1,9 @@
 #pragma once
 #include "Crestaph.hpp"
 #include "Components.hpp"
+#include "Renderer/Animation/Animator.hpp"
+#include "Core/Time.hpp"
+#include "Renderer/RendererCommand.hpp"
 
 namespace Cresta
 {	
@@ -58,6 +61,8 @@ namespace Cresta
 			if (!m_Path.empty())
 			{
 				m_Model = Model::Create(m_Path);
+				m_DanceAnimation.SetAnimation(path, m_Model.get());
+				m_Animator.PlayAnimation(&m_DanceAnimation);
 			}
 		}
 
@@ -71,7 +76,17 @@ namespace Cresta
 		{ 
 			if (m_Model)
 			{
-				m_Model->Draw(transform,m_ID);
+				float currenttime = RenderCommand::GetTime();
+				float deltatime = currenttime - time;
+				time = currenttime;
+				m_Animator.UpdateAnimation(deltatime);
+				auto Transform = m_Animator.GetFinalBoneMatrices();
+
+				for (int i = 0;i < Transform.size();i++)
+				{
+					m_Model->SetShaderUniform(Transform[i], "finalBonesMatrices[" + std::to_string(i) + "]");
+				}
+				m_Model->Draw(transform, m_ID);
 			}
 		}
 
@@ -84,6 +99,10 @@ namespace Cresta
 		void OnComponentRemoved() override;
 
 		void UI() override;
+		std::string path = "C:\\dev\\CrestaProjectFolder\\models\\Vampire\\Capoeira.fbx";
+		Animation m_DanceAnimation;
+		Animator m_Animator;
+		float time = 0;
 		std::string ToString() override { return "Mesh Renderer"; }
 	};
 }

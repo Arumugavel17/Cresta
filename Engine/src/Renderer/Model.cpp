@@ -1,4 +1,6 @@
 #include "Model.hpp"
+#include "Model.hpp"
+#include "Model.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Shader.hpp"
 #include "vector"
@@ -59,7 +61,7 @@ namespace Cresta
 
 		m_Directory = path.substr(0, path.find_last_of('/'));
 
-		if (scene->HasTextures())
+		if (scene && scene->HasTextures())
 		{
 			m_EmbeddedTexture = true;
 			for (uint32_t t = 0; t < scene->mNumTextures; ++t)
@@ -109,8 +111,8 @@ namespace Cresta
 					m_TextureHandles.push_back(texture->GetTextureHandle());
 				}
 			}
+			ProcessNode(scene->mRootNode, scene);
 		}
-		ProcessNode(scene->mRootNode, scene);
 	}
 
 	void Model::SetVertexBoneDataToDefault(Vertex& vertex)
@@ -124,27 +126,25 @@ namespace Cresta
 
 	void Model::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
 	{
-		for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+		float totalWeight = 0.0f;
+		for (int j = 0; j < MAX_BONE_INFLUENCE; j++) 
 		{
-			if (vertex.BoneIDs[i] < 0)
+			vertex.BoneIDs[j] = boneID;
+			vertex.Weights[j] = weight;
+			totalWeight += vertex.Weights[j];
+			break;
+		}
+
+		if (totalWeight > 0.0f) 
+		{ 
+			for (int j = 0; j < MAX_BONE_INFLUENCE; j++) 
 			{
-				vertex.Weights[i] = weight;
-				vertex.BoneIDs[i] = boneID;
-				break;
+				vertex.Weights[j] /= totalWeight;
 			}
 		}
 	}
 
-	glm::mat4 ConvertAssimpMatrixToGLM(const aiMatrix4x4& aiMat) {
-		return glm::mat4(
-			aiMat.a1, aiMat.b1, aiMat.c1, aiMat.d1,
-			aiMat.a2, aiMat.b2, aiMat.c2, aiMat.d2,
-			aiMat.a3, aiMat.b3, aiMat.c3, aiMat.d3,
-			aiMat.a4, aiMat.b4, aiMat.c4, aiMat.d4
-		);
-	}
-
-	void Model::ExctractBoneInfo(std::vector<Vertex>& vertices,const aiMesh* mesh, const aiScene* scene)
+	void Model::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices,const aiMesh* mesh, const aiScene* scene)
 	{
 		for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 		{
@@ -154,7 +154,7 @@ namespace Cresta
 			{
 				BoneInfo newBoneInfo;
 				newBoneInfo.id = m_BoneCounter;
-				newBoneInfo.offset = ConvertAssimpMatrixToGLM(
+				newBoneInfo.offset = AssimpHelper::ConvertAssimpMatrixToGLM(
 					mesh->mBones[boneIndex]->mOffsetMatrix);
 				m_BoneInfoMap[boneName] = newBoneInfo;
 				boneID = m_BoneCounter;
@@ -238,7 +238,7 @@ namespace Cresta
 			}
 		}
 
-		ExctractBoneInfo(vertices, mesh, scene);
+		ExtractBoneWeightForVertices(vertices, mesh, scene);
 
 		return Mesh(vertices, indices);
 	}
@@ -338,8 +338,8 @@ namespace Cresta
 		}
 	}
 
-	void Model::Draw(const glm::vec3& position, int EntityID)
-	{
+	void Model::Draw(const glm::vec3& position, int EntityID,glm::mat4 mat4,std::string name)
+	{														
 		if (!m_UniformBuffer || m_VAOs.size() <= 0 || m_IsStatic)
 		{
 			return;
@@ -350,11 +350,18 @@ namespace Cresta
 		{
 			m_Shader->Bind();
 			m_Shader->SetInt("o_EntityID", EntityID);
+			m_Shader->SetMat4(name, mat4);
 			Renderer::DrawIndexed(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
 		}
 	}
 
-	void Model::Draw(const glm::mat4& transform, int EntityID)
+	void Model::SetShaderUniform(glm::mat4 mat4, std::string name)
+	{
+		m_Shader->Bind();
+		m_Shader->SetMat4(name, mat4);
+	}
+
+	void Model::Draw(const glm::mat4& transform, int EntityID, glm::mat4 mat4, std::string name)
 	{
 		if (m_IsStatic)
 		{

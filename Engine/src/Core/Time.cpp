@@ -2,6 +2,7 @@
 
 namespace Cresta
 {
+
     float Time::s_Time = 0;
     void Time::SetDeltaTime(float time)
     {
