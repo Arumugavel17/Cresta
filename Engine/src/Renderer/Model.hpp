@@ -18,6 +18,33 @@
 
 namespace Cresta 
 {
+	namespace AssimpHelper
+	{
+		inline glm::mat4 ConvertAssimpMatrixToGLM(const aiMatrix4x4& aiMat) {
+			return glm::mat4(
+				aiMat.a1, aiMat.b1, aiMat.c1, aiMat.d1,
+				aiMat.a2, aiMat.b2, aiMat.c2, aiMat.d2,
+				aiMat.a3, aiMat.b3, aiMat.c3, aiMat.d3,
+				aiMat.a4, aiMat.b4, aiMat.c4, aiMat.d4
+			);
+		}
+
+		inline glm::vec2 ConvertAssimpVec2ToGLM(const aiVector2D& vec)
+		{
+			return glm::vec2(vec.x, vec.y);
+		}
+
+		inline glm::vec3 ConvertAssimpVec3ToGLM(const aiVector3D& vec)
+		{
+			return glm::vec3(vec.x, vec.y, vec.z);
+		}
+
+		inline glm::quat ConvertAssimpQuatToGLM(const aiQuaternion& quat)
+		{
+			return glm::quat(quat.w, quat.x, quat.y, quat.z);
+		}
+	}
+
 	struct BoneInfo
 	{
 		int id;
@@ -58,6 +85,8 @@ namespace Cresta
 		Model(int EntityID);
 		Model(const std::string& Path);
 		~Model();
+		auto& GetBoneInfoMap() { return m_BoneInfoMap; }
+		int& GetBoneCount() { return m_BoneCounter; }
 
 		void DrawWireFrame(const glm::vec3& position);
 		void DrawWireFrame(const glm::mat4& position);

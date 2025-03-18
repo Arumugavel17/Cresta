@@ -1,6 +1,7 @@
 #pragma once
 #include "Crestaph.hpp"
 #include "Components.hpp"
+#include "Renderer/Animation/Animator.hpp"
 
 namespace Cresta
 {	
@@ -65,7 +66,7 @@ namespace Cresta
 		MeshRenderer(Entity* entity, const std::string& path = std::string(), int id = -1);
 
 		inline void const SetID(int ID) { m_ID = ID; }
-		inline void const SetPath(std::string path) { m_Path = path; }
+		inline void const SetPath(std::string path) { m_Path = path; PathChanged();}
 	
 		void const Draw(const glm::mat4& transform) 
 		{ 
@@ -85,5 +86,35 @@ namespace Cresta
 
 		void UI() override;
 		std::string ToString() override { return "Mesh Renderer"; }
+	};
+
+
+	class AnimatorComponent : ComponentTemplate
+	{
+	public:
+		AnimatorComponent(Entity* entity) : ComponentTemplate(entity) {}
+		inline void const SetPath(std::string path) { m_Path = path; }
+
+		void UI() override;
+		void OnUpdate() override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
+
+		std::string ToString() override { return "Mesh Renderer"; }
+		void PathChanged()
+		{
+			if (!m_Path.empty())
+			{
+				m_Animation.SetAnimation(m_Path, m_Model);
+			}
+		}
+
+	private:
+		void UpdateAnimation();
+
+		std::string m_Path;
+		Ref<Model> m_Model;
+		Animator m_Animator;
+		Animation m_Animation;
 	};
 }

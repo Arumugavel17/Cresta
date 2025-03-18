@@ -7,6 +7,7 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoords;
 layout (location = 2) in int16_t aTexIndex;
 
+
 flat out int8_t TexCount;   
 flat out int16_t TexIndex;
 out vec2 TexCoords;

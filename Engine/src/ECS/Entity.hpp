@@ -86,6 +86,16 @@ namespace Cresta
 					[&](const auto& pair) { return pair.first == typeid(T).name(); }),
 				OnStartFunctions.end());
 
+			OnEndFunctions.erase(
+				std::remove_if(OnEndFunctions.begin(), OnEndFunctions.end(),
+					[&](const auto& pair) { return pair.first == typeid(T).name(); }),
+				OnEndFunctions.end());
+
+			OnRenderFunctions.erase(
+				std::remove_if(OnRenderFunctions.begin(), OnRenderFunctions.end(),
+					[&](const auto& pair) { return pair.first == typeid(T).name(); }),
+				OnRenderFunctions.end());
+
 			OnUpdateFunctions.erase(
 				std::remove_if(OnUpdateFunctions.begin(), OnUpdateFunctions.end(),
 					[&](const auto& pair) { return pair.first == typeid(T).name(); }),

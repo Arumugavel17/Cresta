@@ -139,6 +139,11 @@ namespace Cresta
         int pixelData;
 		y = m_Specification.Height - y;
         glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+
+		GLenum err = glGetError();
+		if (err != GL_NO_ERROR) {
+			std::cerr << "OpenGL Error: " << err << std::endl;
+		}
         return pixelData;
     }
 
