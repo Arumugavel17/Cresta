@@ -208,19 +208,21 @@ namespace Cresta
 			DisplayAddComponentEntry<SphereCollider>("SphereCollider");
 			DisplayAddComponentEntry<CapsuleCollider>("CapsuleCollider");
 			DisplayAddComponentEntry<MeshCollider>("MeshCollider");
-			DisplayAddComponentEntry<ScriptComponent>("Script Component");
+			DisplayAddComponentEntry<ScriptComponent>("Script");
+			DisplayAddComponentEntry<AnimatorComponent>("Animator");
 			ImGui::EndPopup();
 		}
 
-		Utils::DrawComponent<Transform>("Transform",			 *m_SelectedEntity);
-		Utils::DrawComponent<SpriteRenderer>("Sprite Renderer",  *m_SelectedEntity);
-		Utils::DrawComponent<MeshRenderer>("Mesh Renderer",		 *m_SelectedEntity);
-		Utils::DrawComponent<Rigidbody>("RigidBody",			 *m_SelectedEntity);
-		Utils::DrawComponent<BoxCollider>("BoxCollider",		 *m_SelectedEntity);
-		Utils::DrawComponent<SphereCollider>("SphereCollider",	 *m_SelectedEntity);
-		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider", *m_SelectedEntity);
-		Utils::DrawComponent<MeshCollider>("MeshCollider",		 *m_SelectedEntity);
-		Utils::DrawComponent<ScriptComponent>("Script Component",*m_SelectedEntity);
+		Utils::DrawComponent<Transform>("Transform",			*m_SelectedEntity);
+		Utils::DrawComponent<SpriteRenderer>("Sprite Renderer",	*m_SelectedEntity);
+		Utils::DrawComponent<MeshRenderer>("Mesh Renderer",		*m_SelectedEntity);
+		Utils::DrawComponent<Rigidbody>("RigidBody",			*m_SelectedEntity);
+		Utils::DrawComponent<BoxCollider>("BoxCollider",		*m_SelectedEntity);
+		Utils::DrawComponent<SphereCollider>("SphereCollider",	*m_SelectedEntity);
+		Utils::DrawComponent<CapsuleCollider>("CapsuleCollider",*m_SelectedEntity);
+		Utils::DrawComponent<MeshCollider>("MeshCollider",		*m_SelectedEntity);
+		Utils::DrawComponent<ScriptComponent>("Script",			*m_SelectedEntity);
+		Utils::DrawComponent<AnimatorComponent>("Animator",		*m_SelectedEntity);
 		
 		ImGui::End();
 	}

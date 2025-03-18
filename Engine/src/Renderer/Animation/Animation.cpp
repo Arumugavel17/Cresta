@@ -2,12 +2,12 @@
 
 namespace Cresta 
 {
-    Animation::Animation(const std::string& animationPath, Model* model)
+    Animation::Animation(const std::string& animationPath, Ref<Model> model)
     {
         SetAnimation(animationPath, model);
     }
 
-    void Animation::SetAnimation(const std::string& animationPath, Model* model)
+    void Animation::SetAnimation(const std::string& animationPath, Ref<Model> model)
     {
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(animationPath, 

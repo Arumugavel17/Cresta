@@ -18,13 +18,46 @@ namespace Cresta
 	void MeshRenderer::OnRender()
 	{
 		CRESTA_PROFILE_FUNCTION();
-
 		Draw(p_Entity->GetComponent<Transform>().GetTransform());
 	}
 
 	void MeshRenderer::OnComponentAdded()
 	{
 		CRESTA_INFO("Mesh Renderer OnComponentAdded");
+	}
+
+	void AnimatorComponent::OnComponentAdded()
+	{
+		MeshRenderer* meshRenderer;
+		CRESTA_INFO("Animator Component OnComponentAdded");
+		if (!p_Entity->HasComponent<MeshRenderer>())
+		{
+			meshRenderer = &p_Entity->AddComponent<MeshRenderer>();
+		}
+		else
+		{
+			meshRenderer = &p_Entity->GetComponent<MeshRenderer>();
+		}
+
+		if (meshRenderer)
+		{
+			m_Model = meshRenderer->GetModel();
+		}
+	}
+
+	void AnimatorComponent::OnUpdate()
+	{
+		UpdateAnimation();
+	}
+
+	void AnimatorComponent::UpdateAnimation()
+	{
+		m_Animator.UpdateAnimation(Time::DeltaTime());
+		std::vector<glm::mat4>& Transform = m_Animator.GetFinalBoneMatrices();
+		for (int i = 0;i < Transform.size();i++)
+		{
+			m_Model->SetShaderUniform(Transform[i], "finalBonesMatrices[" + std::to_string(i) + "]");
+		}
 	}
 
 	void SpriteRenderer::OnComponentRemoved()
@@ -35,5 +68,10 @@ namespace Cresta
 	void MeshRenderer::OnComponentRemoved()
 	{
 		CRESTA_INFO("Mesh Renderer OnComponentRemoved");
+	}
+
+	void AnimatorComponent::OnComponentRemoved()
+	{
+		CRESTA_INFO("Animator Component OnComponentAdded");
 	}
 }

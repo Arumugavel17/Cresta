@@ -61,8 +61,6 @@ namespace Cresta
 			if (!m_Path.empty())
 			{
 				m_Model = Model::Create(m_Path);
-				m_DanceAnimation.SetAnimation(path, m_Model.get());
-				m_Animator.PlayAnimation(&m_DanceAnimation);
 			}
 		}
 
@@ -76,16 +74,6 @@ namespace Cresta
 		{ 
 			if (m_Model)
 			{
-				float currenttime = RenderCommand::GetTime();
-				float deltatime = currenttime - time;
-				time = currenttime;
-				m_Animator.UpdateAnimation(deltatime);
-				auto Transform = m_Animator.GetFinalBoneMatrices();
-
-				for (int i = 0;i < Transform.size();i++)
-				{
-					m_Model->SetShaderUniform(Transform[i], "finalBonesMatrices[" + std::to_string(i) + "]");
-				}
 				m_Model->Draw(transform, m_ID);
 			}
 		}
@@ -99,10 +87,36 @@ namespace Cresta
 		void OnComponentRemoved() override;
 
 		void UI() override;
-		std::string path = "C:\\dev\\CrestaProjectFolder\\models\\Vampire\\Capoeira.fbx";
-		Animation m_DanceAnimation;
-		Animator m_Animator;
 		float time = 0;
 		std::string ToString() override { return "Mesh Renderer"; }
+	};
+
+	class AnimatorComponent : ComponentTemplate
+	{
+	public:
+		AnimatorComponent(Entity* entity) : ComponentTemplate(entity){}
+		inline void const SetPath(std::string path) { m_Path = path; }
+
+		void UI() override;
+		void OnUpdate() override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
+
+		std::string ToString() override { return "Mesh Renderer"; }
+		void PathChanged()
+		{
+			if (!m_Path.empty())
+			{
+				m_Animation.SetAnimation(m_Path,m_Model);
+			}
+		}
+
+	private:
+		void UpdateAnimation();
+
+		std::string m_Path;
+		Ref<Model> m_Model;
+		Animator m_Animator;
+		Animation m_Animation;
 	};
 }

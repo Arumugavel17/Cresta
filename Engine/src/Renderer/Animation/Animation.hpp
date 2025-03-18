@@ -17,11 +17,11 @@ namespace Cresta
     {
     public:
         Animation() = default;
-        Animation(const std::string& animationPath, Model* model);
+        Animation(const std::string& animationPath, Ref<Model> model);
 
         ~Animation() {}
 
-        void SetAnimation(const std::string& animationPath, Model* model);
+        void SetAnimation(const std::string& animationPath, Ref<Model> model);
         Bone* FindBone(const std::string& name);
 
         inline float GetTicksPerSecond() { return m_TicksPerSecond; }

@@ -108,13 +108,6 @@ namespace Cresta
 	{
 		CRESTA_PROFILE_FUNCTION();
 
-		//if (!m_SceneIsActive)
-		//{
-		//	if (Cresta::Utils::DrawVec3Control("Center", m_Center, 1.0f))
-		//	{
-		//		Revaluate(p_Entity);
-		//	}
-		//}
 		if (Cresta::Utils::DrawVec3Control("Size", m_LocalScale, 1.0f))
 		{
 			Revaluate(p_Entity,true);
@@ -152,4 +145,31 @@ namespace Cresta
 		ImGui::Text("Mesh Collider");
 	}
 
+
+	void AnimatorComponent::UI()
+	{
+		ImGui::Text("Mesh Collider");
+
+		char buffer[128];
+		std::strncpy(buffer, m_Path.c_str(), sizeof(buffer) - 1);
+		buffer[sizeof(buffer) - 1] = '\0';
+
+		if (ImGui::InputText("TextPath", buffer, sizeof(buffer), ImGuiInputTextFlags_ReadOnly))
+		{
+			SetPath(buffer);
+			PathChanged();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH");
+			if (payload != nullptr)
+			{
+				std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
+				SetPath(tempString);
+				PathChanged();
+			}
+			ImGui::EndDragDropTarget();
+		}
+	}
 }
