@@ -235,10 +235,10 @@ namespace Cresta
 	{
 		Quat bodyRotation = m_BodyInterface->GetRotation(m_EntityToBody[EntityID]);
 		return {
-			bodyRotation.GetW(),
 			bodyRotation.GetX(),
 			bodyRotation.GetY(),
-			bodyRotation.GetZ()
+			bodyRotation.GetZ(),
+			bodyRotation.GetW()
 		};
 	}
 

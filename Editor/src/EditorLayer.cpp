@@ -461,7 +461,7 @@ namespace Editor
                 ImGui::BeginGroup(); // Group image and text together
                 if (ImGui::TreeNode(filename.c_str()))
                 {
-                    ShowFileManager(entry.path(), currentPath + "\\" + filename);
+                    ShowFileManager(entry.path(), currentPath + "/" + filename);
                     ImGui::TreePop();
                 }
                 ImGui::EndGroup();
