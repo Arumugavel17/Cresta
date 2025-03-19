@@ -2,6 +2,7 @@
 #include "Crestaph.hpp"
 #include "Components.hpp"
 #include "Renderer/Animation/Animator.hpp"
+#include "ECS/UUID.hpp"
 
 namespace Cresta
 {	
@@ -50,6 +51,7 @@ namespace Cresta
 	class MeshRenderer : public ComponentTemplate
 	{
 	private:
+		UUID* m_ModelID;
 		int m_ID;
 		std::string m_Path;
 		Ref<Model> m_Model;
@@ -63,10 +65,14 @@ namespace Cresta
 		}
 
 	public:
-		MeshRenderer(Entity* entity, const std::string& path = std::string(), int id = -1);
+		MeshRenderer(Entity* entity, const std::string& path = std::string(), int64_t = -1);
 
 		inline void const SetID(int ID) { m_ID = ID; }
-		inline void const SetPath(std::string path) { m_Path = path; PathChanged();}
+		inline void const SetPath(std::string path) 
+		{ 
+			m_Path = path; 
+			PathChanged();
+		}
 	
 		void const Draw(const glm::mat4& transform) 
 		{ 
@@ -76,6 +82,7 @@ namespace Cresta
 			}
 		}
 
+		void CreateModelDataFile();
 		inline const int GetID() const { return m_ID; }
 		inline const std::string& GetPath() const { return m_Path; }
 		inline const Ref<Model>& GetModel() const { return m_Model; }

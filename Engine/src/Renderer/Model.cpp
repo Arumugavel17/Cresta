@@ -59,7 +59,7 @@ namespace Cresta
 
 		m_Directory = path.substr(0, path.find_last_of('/'));
 
-		if (scene->HasTextures())
+		if (scene && scene->HasTextures())
 		{
 			m_EmbeddedTexture = true;
 			for (uint32_t t = 0; t < scene->mNumTextures; ++t)
@@ -110,7 +110,8 @@ namespace Cresta
 				}
 			}
 		}
-		ProcessNode(scene->mRootNode, scene);
+		if(scene)
+			ProcessNode(scene->mRootNode, scene);
 	}
 
 	void Model::SetVertexBoneDataToDefault(Vertex& vertex)

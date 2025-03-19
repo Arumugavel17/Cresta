@@ -321,7 +321,7 @@ namespace Cresta
 
 				if (option == CREATE_ENTITIES)
 				{
-					Entity& deserializedEntity = scene.CreateEntity(name);
+					Entity& deserializedEntity = scene.CreateEntity(name,uuid);
 
 					auto transformComponent = entity["TransformComponent"];
 					if (transformComponent)
@@ -353,9 +353,21 @@ namespace Cresta
 					auto MeshRendererComponenet = entity["MeshRenderer"];
 					if (MeshRendererComponenet)
 					{
+						int64_t ModelID = -1;
 						std::string path = MeshRendererComponenet["path"].as<std::string>();
+						if (!path.empty())
+						{
+							std::string filepath = path.substr(0,path.find_last_of("."));
+							filepath = filepath + ".data";
+							if (std::filesystem::exists(filepath))
+							{
+								YAML::Node data;
+								data = YAML::LoadFile(filepath);
+								ModelID = data["ID"].as<uint64_t>();
+							}
 
-						auto& comp = deserializedEntity.AddComponent<MeshRenderer>(path, (int)(entt::entity)deserializedEntity);
+							auto& comp = deserializedEntity.AddComponent<MeshRenderer>(path, ModelID);
+						}
 					}
 
 					auto RigibodyComponent = entity["Rigidbody"];

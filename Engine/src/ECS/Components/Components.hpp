@@ -133,11 +133,17 @@ namespace Cresta
 		{ 
 			std::cout << "Entity* entity Construct\n"; 
 		}
+		IDComponent(Entity* entity, uint64_t ID) : m_ID(ID)	
+		{
+			std::cout << "Entity* entity Construct\n";
+		}
 
 		void OnComponentAdded();
 		void OnComponentRemoved();
 
-		inline const UUID& GetUUID() const { return m_ID; }
+		inline const UUID& GetUUID() const { 
+			return m_ID; 
+		}
 		std::string ToString()
 		{
 			return "IDComponent";

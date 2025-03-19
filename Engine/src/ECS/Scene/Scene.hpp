@@ -36,8 +36,7 @@ namespace Cresta
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity& CreateEntity(const std::string& name = std::string());
-		Entity& CreateEntity(UUID& ID,const std::string& name = std::string());
+		Entity& CreateEntity(const std::string& name = std::string(),uint64_t ID = -1);
 		Entity& FindEntityByName(std::string name);
 		Entity& FindEntityByID(UUID& ID);
 

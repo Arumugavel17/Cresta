@@ -20,19 +20,19 @@ namespace Cresta
 		sm_Count--;
 	}
 
-	Entity& Scene::CreateEntity(UUID& ID, const std::string& name)
-	{
-		CRESTA_PROFILE_FUNCTION();
-		Entity& entity = CreateEntity(name);
-		return entity;
-	}
-
-	Entity& Scene::CreateEntity(const std::string& name)
+	Entity& Scene::CreateEntity(const std::string& name, uint64_t ID)
 	{
 		CRESTA_PROFILE_FUNCTION();
 		Ref<Entity> entity1 = CreateRef<Entity>(m_Registry.create(), this);
 		Entity& entity = *entity1;
-		entity.AddComponent<IDComponent>();
+		if (ID == -1) 
+		{
+			entity.AddComponent<IDComponent>();
+		}
+		else
+		{
+			entity.AddComponent<IDComponent>(ID);
+		}
 		entity.AddComponent<Transform>();
 		
 		auto& tag = entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
