@@ -52,14 +52,18 @@ namespace Cresta
 
 		bool condition = !scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode;
 
+		if (!scene) {
+			std::cerr << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+		}
+
 		CRESTA_ASSERT(
 			condition,
 			"ERROR::ASSIMP::{0}",
 			importer.GetErrorString());
 
-		m_Directory = path.substr(0, path.find_last_of('/'));
+		m_Directory = path.substr(0, path.find_last_of('\\'));
 
-		if (scene->HasTextures())
+		if (scene && scene->HasTextures())
 		{
 			m_EmbeddedTexture = true;
 			for (uint32_t t = 0; t < scene->mNumTextures; ++t)
@@ -109,8 +113,8 @@ namespace Cresta
 					m_TextureHandles.push_back(texture->GetTextureHandle());
 				}
 			}
+			ProcessNode(scene->mRootNode, scene);
 		}
-		ProcessNode(scene->mRootNode, scene);
 	}
 
 	void Model::SetVertexBoneDataToDefault(Vertex& vertex)
@@ -376,6 +380,5 @@ namespace Cresta
 
 	Model::~Model()
 	{
-		std::cout << "\n";
 	}
 }
