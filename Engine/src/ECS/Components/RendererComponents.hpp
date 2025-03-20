@@ -60,7 +60,7 @@ namespace Cresta
 		{
 			if (!m_Path.empty())
 			{
-				m_Model = Model::Create(m_Path);
+				m_Model = Model::Create(m_Path,*m_ModelID);
 			}
 		}
 

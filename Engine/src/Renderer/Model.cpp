@@ -5,7 +5,7 @@
 
 namespace Cresta
 {
-	std::unordered_map<std::string, std::pair<std::vector<Ref<VertexArray>>, Ref<UniformBuffer>>> Model::s_ModelsLoaded;
+	std::unordered_map<uint64_t, Ref<Model>> Model::s_ModelsLoadedWithMap;
 
 	Model::Model(int entityID) 
 	{
@@ -16,25 +16,8 @@ namespace Cresta
 	Model::Model(const std::string& Path)
 	{
 		m_Shader = Shader::Create("assets/shaders/BindlessTextureShader.glsl");
-
-		for (const auto& pair : s_ModelsLoaded) 
-		{
-			CRESTA_CORE_INFO("Stored key: '{}'", pair.first);
-		}
-		CRESTA_CORE_INFO("Checking key: '{}'", Path);
-
-		if (s_ModelsLoaded.find(Path) == s_ModelsLoaded.end())
-		{
-			CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
-			LoadModel(Path);
-			SetupVAO();
-			s_ModelsLoaded[Path] = std::pair<std::vector<Ref<VertexArray>>, Ref<UniformBuffer>>(m_VAOs, m_UniformBuffer);
-		}
-		else
-		{
-			m_VAOs = s_ModelsLoaded.at(Path).first;
-			m_UniformBuffer = s_ModelsLoaded.at(Path).second;
-		}
+		LoadModel(Path);
+		SetupVAO();
 	}
 
 	void Model::LoadModel(std::string path)
@@ -57,7 +40,7 @@ namespace Cresta
 			"ERROR::ASSIMP::{0}",
 			importer.GetErrorString());
 
-		m_Directory = path.substr(0, path.find_last_of('/'));
+		m_Directory = path.substr(0, path.find_last_of('\\'));
 
 		if (scene && scene->HasTextures())
 		{
@@ -370,9 +353,15 @@ namespace Cresta
 		}
 	}
 
-	Ref<Model> Model::Create(const std::string& Path)
+	Ref<Model> Model::Create(const std::string& Path, const uint64_t& ID)
 	{
-		return CreateRef<Model>(Path);
+		if (s_ModelsLoadedWithMap.find(ID) == s_ModelsLoadedWithMap.end())
+		{
+			CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
+			s_ModelsLoadedWithMap[ID] = CreateRef<Model>(Path);
+			return s_ModelsLoadedWithMap[ID];
+		}
+		return s_ModelsLoadedWithMap[ID];
 	}
 
 	Model::~Model()

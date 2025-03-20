@@ -4,6 +4,7 @@
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Shader.hpp"
 #include "Renderer/UniformBuffer.hpp"
+#include "ECS/UUID.hpp"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -79,7 +80,7 @@ namespace Cresta
 	{
 	public:
 		std::vector<Ref<VertexArray>> m_VAOs;
-		static std::unordered_map<std::string, std::pair<std::vector<Ref<VertexArray>>, Ref<UniformBuffer>>> s_ModelsLoaded;
+		static std::unordered_map<uint64_t, Ref<Model>> s_ModelsLoadedWithMap;
 
 	public:
 		Model(int EntityID);
@@ -92,7 +93,7 @@ namespace Cresta
 		void DrawWireFrame(const glm::mat4& position);
 		void Draw(const glm::vec3& position = glm::vec3(1.0f) , int m_EntityID = 0);
 		void Draw(const glm::mat4& transform = glm::mat4(1.0f), int m_EntityID = 0);
-		static Ref<Model> Create(const std::string& Path);
+		static Ref<Model> Create(const std::string& Path, const uint64_t& ID);
 		
 	private:
 		void SetVertexBoneDataToDefault(Vertex& vertex);
