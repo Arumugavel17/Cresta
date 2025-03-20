@@ -7,7 +7,6 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoords;
 layout (location = 2) in int16_t aTexIndex;
 
-
 flat out int8_t TexCount;   
 flat out int16_t TexIndex;
 out vec2 TexCoords;
@@ -20,7 +19,7 @@ void main()
     TexCount = (int8_t)aTexIndex & (int8_t)0x1F;  // Extract lower 5 bits
     TexIndex = aTexIndex >> 5;   // Extract upper 11 bits
     TexCoords = aTexCoords;
-    gl_Position = u_ProjectionView * u_Model * vec4(aPos, 1.0);
+    gl_Position = u_ProjectionView * u_Model * vec4(aPos,1.0f);
 }
 
 //type fragment

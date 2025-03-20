@@ -1,4 +1,5 @@
 #include "Model.hpp"
+#include "Model.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Shader.hpp"
 #include "vector"
@@ -10,12 +11,12 @@ namespace Cresta
 	Model::Model(int entityID) 
 	{
 		CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
-		m_Shader = Shader::Create("assets/shaders/BindlessTextureShader.glsl");
+		m_Shader = Shader::Create("assets/shaders/Model.glsl");
 	}
 
 	Model::Model(const std::string& Path)
 	{
-		m_Shader = Shader::Create("assets/shaders/BindlessTextureShader.glsl");
+		m_Shader = Shader::Create("assets/shaders/Model.glsl");
 		LoadModel(Path);
 		SetupVAO();
 	}
@@ -351,6 +352,17 @@ namespace Cresta
 			m_Shader->SetInt("o_EntityID",EntityID);
 			Renderer::DrawIndexed(m_Shader, m_VAOs[i], transform);	
 		}
+	}
+
+	void Model::MoveBone(glm::mat4 tansform, std::string boneIndex)
+	{
+		m_Shader->Bind();
+		m_Shader->SetMat4(boneIndex, tansform);
+	}
+
+	void Model::SetShader(Ref<Shader> shader)
+	{
+		m_Shader = shader;
 	}
 
 	Ref<Model> Model::Create(const std::string& Path, const uint64_t& ID)

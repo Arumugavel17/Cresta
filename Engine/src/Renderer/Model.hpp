@@ -89,10 +89,13 @@ namespace Cresta
 		auto& GetBoneInfoMap() { return m_BoneInfoMap; }
 		int& GetBoneCount() { return m_BoneCounter; }
 
+		void SetShader(Ref<Shader> shader);
+
 		void DrawWireFrame(const glm::vec3& position);
 		void DrawWireFrame(const glm::mat4& position);
 		void Draw(const glm::vec3& position = glm::vec3(1.0f) , int m_EntityID = 0);
 		void Draw(const glm::mat4& transform = glm::mat4(1.0f), int m_EntityID = 0);
+		void MoveBone(glm::mat4 tansform, std::string boneIndex);
 		static Ref<Model> Create(const std::string& Path, const uint64_t& ID);
 		
 	private:

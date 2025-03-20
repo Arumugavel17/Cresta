@@ -1,4 +1,5 @@
 #include "Animator.hpp"
+#include "Animator.hpp"
 
 namespace Cresta
 {
@@ -77,6 +78,11 @@ namespace Cresta
     {
         m_CurrentAnimation = pAnimation;
         m_BoneInfoMap[m_CurrentAnimation] = m_CurrentAnimation->GetBoneIDMap();
+        m_CurrentTime = 0.0f;
+    }
+
+    void Animator::ResetTime()
+    {
         m_CurrentTime = 0.0f;
     }
 

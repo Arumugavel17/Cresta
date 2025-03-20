@@ -70,6 +70,7 @@ namespace Cresta
 			float time = RenderCommand::GetTime();	 
 			float timestep = time - p_LastFrameTime; 
 			p_LastFrameTime = time;
+			Time::SetDeltaTime(timestep);
 
 			accumulatedTime += timestep;
 			fpsTimer += timestep;       

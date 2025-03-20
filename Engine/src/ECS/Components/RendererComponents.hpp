@@ -90,7 +90,7 @@ namespace Cresta
 		void OnRender() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
-
+			 
 		void UI() override;
 		std::string ToString() override { return "Mesh Renderer"; }
 	};
@@ -99,22 +99,25 @@ namespace Cresta
 	class AnimatorComponent : ComponentTemplate
 	{
 	public:
-		AnimatorComponent(Entity* entity) : ComponentTemplate(entity) {}
-		inline void const SetPath(std::string path) { m_Path = path; }
+		AnimatorComponent(Entity* entity) : ComponentTemplate(entity) 
+		{
+			if (!sm_AnimationShader)
+			{
+				sm_AnimationShader = Shader::Create("assets/shaders/Animation.glsl");
+			}
+		}
+		inline void const SetPath(std::string path) { m_Path = path; PathChanged(); }
 
 		void UI() override;
+		void OnStart() override;
+		void OnEnd() override;
 		void OnUpdate() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
+		std::string GetPath() { return m_Path; }
 
 		std::string ToString() override { return "Mesh Renderer"; }
-		void PathChanged()
-		{
-			if (!m_Path.empty())
-			{
-				m_Animation.SetAnimation(m_Path, m_Model);
-			}
-		}
+		void PathChanged();
 
 	private:
 		void UpdateAnimation();
@@ -123,5 +126,6 @@ namespace Cresta
 		Ref<Model> m_Model;
 		Animator m_Animator;
 		Animation m_Animation;
+		static Ref<Shader> sm_AnimationShader;
 	};
 }

@@ -228,7 +228,17 @@ namespace Cresta
 
 			auto& MeshRendererComponent = entity.GetComponent<MeshRenderer>();
 			out << YAML::Key << "path" << YAML::Value << MeshRendererComponent.GetPath();
-			out << YAML::EndMap; // SpriteRendererComponent
+			out << YAML::EndMap; 
+		}
+
+		if (entity.HasComponent<AnimatorComponent>())
+		{
+			out << YAML::Key << "Animator";
+			out << YAML::BeginMap; // AnimatorComponent
+
+			auto& animatorComponent = entity.GetComponent<AnimatorComponent>();
+			out << YAML::Key << "path" << YAML::Value << animatorComponent.GetPath();
+			out << YAML::EndMap; 
 		}
 
 		if (entity.HasComponent<Rigidbody>())
@@ -368,6 +378,13 @@ namespace Cresta
 
 							auto& comp = deserializedEntity.AddComponent<MeshRenderer>(path, ModelID);
 						}
+					}
+
+					auto animatorComponent = entity["Animator"];
+					if (animatorComponent)
+					{
+						auto& animator = deserializedEntity.AddComponent<AnimatorComponent>();
+						animator.SetPath(animatorComponent["path"].as<std::string>());
 					}
 
 					auto RigibodyComponent = entity["Rigidbody"];

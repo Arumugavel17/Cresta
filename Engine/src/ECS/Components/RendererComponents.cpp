@@ -1,5 +1,6 @@
 #include "RendererComponents.hpp"
 #include "RendererComponents.hpp"
+#include "RendererComponents.hpp"
 #include "Renderer/PrimitiveMeshes.hpp"
 #include "ECS/Entity.hpp"
 #include "Core/Time.hpp"
@@ -68,6 +69,7 @@ namespace Cresta
 		CRESTA_INFO("Mesh Renderer OnComponentRemoved");
 	}
 
+	Ref<Shader> AnimatorComponent::sm_AnimationShader = nullptr;
 	void AnimatorComponent::OnComponentAdded()
 	{
 		MeshRenderer* meshRenderer;
@@ -87,18 +89,64 @@ namespace Cresta
 		}
 	}
 
+	void AnimatorComponent::OnStart()
+	{
+		if (m_Model)
+		{
+			for (int i = 0;i < 200;i++)
+			{
+				m_Model->MoveBone(glm::mat4(1.0f), "finalBonesMatrices[" + std::to_string(i) + "]");
+			}
+		}
+		m_Animator.ResetTime();
+		m_Animator.UpdateAnimation(0);
+	}
+
 	void AnimatorComponent::OnUpdate()
 	{
 		UpdateAnimation();
 	}
 
+	void AnimatorComponent::OnEnd()
+	{
+		if (m_Model)
+		{
+			for (int i = 0;i < 200;i++)
+			{
+				m_Model->MoveBone(glm::mat4(1.0f), "finalBonesMatrices[" + std::to_string(i) + "]");
+			}
+		}
+	}
+
 	void AnimatorComponent::UpdateAnimation()
 	{
-		m_Animator.UpdateAnimation(Time::DeltaTime());
-		std::vector<glm::mat4>& Transform = m_Animator.GetFinalBoneMatrices();
-		for (int i = 0;i < Transform.size();i++)
+		if (m_Model)
 		{
-			//m_Model->SetShaderUniform(Transform[i], "finalBonesMatrices[" + std::to_string(i) + "]");
+			m_Animator.UpdateAnimation(Time::DeltaTime());
+			std::vector<glm::mat4>& Transform = m_Animator.GetFinalBoneMatrices();
+			for (int i = 0;i < Transform.size();i++)
+			{
+				m_Model->MoveBone(Transform[i], "finalBonesMatrices[" + std::to_string(i) + "]");
+			}
+		}
+	}
+
+	void AnimatorComponent::PathChanged()
+	{
+		if (m_Model)
+		{
+			m_Model->SetShader(sm_AnimationShader);
+
+			for (int i = 0;i < 200;i++)
+			{
+				m_Model->MoveBone(glm::mat4(1.0f), "finalBonesMatrices[" + std::to_string(i) + "]");
+			}
+		}
+
+		if (!m_Path.empty() && m_Model)
+		{
+			m_Animation.SetAnimation(m_Path, m_Model);
+			m_Animator.PlayAnimation(&m_Animation);
 		}
 	}
 

@@ -37,6 +37,8 @@ namespace Cresta
         void UpdateAnimation(float dt);
         void PlayAnimation(Animation* pAnimation);
 
+        void ResetTime();
+
         void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, ThreadPool& pool);
 
         std::vector<glm::mat4>& GetFinalBoneMatrices() 

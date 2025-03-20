@@ -161,7 +161,6 @@ namespace Cresta
 		if (ImGui::InputText("TextPath", buffer, sizeof(buffer), ImGuiInputTextFlags_ReadOnly))
 		{
 			SetPath(buffer);
-			PathChanged();
 		}
 
 		if (ImGui::BeginDragDropTarget())
@@ -171,7 +170,6 @@ namespace Cresta
 			{
 				std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
 				SetPath(tempString);
-				PathChanged();
 			}
 			ImGui::EndDragDropTarget();
 		}
