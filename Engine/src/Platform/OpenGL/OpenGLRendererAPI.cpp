@@ -36,8 +36,16 @@ namespace Cresta
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(1.0f, 1.0f);  // Negative values push forward
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+		glLineWidth(2.0f); // Adjust line width as needed
+
+		// Multisample Anti-Aliasing (MSAA)
+		// (Requires creating a multisampled framebuffer)
+		glEnable(GL_MULTISAMPLE);
 	}
 	void OpenGLRenderAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{

@@ -1,6 +1,4 @@
 #include "RendererComponents.hpp"
-#include "RendererComponents.hpp"
-#include "RendererComponents.hpp"
 #include "Renderer/PrimitiveMeshes.hpp"
 #include "ECS/Entity.hpp"
 #include "Core/Time.hpp"
@@ -14,8 +12,14 @@ namespace Cresta
 		CRESTA_INFO("SpriteRenderer OnComponentAdded");
 	}
 
+	Ref<Shader> MeshRenderer::sm_Shader = nullptr;
 	MeshRenderer::MeshRenderer(Entity* entity, const std::string& path,int64_t Model_ID) : ComponentTemplate(entity), m_Path(path)
 	{
+		if (!sm_Shader)
+		{
+			sm_Shader = Shader::Create("assets/shaders/Model.glsl");
+		}
+
 		m_ID = static_cast<int>(entt::entity(*entity));
 		if (Model_ID == -1)
 		{
@@ -82,9 +86,9 @@ namespace Cresta
 		{
 			meshRenderer = &p_Entity->GetComponent<MeshRenderer>();
 		}
-
 		if (meshRenderer)
 		{
+			meshRenderer->SetShader(sm_AnimationShader);
 			m_Model = meshRenderer->GetModel();
 		}
 	}
@@ -93,13 +97,14 @@ namespace Cresta
 	{
 		if (m_Model)
 		{
+			sm_AnimationShader->Bind();
 			for (int i = 0;i < 200;i++)
 			{
-				m_Model->MoveBone(glm::mat4(1.0f), "finalBonesMatrices[" + std::to_string(i) + "]");
+				sm_AnimationShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", glm::mat4(1.0f));
 			}
 		}
 		m_Animator.ResetTime();
-		m_Animator.UpdateAnimation(0);
+		m_Animator.StartAnimation();
 	}
 
 	void AnimatorComponent::OnUpdate()
@@ -111,22 +116,24 @@ namespace Cresta
 	{
 		if (m_Model)
 		{
+			sm_AnimationShader->Bind();
 			for (int i = 0;i < 200;i++)
 			{
-				m_Model->MoveBone(glm::mat4(1.0f), "finalBonesMatrices[" + std::to_string(i) + "]");
+				sm_AnimationShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", glm::mat4(1.0f));
 			}
 		}
+		m_Animator.EndAnimation();
 	}
 
 	void AnimatorComponent::UpdateAnimation()
 	{
 		if (m_Model)
 		{
-			m_Animator.UpdateAnimation(Time::DeltaTime());
 			std::vector<glm::mat4>& Transform = m_Animator.GetFinalBoneMatrices();
-			for (int i = 0;i < Transform.size();i++)
+			sm_AnimationShader->Bind();
+			for (int i = 0;i < 200;i++)
 			{
-				m_Model->MoveBone(Transform[i], "finalBonesMatrices[" + std::to_string(i) + "]");
+				sm_AnimationShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", Transform[i]);
 			}
 		}
 	}
@@ -135,11 +142,10 @@ namespace Cresta
 	{
 		if (m_Model)
 		{
-			m_Model->SetShader(sm_AnimationShader);
-
+			sm_AnimationShader->Bind();
 			for (int i = 0;i < 200;i++)
 			{
-				m_Model->MoveBone(glm::mat4(1.0f), "finalBonesMatrices[" + std::to_string(i) + "]");
+				sm_AnimationShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", glm::mat4(1.0f));
 			}
 		}
 

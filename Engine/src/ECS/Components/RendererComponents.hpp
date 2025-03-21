@@ -50,20 +50,6 @@ namespace Cresta
 
 	class MeshRenderer : public ComponentTemplate
 	{
-	private:
-		UUID* m_ModelID;
-		int m_ID;
-		std::string m_Path;
-		Ref<Model> m_Model;
-
-		void PathChanged()
-		{
-			if (!m_Path.empty())
-			{
-				m_Model = Model::Create(m_Path,*m_ModelID);
-			}
-		}
-
 	public:
 		MeshRenderer(Entity* entity, const std::string& path = std::string(), int64_t = -1);
 
@@ -78,7 +64,7 @@ namespace Cresta
 		{ 
 			if (m_Model)
 			{
-				m_Model->Draw(transform,m_ID);
+				m_Model->Draw(sm_Shader,transform,m_ID);
 			}
 		}
 
@@ -90,9 +76,25 @@ namespace Cresta
 		void OnRender() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
-			 
+		
+		void SetShader(Ref<Shader> shader) { sm_Shader = shader; }
 		void UI() override;
 		std::string ToString() override { return "Mesh Renderer"; }
+
+	private:
+		UUID* m_ModelID;
+		int m_ID;
+		std::string m_Path;
+		Ref<Model> m_Model;
+		static Ref<Shader> sm_Shader;
+
+		void PathChanged()
+		{
+			if (!m_Path.empty())
+			{
+				m_Model = Model::Create(m_Path, *m_ModelID);
+			}
+		}
 	};
 
 

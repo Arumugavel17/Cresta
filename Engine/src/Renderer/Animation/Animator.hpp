@@ -9,21 +9,6 @@
 
 namespace Cresta
 {
-
-    class ThreadPool {
-    public:
-        ThreadPool(size_t numThreads);
-        ~ThreadPool();
-        void Enqueue(std::function<void()> task);
-
-    private:
-        std::vector<std::thread> workers;
-        std::queue<std::function<void()>> tasks;
-        std::mutex queueMutex;
-        std::condition_variable condition;
-        bool stop;
-    };
-
     class Animator
     {
     public:
@@ -34,17 +19,20 @@ namespace Cresta
 
         void Init();
         Animator(Animation* Animation);
-        void UpdateAnimation(float dt);
+        void UpdateAnimation();
         void PlayAnimation(Animation* pAnimation);
 
         void ResetTime();
 
-        void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, ThreadPool& pool);
+        void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 
         std::vector<glm::mat4>& GetFinalBoneMatrices() 
         { 
             return m_FinalBoneMatrices; 
         }
+
+        void StartAnimation();
+        void EndAnimation();
 
     private:
         std::vector<glm::mat4> m_FinalBoneMatrices;
@@ -52,10 +40,10 @@ namespace Cresta
         float m_CurrentTime;
         float m_DeltaTime;
 
-        ThreadPool* m_Pool;
-        std::mutex* m_BoneMatrixMutex;
         using BoneInfoMap = std::map<std::string, BoneInfo>;
-
         std::map<Animation*, BoneInfoMap> m_BoneInfoMap;
+
+        std::thread* Thread;
+        bool Play = false;
     };
 }

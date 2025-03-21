@@ -13,5 +13,6 @@ namespace Cresta
 		
 	private:
 		static Ref<Model> sm_CubeModel;
+		static Ref<Shader> sm_PrimitiveShader;
 	};
 }

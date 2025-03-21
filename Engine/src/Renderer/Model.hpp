@@ -56,6 +56,7 @@ namespace Cresta
 	struct Vertex
 	{
 		glm::vec3 position;
+		glm::vec3 normals;
 		glm::vec2 texCoords;
 		int index;
 
@@ -83,20 +84,16 @@ namespace Cresta
 		static std::unordered_map<uint64_t, Ref<Model>> s_ModelsLoadedWithMap;
 
 	public:
-		Model(int EntityID);
-		Model(const std::string& Path);
+		Model(const std::string& Path );
 		~Model();
 		auto& GetBoneInfoMap() { return m_BoneInfoMap; }
 		int& GetBoneCount() { return m_BoneCounter; }
 
-		void SetShader(Ref<Shader> shader);
-
-		void DrawWireFrame(const glm::vec3& position);
-		void DrawWireFrame(const glm::mat4& position);
-		void Draw(const glm::vec3& position = glm::vec3(1.0f) , int m_EntityID = 0);
-		void Draw(const glm::mat4& transform = glm::mat4(1.0f), int m_EntityID = 0);
-		void MoveBone(glm::mat4 tansform, std::string boneIndex);
-		static Ref<Model> Create(const std::string& Path, const uint64_t& ID);
+		void DrawWireFrame(Ref<Shader> shader,const glm::vec3& position);
+		void DrawWireFrame(Ref<Shader> shader,const glm::mat4& position);
+		void Draw(Ref<Shader> shader, const glm::vec3& position = glm::vec3(1.0f) , int m_EntityID = 0);
+		void Draw(Ref<Shader> shader, const glm::mat4& transform = glm::mat4(1.0f), int m_EntityID = 0);
+		static Ref<Model> Create(const std::string& Path,const uint64_t& ID);
 		
 	private:
 		void SetVertexBoneDataToDefault(Vertex& vertex);
@@ -125,7 +122,6 @@ namespace Cresta
 		bool m_EmbeddedTexture = false;
 		bool m_IsStatic = false; // To know if the model is static if yes then it can be batched else draw it individually.
 		
-		Ref<Shader> m_Shader;
 		Ref<UniformBuffer> m_UniformBuffer;
 
 		std::string m_Directory;

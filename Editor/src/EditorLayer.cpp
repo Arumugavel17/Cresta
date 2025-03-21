@@ -83,16 +83,30 @@ namespace Editor
             m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
 
+        GLenum AllBuffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+        GLenum ColorOnebuffers[1] = { GL_COLOR_ATTACHMENT0};
+
         Renderer::BeginScene(*m_EditorCamera);
         {
             m_EditorCamera->OnUpdate();
-            m_Framebuffer->Bind();
+            if (!teri)
             {
+                m_Framebuffer->Bind();
+            }
+            {
+                m_Framebuffer->SetBufferSize(AllBuffers, 4);
+
                 p_ActiveScene->OnUpdate();
+                
+                m_Framebuffer->SetBufferSize(ColorOnebuffers,1);
+
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
 
                 m_EntityID = m_Framebuffer->ReadPixel(1, m_MouseX, m_MouseY);
-                m_Framebuffer->Unbind();
+                if (!teri)
+                {
+                    m_Framebuffer->Unbind();
+                }
             }
             Renderer::EndScene();
         }
@@ -251,6 +265,13 @@ namespace Editor
     bool EditorLayer::OnKeyPressedEvent(KeyPressedEvent& e)
     {
         CRESTA_PROFILE_FUNCTION();
+
+        if (e.Has(Key::O) && e.GetKeyCount() == 1)
+        {
+            teri = !teri;
+            RenderCommand::SetViewport(0,0,1920,1080);
+            return true;
+        }
         if (!e.Has(Key::LeftShift) && e.Has(Key::LeftControl, Key::O))
         {
             OpenScene();
@@ -417,17 +438,26 @@ namespace Editor
     void EditorLayer::OnImGUIRender()
     {
         CRESTA_PROFILE_FUNCTION();
+        if (!teri)
+        {
+            CreateDockSpace();
+            UI_Toolbar();
+        }
 
-        CreateDockSpace();
-        UI_Toolbar();
         string RootPath = Application::GetApplication().p_ActiveProjectPath.ProjectFolder.string();
 
-        ShowFileManager(RootPath, RootPath);
-        
-        ShowScene();
-        m_HierarchyPanel->OnImGuiRender();
+        if (!teri)
+        {
+            ShowScene();
+        }
 
+        if (teri)
+        {
+            return;
+        }
+        m_HierarchyPanel->OnImGuiRender();
         // VSync settings
+        ShowFileManager(RootPath, RootPath);
         ImGuizmo::BeginFrame();
         ImGui::Begin("VSync");
         if (ImGui::Checkbox("Set VSync Option", &m_VSync)) 

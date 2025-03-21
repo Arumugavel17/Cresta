@@ -35,10 +35,9 @@ void main()
 //type fragment
 #version 330
 
-in vec3 WorldPos;
-
-
 layout (location = 0) out vec4 FragColor;
+
+in vec3 WorldPos;
 
 uniform vec3 u_CameraPosition;
 uniform float u_GridSize = 100.0;

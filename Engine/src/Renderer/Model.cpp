@@ -1,5 +1,4 @@
 #include "Model.hpp"
-#include "Model.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/Shader.hpp"
 #include "vector"
@@ -8,15 +7,8 @@ namespace Cresta
 {
 	std::unordered_map<uint64_t, Ref<Model>> Model::s_ModelsLoadedWithMap;
 
-	Model::Model(int entityID) 
-	{
-		CRESTA_CORE_INFO("MAX SIZE: {0}", GL_MAX_TEXTURE_SIZE);
-		m_Shader = Shader::Create("assets/shaders/Model.glsl");
-	}
-
 	Model::Model(const std::string& Path)
 	{
-		m_Shader = Shader::Create("assets/shaders/Model.glsl");
 		LoadModel(Path);
 		SetupVAO();
 	}
@@ -204,8 +196,15 @@ namespace Cresta
 
 			aiVector3D position = mesh->mVertices[i];
 			aiVector3D texture = mesh->mTextureCoords[0] ? mesh->mTextureCoords[0][i] : aiVector3D(0.0f, 0.0f, 0.0f); 
+			aiVector3D normals(1.0f);
+			if (mesh->HasNormals())
+			{
+				normals = mesh->mNormals[i];
+			}
+
 			vertices.push_back({
 					{ position.x, position.y, position.z },  // glm::vec3 position
+					{normals.x,normals.y,normals.z},
 					{ texture.x, texture.y },                // glm::vec2 texCoords
 					TextureIndex,                             // index
 					{ -1, -1, -1, -1 },                      // m_BoneIDs initialized properly
@@ -277,11 +276,12 @@ namespace Cresta
 			Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(Indices, IndicesSize);
 
 			vertexBuffer->SetLayout({
-					{ ShaderDataType::FVec3, "aPos" },
-					{ ShaderDataType::FVec2, "aTexCoords" },
-					{ ShaderDataType::Int, "aTexIndex" },
-					{ ShaderDataType::IVec4, "aBoneIDs" },
-					{ ShaderDataType::FVec4, "aWeights" }
+					{ ShaderDataType::FVec3, "aPos"			},
+					{ ShaderDataType::FVec3, "aNormals"		},
+					{ ShaderDataType::FVec2, "aTexCoords"   },
+					{ ShaderDataType::Int,	 "aTexIndex"	},
+					{ ShaderDataType::IVec4, "aBoneIDs"		},
+					{ ShaderDataType::FVec4, "aWeights"		}
 				});
 
 			m_VAOs[i]->AddVertexBuffer(vertexBuffer);
@@ -291,7 +291,7 @@ namespace Cresta
 		m_UniformBuffer = UniformBuffer::Create(sizeof(uint64_t) * m_TextureHandles.size(), 0, m_TextureHandles.data());
 	}
 
-	void Model::DrawWireFrame(const glm::vec3& position)
+	void Model::DrawWireFrame(Ref<Shader> shader,const glm::vec3& position)
 	{
 		if (!m_UniformBuffer || m_VAOs.size() <= 0 || m_IsStatic)
 		{
@@ -301,13 +301,13 @@ namespace Cresta
 
 		for (int i = 0;i < m_VAOs.size();i++)
 		{
-			m_Shader->Bind();
-			m_Shader->SetInt("o_EntityID", 0);
-			Renderer::DrawGizmoIndexed(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
+			shader->Bind();
+			shader->SetInt("u_EntityID", 0);
+			Renderer::DrawGizmoIndexed(shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
 		}
 	}
 
-	void Model::DrawWireFrame(const glm::mat4& position)
+	void Model::DrawWireFrame(Ref<Shader> shader, const glm::mat4& position)
 	{
 		if (!m_UniformBuffer || m_VAOs.size() <= 0 || m_IsStatic)
 		{
@@ -317,13 +317,13 @@ namespace Cresta
 
 		for (int i = 0;i < m_VAOs.size();i++)
 		{
-			m_Shader->Bind();
-			m_Shader->SetInt("o_EntityID", 0);
-			Renderer::DrawGizmoIndexed(m_Shader, m_VAOs[i], position);
+			shader->Bind();
+			shader->SetInt("u_EntityID", 0);
+			Renderer::DrawGizmoIndexed(shader, m_VAOs[i], position);
 		}
 	}
 
-	void Model::Draw(const glm::vec3& position, int EntityID)
+	void Model::Draw(Ref<Shader> shader, const glm::vec3& position, int EntityID)
 	{
 		if (!m_UniformBuffer || m_VAOs.size() <= 0 || m_IsStatic)
 		{
@@ -333,13 +333,13 @@ namespace Cresta
 
 		for (int i = 0;i < m_VAOs.size();i++)
 		{
-			m_Shader->Bind();
-			m_Shader->SetInt("o_EntityID", EntityID);
-			Renderer::DrawIndexed(m_Shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
+			shader->Bind();
+			shader->SetInt("o_EntityID", EntityID);
+			Renderer::DrawIndexed(shader, m_VAOs[i], glm::translate(glm::mat4(1.0f), position));
 		}
 	}
 
-	void Model::Draw(const glm::mat4& transform, int EntityID)
+	void Model::Draw(Ref<Shader> shader, const glm::mat4& transform, int EntityID)
 	{
 		if (m_IsStatic)
 		{
@@ -348,21 +348,11 @@ namespace Cresta
 		m_UniformBuffer->Bind();
 		for (int i = 0;i < m_VAOs.size();i++)
 		{
-			m_Shader->Bind();
-			m_Shader->SetInt("o_EntityID",EntityID);
-			Renderer::DrawIndexed(m_Shader, m_VAOs[i], transform);	
+			shader->Bind();
+			shader->SetInt("u_EntityID",EntityID);
+			shader->SetVec3("u_LightPos", glm::vec3(1.0f));
+			Renderer::DrawIndexed(shader, m_VAOs[i], transform);	
 		}
-	}
-
-	void Model::MoveBone(glm::mat4 tansform, std::string boneIndex)
-	{
-		m_Shader->Bind();
-		m_Shader->SetMat4(boneIndex, tansform);
-	}
-
-	void Model::SetShader(Ref<Shader> shader)
-	{
-		m_Shader = shader;
 	}
 
 	Ref<Model> Model::Create(const std::string& Path, const uint64_t& ID)

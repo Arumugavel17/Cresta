@@ -1,46 +1,9 @@
 #include "Animator.hpp"
-#include "Animator.hpp"
+#include "Core/Time.hpp"
 
 namespace Cresta
 {
-
-    ThreadPool::ThreadPool(size_t numThreads) : stop(false) {
-        for (size_t i = 0; i < numThreads; ++i) {
-            workers.emplace_back([this] {
-                while (true) {
-                    std::function<void()> task;
-                    {
-                        std::unique_lock<std::mutex> lock(queueMutex);
-                        condition.wait(lock, [this] { return stop || !tasks.empty(); });
-                        if (stop && tasks.empty()) return;
-                        task = std::move(tasks.front());
-                        tasks.pop();
-                    }
-                    task();
-                }
-                });
-        }
-    }
-
-    ThreadPool::~ThreadPool() {
-        {
-            std::unique_lock<std::mutex> lock(queueMutex);
-            stop = true;
-        }
-        condition.notify_all();
-        for (std::thread& worker : workers)
-            worker.join();
-    }
-
-    void ThreadPool::Enqueue(std::function<void()> task) {
-        {
-            std::unique_lock<std::mutex> lock(queueMutex);
-            tasks.push(std::move(task));
-        }
-        condition.notify_one();
-    }
-
-    Animator::Animator(Animation* Animation)
+    Animator::Animator(Animation* Animation) 
     {
         Init();
 
@@ -48,10 +11,8 @@ namespace Cresta
         m_BoneInfoMap[m_CurrentAnimation] = m_CurrentAnimation->GetBoneIDMap();
     }
 
-    void Animator::Init()
+    void Animator::Init() 
     {
-        m_Pool = new ThreadPool(std::thread::hardware_concurrency());
-        m_BoneMatrixMutex = new std::mutex();
         m_CurrentTime = 0.0;
         m_CurrentAnimation = nullptr;
 
@@ -63,14 +24,20 @@ namespace Cresta
         }
     }
 
-    void Animator::UpdateAnimation(float dt)
+    void Animator::UpdateAnimation()
     {
-        m_DeltaTime = dt;
-        if (m_CurrentAnimation)
+        while (Play)
         {
-            m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * dt;
-            m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
-            CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f), *m_Pool);
+            m_DeltaTime = Time::DeltaTime();
+            m_DeltaTime *= 10.0f;
+            if (m_CurrentAnimation)
+            {
+                m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * m_DeltaTime;
+                m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
+                CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Prevent overloading
         }
     }
 
@@ -86,14 +53,10 @@ namespace Cresta
         m_CurrentTime = 0.0f;
     }
 
-    void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, ThreadPool& pool)
+    void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
     {
-        //std::cout << "Current thread id: " << std::this_thread::get_id() << std::endl;
-
-        //std::unique_lock<std::mutex> lock(*m_BoneMatrixMutex);
         std::string nodeName = node->name;
         glm::mat4 nodeTransform = node->transformation;
-
 
         Bone* Bone_ = m_CurrentAnimation->FindBone(nodeName);
            
@@ -113,19 +76,22 @@ namespace Cresta
             m_FinalBoneMatrices[index] = globalTransformation * offset;
         }
 
-        //lock.release();
-        //m_BoneMatrixMutex->unlock();
-
         for (int i = 0; i < node->childrenCount; i++)
         {
-            //std::cout << node->name << " " << node->childrenCount << "\n";
-
-            //    pool.Enqueue([this, &node, i, globalTransformation, &pool] {
-            //        if (node && node->children.size() > 0)
-            //        {
-                        CalculateBoneTransform(&node->children[i], globalTransformation, pool);
-                    /*}
-                    });*/
+            CalculateBoneTransform(&node->children[i], globalTransformation);
         }
+    }
+
+    void Animator::StartAnimation()
+    {
+        Play = true;
+        Thread = new std::thread(&Animator::UpdateAnimation,this);
+    }
+
+    void Animator::EndAnimation()
+    {
+        Play = false;
+        Thread->join();
+        delete Thread;
     }
 }

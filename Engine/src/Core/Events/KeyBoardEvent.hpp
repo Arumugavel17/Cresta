@@ -9,7 +9,7 @@ namespace Cresta {
 	{
 	public:
 		const std::unordered_set<KeyCode>& GetKeyCode() const { return m_KeyCodes; }
-
+		const int GetKeyCount() const { return m_KeyCodes.size(); }
 		EVENT_CLASS_CATEGORY(EventCategory::Keyboard_EventCategory)
 	protected:
 		KeyEvent(const std::unordered_set<KeyCode>& keycode)
