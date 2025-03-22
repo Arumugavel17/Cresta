@@ -48,9 +48,15 @@ namespace Cresta
 		float MixFactor = 1.0f;
 	};
 
+	
 	class MeshRenderer : public ComponentTemplate
 	{
 	public:
+		enum class ShaderType {
+			NORMAL,
+			ANIMATION
+		};
+
 		MeshRenderer(Entity* entity, const std::string& path = std::string(), int64_t = -1);
 
 		inline void const SetID(int ID) { m_ID = ID; }
@@ -64,7 +70,12 @@ namespace Cresta
 		{ 
 			if (m_Model)
 			{
-				m_Model->Draw(sm_Shader,transform,m_ID);
+				if (sm_Shader.find(m_ShaderType) == sm_Shader.end()) {
+					std::cerr << "Shader NORMAL not found!" << std::endl;
+				}
+				else {
+					m_Model->Draw(sm_Shader[m_ShaderType], transform, m_ID);
+				}
 			}
 		}
 
@@ -77,7 +88,8 @@ namespace Cresta
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
 		
-		void SetShader(Ref<Shader> shader) { sm_Shader = shader; }
+		void SetShaderType(ShaderType type) { m_ShaderType = type; }
+		void SetShader(ShaderType type, Ref<Shader> shader) { sm_Shader[type] = shader; }
 		void UI() override;
 		std::string ToString() override { return "Mesh Renderer"; }
 
@@ -86,7 +98,8 @@ namespace Cresta
 		int m_ID;
 		std::string m_Path;
 		Ref<Model> m_Model;
-		static Ref<Shader> sm_Shader;
+		static std::map<ShaderType,Ref<Shader>> sm_Shader;
+		ShaderType m_ShaderType = ShaderType::NORMAL;
 
 		void PathChanged()
 		{

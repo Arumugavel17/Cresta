@@ -19,7 +19,7 @@ namespace Cresta
 	{
 		glDeleteProgram(m_ProgramID);
 	}
-
+		
 	unsigned int OpenGLShader::CompileShader(GLenum type, const char* shaderSrc)
 	{
 		unsigned int shaderID = glCreateShader(type);
@@ -31,7 +31,7 @@ namespace Cresta
 		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
 
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-		CRESTA_ASSERT(!success,"ERROR::SHADER::{0}::COMPILATION_FAILED::{1}", type,infoLog);
+		CRESTA_ASSERT(!success,"ERROR::SHADER::{0}::COMPILATION_FAILED::{1}", type == GL_FRAGMENT_SHADER ? "FRAGMENT SHADER" : "VERTEX SHADER", infoLog);
 
 		return shaderID;
 	}

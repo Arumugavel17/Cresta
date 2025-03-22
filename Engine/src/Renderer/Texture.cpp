@@ -5,6 +5,18 @@
 
 namespace Cresta
 {
+	Ref<CubeMap> CubeMap::Create(const std::vector<std::string> path, bool flipTexture )
+	{
+		switch (Renderer::GetAPI())
+		{
+			case RendererAPI::API::None:    CRESTA_ASSERT(true, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLCubeMap>(path,flipTexture);
+		}
+
+		CRESTA_ASSERT(true, "Unknown RendererAPI!");
+		return nullptr;
+	}
+
 	Ref<Texture2D> Texture2D::Create(int height, int width, unsigned char* data)
 	{
 		switch (Renderer::GetAPI())

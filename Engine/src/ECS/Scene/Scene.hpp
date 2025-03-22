@@ -9,6 +9,7 @@
 #include "Renderer/Shader.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Renderer/VertexArray.hpp"
+#include "Renderer/Texture.hpp"
 
 namespace Cresta 
 {
@@ -77,6 +78,9 @@ namespace Cresta
 		uint32_t m_ViewportHeight = 0;
 
 		static int sm_Count;
+
+		Ref<CubeMap> m_CubeMap;
+		static Ref<Shader> sm_CubeMapShader;
 
 		friend class SceneHierarchyPanel;
 	};

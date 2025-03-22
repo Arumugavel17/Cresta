@@ -81,6 +81,12 @@ namespace Cresta
 		TextureType p_TextureType;
 	};
 
+	class CubeMap : public Texture
+	{
+	public:
+		static Ref<CubeMap> Create(const std::vector<std::string> txt, bool flipTexture = true);
+	};
+
 	class Texture2D : public Texture
 	{
 	public:

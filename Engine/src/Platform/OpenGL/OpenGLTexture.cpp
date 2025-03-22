@@ -32,9 +32,64 @@ namespace Cresta
 
 	}
 
+	OpenGLCubeMap::OpenGLCubeMap(const std::vector<std::string> texture, bool flipTexture )
+	{
+		glGenTextures(1, &m_RendererID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
+
+		int nrChannels;
+		for (int32_t i = 0; i < texture.size(); i++)
+		{
+			unsigned char* data = stbi_load(texture[i].c_str(), &m_Width, &m_Height, &nrChannels, 0);
+			if (nrChannels == 4)
+			{
+				m_DataFormat = GL_RGBA;
+			}
+			else if (nrChannels == 3)
+			{
+				m_DataFormat = GL_RGB;
+			}
+			if (data)
+			{
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+					0, m_DataFormat, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+				);
+				stbi_image_free(data);
+			}
+			else
+			{
+				std::cout << "Cubemap tex failed to load at path: " << texture[i] << std::endl;
+				stbi_image_free(data);
+			}
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	}
+
+	uint64_t OpenGLCubeMap::CreateHandle()
+	{
+		CRESTA_ASSERT("Cube Map does not have bindless texture handle");
+		return 0;
+	}
+
+	void OpenGLCubeMap::SetData(void* data, uint32_t size)
+	{
+		CRESTA_ASSERT("Cannot set data of a cubemap");
+		return;
+	}
+
+	void OpenGLCubeMap::Bind(uint32_t slot) const
+	{
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
+	}
+
 	OpenGLTexture2D::OpenGLTexture2D(int height, int width, unsigned char* data)
 	{
-		
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& specification)

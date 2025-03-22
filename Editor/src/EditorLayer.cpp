@@ -84,7 +84,7 @@ namespace Editor
         }
 
         GLenum AllBuffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-        GLenum ColorOnebuffers[1] = { GL_COLOR_ATTACHMENT0};
+        GLenum ColorOnebuffers[1] = { GL_COLOR_ATTACHMENT0 };
 
         Renderer::BeginScene(*m_EditorCamera);
         {

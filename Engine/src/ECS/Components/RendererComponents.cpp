@@ -12,12 +12,12 @@ namespace Cresta
 		CRESTA_INFO("SpriteRenderer OnComponentAdded");
 	}
 
-	Ref<Shader> MeshRenderer::sm_Shader = nullptr;
+	std::map<MeshRenderer::ShaderType,Ref<Shader>> MeshRenderer::sm_Shader;
 	MeshRenderer::MeshRenderer(Entity* entity, const std::string& path,int64_t Model_ID) : ComponentTemplate(entity), m_Path(path)
 	{
-		if (!sm_Shader)
+		if (!sm_Shader[ShaderType::NORMAL])
 		{
-			sm_Shader = Shader::Create("assets/shaders/Model.glsl");
+			sm_Shader[ShaderType::NORMAL] = Shader::Create("assets/shaders/Model.glsl");
 		}
 
 		m_ID = static_cast<int>(entt::entity(*entity));
@@ -88,7 +88,9 @@ namespace Cresta
 		}
 		if (meshRenderer)
 		{
-			meshRenderer->SetShader(sm_AnimationShader);
+
+			meshRenderer->SetShader(MeshRenderer::ShaderType::ANIMATION,sm_AnimationShader);
+			meshRenderer->SetShaderType(MeshRenderer::ShaderType::ANIMATION);
 			m_Model = meshRenderer->GetModel();
 		}
 	}
