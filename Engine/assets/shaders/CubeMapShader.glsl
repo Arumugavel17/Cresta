@@ -3,22 +3,20 @@
 layout (location = 0) in vec3 aPos;
 
 out vec3 TexCoords;
-
-uniform mat4 u_Model;
-uniform mat4 u_ProjectionView;
+uniform mat4 u_Projection;
+uniform mat4 u_View;
 
 void main()
 {
     TexCoords = aPos;
-    gl_Position = u_ProjectionView * u_Model * vec4(aPos, 1.0);
+    gl_Position = u_Projection * mat4(mat3(u_View)) * vec4(aPos, 1.0);
 }  
 
 //type fragment
 #version 330 core
-out vec4 FragColor;
 
 in vec3 TexCoords;
-
+layout (location = 0) out vec4 FragColor;
 uniform samplerCube skybox;
 
 void main()

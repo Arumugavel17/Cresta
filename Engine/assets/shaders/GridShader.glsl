@@ -41,10 +41,10 @@ in vec3 WorldPos;
 
 uniform vec3 u_CameraPosition;
 uniform float u_GridSize = 100.0;
-uniform float u_GridMinPixelsBetweenCells = 5.0;
-uniform float u_GridCellSize = 2;
-uniform vec4 u_GridColorThin = vec4(0.5);
-uniform vec4 u_GridColorThick = vec4(vec3(0.5), 1.0);
+uniform float u_GridMinPixelsBetweenCells = 2.0;
+uniform float u_GridCellSize = 0.025;
+uniform vec4 u_GridColorThin = vec4(0.5,0.5,0.5,1.0);
+uniform vec4 u_GridColorThick = vec4(0.0,0.0,0.0,1.0);
 
 float log10(float x) {
     return log(x) / log(10.0);

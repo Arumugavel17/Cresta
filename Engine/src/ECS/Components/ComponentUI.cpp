@@ -89,6 +89,7 @@ namespace Cresta
 			if (payload != nullptr)
 			{
 				std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
+
 				SetPath(tempString); 
 			}
 			ImGui::EndDragDropTarget();
@@ -106,27 +107,24 @@ namespace Cresta
 	{
 		CRESTA_PROFILE_FUNCTION();
 
-		//if (!m_SceneIsActive)
-		//{
-		//	if (Cresta::Utils::DrawVec3Control("Center", m_Center, 1.0f))
-		//	{
-		//		Revaluate(p_Entity);
-		//	}
-		//}
 		if (Cresta::Utils::DrawVec3Control("Size", m_LocalScale, 1.0f))
 		{
 			Revaluate(p_Entity,true);
 		}
+
 		glm::vec3 rotation = glm::degrees(glm::eulerAngles(m_LocalRotation));
 		if (Cresta::Utils::DrawVec3Control("Rotation", rotation))
 		{
 			m_LocalRotation = glm::quat(glm::radians(rotation));
 			Revaluate(p_Entity,true);
 		}
+		
 		if (ImGui::Checkbox("IsTrigger", &m_IsTrigger))
 		{
 			Physics::SetColliderTrigger(p_Entity->GetUUID(), m_IsTrigger);
 		}
+
+
 	}
 
 	void CapsuleCollider::UI()

@@ -14,8 +14,10 @@ const int MAX_BONES = 200;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 
+
 flat out int8_t TexCount;   
 flat out int16_t TexIndex;
+out vec3 Fragpos;    
 out vec3 Normals;
 out vec2 TexCoords;
 
@@ -37,11 +39,12 @@ void main()
         vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos,1.0f);
         totalPosition += localPosition * weights[i];
     }	
-
+    Fragpos = vec3(u_Model*vec4(aPos,1.0f));
     TexCount = (int8_t)aTexIndex & (int8_t)0x1F;  // Extract lower 5 bits
     TexIndex = aTexIndex >> 5;   // Extract upper 11 bits
     TexCoords = aTexCoords;
-    Normals = aNormals;
+    mat3 normalMatrix = transpose(inverse(mat3(u_Model)));
+    Normals = normalize(normalMatrix * aNormals);
     gl_Position = u_ProjectionView * u_Model * totalPosition;
 }
 
@@ -54,7 +57,8 @@ void main()
 #extension GL_EXT_shader_explicit_arithmetic_types : enable
 #extension GL_ARB_bindless_texture: require
 
-layout(std430, binding = 0) uniform TextureHandles {
+layout(std430, binding = 0) uniform TextureHandles 
+{
     uint64_t textureHandles[5];  // Array of 64-bit texture handles
 };
 
@@ -63,9 +67,12 @@ sampler2D Specular;
 
 flat in int8_t TexCount;
 flat in int16_t TexIndex;
-uniform vec3 u_LightPos;
+
 uniform int u_EntityID;
 
+uniform vec3 u_LightPos;
+
+in vec3 Fragpos;
 in vec3 Normals;
 in vec2 TexCoords;
 
@@ -76,7 +83,17 @@ void main()
 {
     if(TexCount == 0)
     {
-        FragColor = vec4(vec3(0.7),1.0);
+        vec4 color = vec4(vec3(0.7),1.0); // Example: accumulate colors    
+
+        float ambientStrength = 0.1;
+        vec3 ambient = ambientStrength * vec3(1.0f);
+        
+        vec3 lightDir =  vec3(0.2f, 100.0f, 0.3f);
+        lightDir = normalize(lightDir);    
+        float diff = max(dot(Normals, lightDir), 0.0);
+        vec3 diffuse = diff * vec3(1.0f);
+
+        FragColor = vec4((ambient + diffuse),1.0f) * color;
         o_EntityID = u_EntityID;
         return;
     }
@@ -92,6 +109,14 @@ void main()
     }
     vec4 color = texture(Diffuse, TexCoords); // Example: accumulate colors    
 
-    FragColor = color;
+    float ambientStrength = 0.1;
+    vec3 ambient = ambientStrength * vec3(1.0f);
+    
+    vec3 lightDir = u_LightPos - Fragpos;
+    lightDir = normalize(lightDir);    
+    float diff = max(dot(Normals, lightDir), 0.0);
+    vec3 diffuse = diff * vec3(1.0f);
+
+    FragColor = vec4((ambient + diffuse),1.0f) * color;
     o_EntityID = u_EntityID;
 }

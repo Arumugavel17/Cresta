@@ -10,6 +10,7 @@
 #include "Renderer/Renderer.hpp"
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Texture.hpp"
+#include "Renderer/CubeMap/Cubemap.hpp"
 
 namespace Cresta 
 {
@@ -62,6 +63,7 @@ namespace Cresta
 		static void RemoveRigidBody(const UUID& entity);
 		static void RemoveCollider(const UUID& entity);
 
+		void DrawSkyBox();
 		void SerializeScene(const std::filesystem::path& path);
 
 	private:
@@ -78,10 +80,8 @@ namespace Cresta
 		uint32_t m_ViewportHeight = 0;
 
 		static int sm_Count;
-
 		Ref<CubeMap> m_CubeMap;
-		static Ref<Shader> sm_CubeMapShader;
-
+		
 		friend class SceneHierarchyPanel;
 	};
 }

@@ -94,15 +94,16 @@ namespace Editor
                 m_Framebuffer->Bind();
             }
             {
+                m_Framebuffer->SetBufferSize(ColorOnebuffers, 1);
+                p_ActiveScene->DrawSkyBox();
                 m_Framebuffer->SetBufferSize(AllBuffers, 4);
-
                 p_ActiveScene->OnUpdate();
-                
                 m_Framebuffer->SetBufferSize(ColorOnebuffers,1);
-
+                
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
 
                 m_EntityID = m_Framebuffer->ReadPixel(1, m_MouseX, m_MouseY);
+                std::cout << m_EntityID << "\n";
                 if (!teri)
                 {
                     m_Framebuffer->Unbind();

@@ -37,6 +37,8 @@ namespace Cresta
 		{
 			glm::vec3 CamerPosition;
 			glm::mat4 ViewProjectionMatrix;
+			glm::mat4 ProjectionMatrix;
+			glm::mat4 ViewMatrix;
 		};
 
 

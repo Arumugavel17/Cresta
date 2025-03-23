@@ -10,25 +10,18 @@ namespace Cresta
 {
 	int Scene::sm_Count = 0;
 
-	Ref<Shader> Scene::sm_CubeMapShader = nullptr; 
 	Scene::Scene()
 	{
 		std::vector<std::string> CubeMapPaths;
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\back.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\top.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\right.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\left.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\front.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\bottom.jpg");
+		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\right.jpg");
+		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\left.jpg");	
+		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\top.jpg");
+		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\bottom.jpg");
+		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\front.jpg");
+		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\back.jpg");
 
-		m_CubeMap = CubeMap::Create(CubeMapPaths);
+		m_CubeMap = CreateRef<CubeMap>(CubeMapPaths);
 		Physics::ClearBodies();
-
-		if (!sm_CubeMapShader)
-		{
-			sm_CubeMapShader = Shader::Create("assets\\shaders\\CubeMapShader.glsl");
-		}
-
 	}
 
 	Scene::~Scene()
@@ -228,6 +221,11 @@ namespace Cresta
 			}
 			Physics::Step();
 		}
+	}
+
+	void Scene::DrawSkyBox()
+	{
+		m_CubeMap->Draw();
 	}
 
 	void Scene::OnUpdate()

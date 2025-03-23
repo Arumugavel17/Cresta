@@ -25,7 +25,8 @@ void main()
 
     Fragpos = vec3(u_Model*vec4(aPos,1.0f));
     TexCoords = aTexCoords;
-    Normals = normalize(aNormals);
+    mat3 normalMatrix = transpose(inverse(mat3(u_Model)));
+    Normals = normalize(normalMatrix * aNormals);
     gl_Position = u_ProjectionView * u_Model * vec4(aPos,1.0f);
 }
 
@@ -67,7 +68,7 @@ void main()
         float ambientStrength = 0.1;
         vec3 ambient = ambientStrength * vec3(1.0f);
         
-        vec3 lightDir = u_LightPos - Fragpos;
+        vec3 lightDir =  vec3(0.2f, 1.0f, 0.3f);
         lightDir = normalize(lightDir);    
         float diff = max(dot(Normals, lightDir), 0.0);
         vec3 diffuse = diff * vec3(1.0f);

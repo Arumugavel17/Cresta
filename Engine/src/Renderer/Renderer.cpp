@@ -53,6 +53,8 @@ namespace Cresta
 	{
 		sm_SceneData->CamerPosition = camera.GetPosition();
 		sm_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		sm_SceneData->ProjectionMatrix = camera.GetProjectionMatrix();
+		sm_SceneData->ViewMatrix = camera.GetViewMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -98,8 +100,11 @@ namespace Cresta
 		shader->Bind();
 		shader->SetMat4("u_ProjectionView", sm_SceneData->ViewProjectionMatrix);
 		shader->SetVec3("u_CameraPosition", sm_SceneData->CamerPosition);
+		shader->SetMat4("u_View", sm_SceneData->ViewMatrix);
+		shader->SetMat4("u_Projection", sm_SceneData->ProjectionMatrix);
 		shader->SetMat4("u_Model", transform);
 		shader->SetVec4("u_Color", glm::vec4(1.0f));
+		shader->SetInt("skybox",0);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
