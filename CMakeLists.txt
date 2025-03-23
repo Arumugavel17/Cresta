@@ -152,7 +152,7 @@ target_include_directories(Engine PUBLIC
 
 message("SOURCES " ${CMAKE_BINARY_DIR})
 set(LUA_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/lua)
-
+message("LUA PATH: "${LUA_LIBRARY})
 target_link_libraries(Engine
         glfw
 		assimp
@@ -194,7 +194,7 @@ add_custom_target(copy_assets ALL
 add_dependencies(Engine copy_assets)
 
 add_custom_target(copy_lua ALL
-    COMMAND ${CMAKE_COMMAND} -E copy ${LUA_LIBRARY}/Lua54.dll ${LUA_LIBRARY}/Lua54.dll
+    COMMAND ${CMAKE_COMMAND} -E copy ${LUA_LIBRARY}/Lua54.dll ${CMAKE_BINARY_DIR}/Lua54.dll
     COMMENT "Copying LUA_Dll to the build directory..."
 )
 add_dependencies(Engine copy_lua)
