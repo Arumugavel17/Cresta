@@ -26,11 +26,15 @@ namespace Cresta
 		void OnComponentRemoved() override;
 
 	private:
+		void SetGravityFactor();
+
+	private:
 		glm::vec3 m_Velocity = glm::vec3(0.0f);
 		glm::vec3 m_CenterOfMass = glm::vec3(0.0f);
 		float m_Density = 0.1f;
 		bool m_IsStatic = false;
-		float m_Gravity = 0;
+
+		float m_GravityFactor = 1;
 		float m_Mass = 0;
 
 		UUID m_EnityID;

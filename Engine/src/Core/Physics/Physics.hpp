@@ -27,6 +27,8 @@ namespace Cresta
 		static void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
 		static void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
 
+		static void SetGravityFactor(const UUID& EntityID, float gravityfactor);
+
 		static void SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& scale);
 		static void SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale);
 

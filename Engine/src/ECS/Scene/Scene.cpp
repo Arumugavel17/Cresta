@@ -13,15 +13,15 @@ namespace Cresta
 	Scene::Scene()
 	{
 		std::vector<std::string> CubeMapPaths;
-		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\right.jpg");
-		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\left.jpg");	
-		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\top.jpg");
-		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\bottom.jpg");
-		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\front.jpg");
-		CubeMapPaths.push_back("C:\\dev\\Cresta\\Engine\\assets\\Textures\\Cubemap\\back.jpg");
+		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\right.jpg");
+		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\left.jpg");	
+		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\top.jpg");
+		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\bottom.jpg");
+		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\front.jpg");
+		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\back.jpg");
 
-		m_CubeMap = CreateRef<CubeMap>(CubeMapPaths);
 		Physics::ClearBodies();
+		m_CubeMap.SetTextures(CubeMapPaths);
 	}
 
 	Scene::~Scene()
@@ -225,7 +225,7 @@ namespace Cresta
 
 	void Scene::DrawSkyBox()
 	{
-		m_CubeMap->Draw();
+		m_CubeMap.Draw();
 	}
 
 	void Scene::OnUpdate()

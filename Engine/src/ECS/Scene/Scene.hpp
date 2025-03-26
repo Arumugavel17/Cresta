@@ -80,7 +80,7 @@ namespace Cresta
 		uint32_t m_ViewportHeight = 0;
 
 		static int sm_Count;
-		Ref<CubeMap> m_CubeMap;
+		CubeMap m_CubeMap;
 		
 		friend class SceneHierarchyPanel;
 	};

@@ -100,7 +100,10 @@ namespace Cresta
 	{
 		CRESTA_PROFILE_FUNCTION();
 
-		ImGui::Text("RigidBody");
+		if (ImGui::InputFloat("Gravity Factor", &m_GravityFactor))
+		{
+			SetGravityFactor();
+		}
 	}
 
 	void BoxCollider::UI()

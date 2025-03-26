@@ -1,5 +1,6 @@
 #include "PhysicsController.hpp"
 #include "PhysicsController.hpp"
+#include "PhysicsController.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Collision/Shape/CompoundShape.h>
@@ -229,6 +230,11 @@ namespace Cresta
 				m_PhysicsSystem.GetDefaultLayerFilter(body.GetObjectLayer())
 			);
 		}
+	}
+
+	void PhysicsController::SetGravityFactor(const UUID& EntityID, float gravityfactor)
+	{
+		m_BodyInterface->SetGravityFactor(m_EntityToBody[EntityID],gravityfactor);
 	}
 
 	glm::quat PhysicsController::GetBodyRotation(const UUID& EntityID)

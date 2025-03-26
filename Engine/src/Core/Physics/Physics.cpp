@@ -1,5 +1,4 @@
 #include "Physics.hpp"
-#include "Physics.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
@@ -65,6 +64,11 @@ namespace Cresta
 	void Physics::SetBodyRotation(const UUID& EntityID, const glm::quat& rotation)
 	{
 		sm_PhysicsController->SetBodyRotation(EntityID, rotation);
+	}
+
+	void Physics::SetGravityFactor(const UUID& EntityID, float gravityfactor)
+	{
+		sm_PhysicsController->SetGravityFactor(EntityID, gravityfactor);
 	}
 
 	glm::vec3 Physics::GetBodyPosition(const UUID& EntityID)

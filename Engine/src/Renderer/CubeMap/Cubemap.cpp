@@ -5,9 +5,8 @@
 
 namespace Cresta
 {
-	CubeMap::CubeMap(std::vector<std::string> textures)
+	CubeMap::CubeMap()
 	{
-        m_Textures = textures;
         sm_VAO = VertexArray::Create();
 		m_Shader = Shader::Create("assets\\shaders\\CubeMapShader.glsl");
         std::vector<float> skyboxVertices = {
@@ -74,11 +73,11 @@ namespace Cresta
         sm_VAO->AddVertexBuffer(VBO);
         sm_VAO->SetIndexBuffer(IBO);
 
-        Init();
 	}
 
-	void CubeMap::Init()
+	void CubeMap::SetTextures(std::vector<std::string> textures)
 	{
+        m_Textures = textures;
         stbi_set_flip_vertically_on_load(false);
         glGenTextures(1, &m_TextureID);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);

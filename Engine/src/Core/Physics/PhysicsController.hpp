@@ -48,6 +48,8 @@ namespace Cresta
 		void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
 		void SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale);
 
+		void SetGravityFactor(const UUID& EntityID, float gravityfactor );
+
 		void Step();
 		void Start();
 		void Stop();

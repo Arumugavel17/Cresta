@@ -103,7 +103,6 @@ namespace Editor
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
 
                 m_EntityID = m_Framebuffer->ReadPixel(1, m_MouseX, m_MouseY);
-                std::cout << m_EntityID << "\n";
                 if (!teri)
                 {
                     m_Framebuffer->Unbind();

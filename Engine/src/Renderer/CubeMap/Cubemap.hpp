@@ -7,8 +7,8 @@ namespace Cresta
 	class CubeMap
 	{
 	public:
-		CubeMap(std::vector<std::string> textures);
-		void Init();
+		CubeMap();
+		void SetTextures(std::vector<std::string> textures);
 
 		void Draw();
 	private:

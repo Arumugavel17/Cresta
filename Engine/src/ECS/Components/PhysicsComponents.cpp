@@ -1,5 +1,6 @@
 #include "PhysicsComponents.hpp"
 #include "PhysicsComponents.hpp"
+#include "PhysicsComponents.hpp"
 #include "Renderer/PrimitiveMeshes.hpp"
 #include "ECS/Entity.hpp"
 #include "Renderer/Renderer.hpp"
@@ -127,6 +128,11 @@ namespace Cresta
 	void Rigidbody::OnComponentRemoved()
 	{
 		Scene::RemoveRigidBody(p_Entity->GetUUID());
+	}
+
+	void Rigidbody::SetGravityFactor()
+	{
+		Physics::SetGravityFactor(m_EnityID, m_GravityFactor);
 	}
 
 	void BoxCollider::OnComponentRemoved()

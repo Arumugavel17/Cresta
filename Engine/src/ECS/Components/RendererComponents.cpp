@@ -93,6 +93,14 @@ namespace Cresta
 			meshRenderer->SetShaderType(MeshRenderer::ShaderType::ANIMATION);
 			m_Model = meshRenderer->GetModel();
 		}
+		if (m_Model)
+		{
+			sm_AnimationShader->Bind();
+			for (int i = 0;i < 200;i++)
+			{
+				sm_AnimationShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", glm::mat4(1.0f));
+			}
+		}
 	}
 
 	void AnimatorComponent::OnStart()
