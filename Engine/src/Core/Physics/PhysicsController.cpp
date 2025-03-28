@@ -1,6 +1,4 @@
 #include "PhysicsController.hpp"
-#include "PhysicsController.hpp"
-#include "PhysicsController.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Collision/Shape/CompoundShape.h>
@@ -246,6 +244,17 @@ namespace Cresta
 			bodyRotation.GetY(),
 			bodyRotation.GetZ()
 		};
+	}
+
+	void PhysicsController::SetCapsuleHeightRadius(const UUID& EntityID, float HalfHeight, float Radius)
+	{
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
+		if (lock.Succeeded())
+		{
+			Body& body = lock.GetBody();
+			body.SetShapeInternal(new CapsuleShape(HalfHeight, Radius), true);
+			lock.ReleaseLock();
+		}
 	}
 
 

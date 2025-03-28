@@ -13,12 +13,12 @@ namespace Cresta
 	Scene::Scene()
 	{
 		std::vector<std::string> CubeMapPaths;
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\right.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\left.jpg");	
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\top.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\bottom.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\front.jpg");
-		CubeMapPaths.push_back("assets\\Textures\\Cubemap\\back.jpg");
+		CubeMapPaths.push_back("assets\\Textures\\Daylight\\Daylight Box_Right.bmp");
+		CubeMapPaths.push_back("assets\\Textures\\Daylight\\Daylight Box_Left.bmp");
+		CubeMapPaths.push_back("assets\\Textures\\Daylight\\Daylight Box_Top.bmp");
+		CubeMapPaths.push_back("assets\\Textures\\Daylight\\Daylight Box_Bottom.bmp");
+		CubeMapPaths.push_back("assets\\Textures\\Daylight\\Daylight Box_Front.bmp");
+		CubeMapPaths.push_back("assets\\Textures\\Daylight\\Daylight Box_Back.bmp");
 
 		Physics::ClearBodies();
 		m_CubeMap.SetTextures(CubeMapPaths);

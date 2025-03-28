@@ -43,6 +43,8 @@ namespace Cresta
 		glm::vec3 GetBodyPosition(const UUID& EntityID);
 		glm::quat GetBodyRotation(const UUID& EntityID);
 
+		void SetCapsuleHeightRadius(const UUID& EntityID,float HalfHeight, float Radius);
+
 		void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
 		void SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& CenterOfMass);
 		void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);

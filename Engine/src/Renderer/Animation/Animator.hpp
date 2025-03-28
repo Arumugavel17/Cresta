@@ -44,6 +44,9 @@ namespace Cresta
         std::map<Animation*, BoneInfoMap> m_BoneInfoMap;
 
         std::thread* Thread;
-        bool Play = false;
+        bool Play = true;
+
+    public:
+        float timestep = 1.0f;
     };
 }

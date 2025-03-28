@@ -1,7 +1,8 @@
+#include "PhysicsComponents.hpp"
 #include "Components.hpp"
 #include "ECS/Scene/SceneHierarchyPanelUtils.hpp"
-#include "cmath"
 #include "Core/Application.hpp"
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)
 #include <glm/gtc/type_ptr.hpp>
@@ -28,17 +29,13 @@ namespace Cresta
 			OnValidate.post(true);
 		}
 
-		glm::vec3 rotation = glm::degrees(glm::eulerAngles(m_Rotation)); // Convert to degrees
-
 		if (Cresta::Utils::DrawVec3Control("Rotation", rotation))
 		{
-			m_Rotation = glm::quat(glm::radians(rotation)); // Convert back to radians before creating quaternion
+			glm::quat deltaRotation = glm::quat(glm::radians(rotation)) - m_Rotation;
+			m_Rotation += deltaRotation;
 			OnValidate.post(true);
 		}
 
-
-		m_Rotation = glm::radians(rotation);
-		
 		if (Cresta::Utils::DrawVec3Control("Scale", m_Scale, 1.0f))
 		{
 			OnValidate.post(true);
@@ -99,7 +96,8 @@ namespace Cresta
 	void Rigidbody::UI()
 	{
 		CRESTA_PROFILE_FUNCTION();
-
+		ImGui::Text("Gravity:");
+		ImGui::SameLine();
 		if (ImGui::InputFloat("Gravity Factor", &m_GravityFactor))
 		{
 			SetGravityFactor();
@@ -115,19 +113,17 @@ namespace Cresta
 			Revaluate(p_Entity,true);
 		}
 
-		glm::vec3 rotation = glm::degrees(glm::eulerAngles(m_LocalRotation));
 		if (Cresta::Utils::DrawVec3Control("Rotation", rotation))
 		{
-			m_LocalRotation = glm::quat(glm::radians(rotation));
-			Revaluate(p_Entity,true);
+			glm::quat deltaRotation = glm::quat(glm::radians(rotation)) - m_LocalRotation;
+			m_LocalRotation += deltaRotation;
+			Revaluate(p_Entity, true);
 		}
-		
+
 		if (ImGui::Checkbox("IsTrigger", &m_IsTrigger))
 		{
 			Physics::SetColliderTrigger(p_Entity->GetUUID(), m_IsTrigger);
 		}
-
-
 	}
 
 	void CapsuleCollider::UI()
@@ -141,7 +137,12 @@ namespace Cresta
 	{
 		CRESTA_PROFILE_FUNCTION();
 
-		ImGui::Text("Sphere Collider");
+		ImGui::Text("Radius:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("Radius", &m_Radius))
+		{
+			Physics::SetBodyShapeScale(p_Entity->GetUUID(),glm::vec3(m_Radius));
+		}
 	}
 
 	void MeshCollider::UI()
@@ -154,7 +155,8 @@ namespace Cresta
 	void AnimatorComponent::UI()
 	{
 		ImGui::Text("Mesh Collider");
-
+		ImGui::InputFloat("Time Step: ", &m_Animator.timestep);
+		
 		char buffer[128];
 		std::strncpy(buffer, m_Path.c_str(), sizeof(buffer) - 1);
 		buffer[sizeof(buffer) - 1] = '\0';

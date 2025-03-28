@@ -1,6 +1,4 @@
 #include "PhysicsComponents.hpp"
-#include "PhysicsComponents.hpp"
-#include "PhysicsComponents.hpp"
 #include "Renderer/PrimitiveMeshes.hpp"
 #include "ECS/Entity.hpp"
 #include "Renderer/Renderer.hpp"
@@ -35,6 +33,7 @@ namespace Cresta
 	}
 
 	BoxCollider::BoxCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
+
 	void BoxCollider::OnComponentAdded()
 	{
 		Scene::AddCollider(p_Entity->GetUUID(), m_Shape);
@@ -69,7 +68,8 @@ namespace Cresta
 		glm::vec3 parentScale = transform.GetScale();
 
 		collider.m_Center = parentPosition;
-		collider.m_Rotation = parentRotation * collider.m_LocalRotation;
+		collider.m_Rotation = collider.m_LocalRotation * parentRotation;
+
 		collider.m_Scale = parentScale * collider.m_LocalScale;
 
 		if (reflectphysics)
@@ -91,6 +91,7 @@ namespace Cresta
 	void BoxCollider::OnStart()
 	{
 		CRESTA_PROFILE_FUNCTION();
+		std::cout << m_LocalRotation << "\n";
 
 		if (std::abs(m_Scale.x) > 0.1f && std::abs(m_Scale.y) > 0.1f && std::abs(m_Scale.z) > 0.1f)
 		{
@@ -111,6 +112,11 @@ namespace Cresta
 	void SphereCollider::OnComponentAdded()
 	{
 		Scene::AddCollider(p_Entity->GetComponent<IDComponent>().GetUUID(), m_Shape);
+	}
+
+	void CapsuleCollider::OnRender()
+	{
+		Primitive::DrawCapsuleGuizmo(p_Entity->GetComponent<Transform>().GetTransform());
 	}
 
 	void CapsuleCollider::OnComponentAdded()
@@ -145,6 +151,13 @@ namespace Cresta
 	void SphereCollider::OnComponentRemoved()
 	{
 		Scene::RemoveCollider(p_Entity->GetUUID());
+	}
+
+	void SphereCollider::OnRender()
+	{
+		glm::vec3 position = p_Entity->GetComponent<Transform>().GetPosition();
+		glm::quat rotation = p_Entity->GetComponent<Transform>().GetRotation();
+		Primitive::DrawSphereGuizmo(position,rotation, m_Radius);
 	}
 
 	void CapsuleCollider::OnComponentRemoved()

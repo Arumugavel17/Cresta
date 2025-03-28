@@ -77,7 +77,7 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 	return os << glm::to_string(quaternion);
 }
 
-#if 1
+#if 0
 // Core log macros
 #define CRESTA_CORE_TRACE(...)    ::Cresta::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define CRESTA_CORE_INFO(...)     ::Cresta::Log::GetCoreLogger()->info(__VA_ARGS__)

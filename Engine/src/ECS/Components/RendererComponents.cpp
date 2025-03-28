@@ -91,9 +91,9 @@ namespace Cresta
 
 			meshRenderer->SetShader(MeshRenderer::ShaderType::ANIMATION,sm_AnimationShader);
 			meshRenderer->SetShaderType(MeshRenderer::ShaderType::ANIMATION);
-			m_Model = meshRenderer->GetModel();
+			meshRendererComponent = meshRenderer;
 		}
-		if (m_Model)
+		if (meshRendererComponent)
 		{
 			sm_AnimationShader->Bind();
 			for (int i = 0;i < 200;i++)
@@ -105,7 +105,7 @@ namespace Cresta
 
 	void AnimatorComponent::OnStart()
 	{
-		if (m_Model)
+		if (meshRendererComponent)
 		{
 			sm_AnimationShader->Bind();
 			for (int i = 0;i < 200;i++)
@@ -124,7 +124,7 @@ namespace Cresta
 
 	void AnimatorComponent::OnEnd()
 	{
-		if (m_Model)
+		if (meshRendererComponent)
 		{
 			sm_AnimationShader->Bind();
 			for (int i = 0;i < 200;i++)
@@ -137,8 +137,11 @@ namespace Cresta
 
 	void AnimatorComponent::UpdateAnimation()
 	{
-		if (m_Model)
+		
+		if (meshRendererComponent)
 		{
+			m_Animator.EndAnimation();
+			m_Animator.StartAnimation();
 			std::vector<glm::mat4>& Transform = m_Animator.GetFinalBoneMatrices();
 			sm_AnimationShader->Bind();
 			for (int i = 0;i < 200;i++)
@@ -150,7 +153,7 @@ namespace Cresta
 
 	void AnimatorComponent::PathChanged()
 	{
-		if (m_Model)
+		if (meshRendererComponent)
 		{
 			sm_AnimationShader->Bind();
 			for (int i = 0;i < 200;i++)
@@ -159,9 +162,9 @@ namespace Cresta
 			}
 		}
 
-		if (!m_Path.empty() && m_Model)
+		if (!m_Path.empty() && meshRendererComponent)
 		{
-			m_Animation.SetAnimation(m_Path, m_Model);
+			m_Animation.SetAnimation(m_Path, meshRendererComponent->GetModel());
 			m_Animator.PlayAnimation(&m_Animation);
 		}
 	}

@@ -137,8 +137,8 @@ namespace Cresta
 	private:
 		void UpdateAnimation();
 
+		MeshRenderer* meshRendererComponent;
 		std::string m_Path;
-		Ref<Model> m_Model;
 		Animator m_Animator;
 		Animation m_Animation;
 		static Ref<Shader> sm_AnimationShader;

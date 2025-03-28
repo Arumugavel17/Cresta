@@ -98,27 +98,39 @@ namespace Cresta
 		glm::vec3 m_LocalCenter;
 		glm::quat m_LocalRotation;
 		glm::vec3 m_LocalScale;
+
+		glm::vec3 rotation = { 0.0f,0.0f ,0.0f };
 	};
 
 	class SphereCollider : public Collider
 	{
 	public:
-		SphereCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
+		SphereCollider(Entity* entity) : Collider(entity, ColliderShape::SphereCollider) {}
+
+		float GetRotation() { return m_Radius; }
+		void SetRotation(float radius) { m_Radius = radius; }
+
 		void UI() override;
 		std::string ToString() override
 		{
 			return "Sphere Collider";
 		}
+
+		void OnRender() override;
 		void OnComponentAdded() override;
 		void OnComponentRemoved() override;
+
+	private:
+		float m_Radius = 1.0f;
 	};
 
 	class CapsuleCollider : public Collider
 	{
 	public:
-		CapsuleCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
+		CapsuleCollider(Entity* entity) : Collider(entity, ColliderShape::CapsuleCollider) {}
 		void UI() override;
 		
+		void OnRender() override;
 		std::string ToString() override
 		{
 			return "Capsule Collider";
@@ -130,7 +142,7 @@ namespace Cresta
 	class MeshCollider : public Collider
 	{
 	public:
-		MeshCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
+		MeshCollider(Entity* entity) : Collider(entity, ColliderShape::MeshCollider) {}
 		void UI() override;
 
 		std::string ToString() override

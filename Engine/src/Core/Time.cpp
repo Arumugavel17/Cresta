@@ -1,4 +1,5 @@
 #include "Time.hpp"
+#include "Renderer/RendererCommand.hpp"
 
 namespace Cresta
 {
@@ -11,5 +12,10 @@ namespace Cresta
     float Time::DeltaTime()
     {
         return s_Time;
+    }
+
+    float Time::GetTime()
+    {
+        return RenderCommand::GetTime();
     }
 }

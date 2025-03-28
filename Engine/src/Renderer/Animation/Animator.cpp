@@ -1,5 +1,6 @@
 #include "Animator.hpp"
 #include "Core/Time.hpp"
+#include "imgui/imgui.h"
 
 namespace Cresta
 {
@@ -26,19 +27,16 @@ namespace Cresta
 
     void Animator::UpdateAnimation()
     {
-        while (Play)
-        {
-            m_DeltaTime = Time::DeltaTime();
-            m_DeltaTime *= 10.0f;
-            if (m_CurrentAnimation)
-            {
-                m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * m_DeltaTime;
-                m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
-                CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
-            }
+        m_DeltaTime = Time::DeltaTime() * (timestep + 3.5f);
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Prevent overloading
+        if (m_CurrentAnimation)
+        {
+            m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * m_DeltaTime;
+            m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
+            CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
         }
+
+        Play = true;
     }
 
     void Animator::PlayAnimation(Animation* pAnimation)
@@ -84,14 +82,22 @@ namespace Cresta
 
     void Animator::StartAnimation()
     {
-        Play = true;
-        Thread = new std::thread(&Animator::UpdateAnimation,this);
+        if (Play)
+        {
+            Play = false;
+            Thread = new std::thread(&Animator::UpdateAnimation,this);
+        }
     }
 
     void Animator::EndAnimation()
     {
-        Play = false;
-        Thread->join();
-        delete Thread;
+        if (Thread)
+        {
+            if (Play)
+            {
+                Thread->join();
+                delete Thread;
+            }
+        }
     }
 }

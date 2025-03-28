@@ -421,10 +421,10 @@ namespace Cresta
 							});
 
 						boxcollider.SetRotation({
+							Rotation[3].as<float>(),
 							Rotation[0].as<float>(),
 							Rotation[1].as<float>(),
-							Rotation[2].as<float>(),
-							Rotation[3].as<float>()
+							Rotation[2].as<float>()
 							});
 
 						boxcollider.SetSize({
@@ -509,10 +509,10 @@ namespace Cresta
 							});
 
 						boxcollider.SetRotation({
+							Rotation[3].as<float>(),
 							Rotation[0].as<float>(),
 							Rotation[1].as<float>(),
-							Rotation[2].as<float>(),
-							Rotation[3].as<float>()
+							Rotation[2].as<float>()
 							});
 
 						boxcollider.SetSize({
