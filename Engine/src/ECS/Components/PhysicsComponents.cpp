@@ -37,19 +37,16 @@ namespace Cresta
 	void BoxCollider::OnComponentAdded()
 	{
 		Scene::AddCollider(p_Entity->GetUUID(), m_Shape);
-
-		m_Rotation = glm::vec3(0.0f);
-		m_Center = glm::vec3(0.0f);
-		m_Scale = glm::vec3(1.0f);
-
 		Transform& transform = p_Entity->GetComponent<Transform>();
 		transform.OnValidate.Subscribe(typeid(BoxCollider).name(), [entity = p_Entity](bool reflectphysics = false)
 			{
 				BoxCollider::Revaluate(entity, reflectphysics);
 			});
 
-		m_Center = transform.GetPosition();
-		m_LocalRotation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f);
+		m_Rotation = glm::eulerAngles(glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
+		m_Scale = glm::vec3(1.0f);
+		m_LocalCenter = transform.GetPosition();
+		m_LocalRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 		m_LocalScale = glm::vec3(1.0f);
 
 		Revaluate(p_Entity,true);
@@ -67,18 +64,14 @@ namespace Cresta
 		glm::quat parentRotation = transform.GetRotation(); // Parent rotation
 		glm::vec3 parentScale = transform.GetScale();
 
-		collider.m_Center = parentPosition;
-		collider.m_Rotation = collider.m_LocalRotation * parentRotation;
+		collider.m_LocalCenter = parentPosition;
+		collider.m_Rotation = parentRotation * collider.m_LocalRotation;
 
 		collider.m_Scale = parentScale * collider.m_LocalScale;
 
 		if (reflectphysics)
 		{
-			if ((uint32_t)entity == 1)
-			{
-				std::cout << collider.m_Center << " " << parentPosition << " " << "\n";
-			}
-			Physics::SetBodyPosition(entity->GetUUID(), collider.m_Center);
+			Physics::SetBodyPosition(entity->GetUUID(), collider.m_LocalCenter);
 			Physics::SetBodyRotation(entity->GetUUID(), collider.m_Rotation);
 		}
 

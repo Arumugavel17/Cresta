@@ -12,6 +12,8 @@ namespace Cresta
 		virtual void Run();
 		virtual void OnEvent(Event& e);
 		
+		Ref<Scene> GetActiveScene();
+
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);

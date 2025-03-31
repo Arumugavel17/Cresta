@@ -3,6 +3,7 @@
 #include "ECS/Components/Components.hpp"
 #include "ECS/UUID.hpp"
 #include "ECS/Entity.hpp"
+#include "ECS/Components/ScriptComponent.hpp"
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 
@@ -89,10 +90,10 @@ namespace YAML
 		static Node encode(const glm::quat& rhs)
 		{
 			Node node;
+			node.push_back(rhs.w);
 			node.push_back(rhs.x);
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
-			node.push_back(rhs.w);
 			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
@@ -102,10 +103,10 @@ namespace YAML
 			if (!node.IsSequence() || node.size() != 4)
 				return false;
 
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			rhs.w = node[3].as<float>();
+			rhs.w = node[0].as<float>();
+			rhs.x = node[1].as<float>();
+			rhs.y = node[2].as<float>();
+			rhs.z = node[3].as<float>();
 			return true;
 		}
 	};
@@ -169,11 +170,11 @@ namespace Cresta
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::quat& q)
 	{
 		out << YAML::Flow;
-		out << YAML::BeginSeq << q.x << q.y << q.z << q.w << YAML::EndSeq;
+		out << YAML::BeginSeq << q.w << q.x << q.y << q.z << YAML::EndSeq;
 		return out;
 	}
 
-	static void SerializeEntity(YAML::Emitter& out, Entity entity)
+	static void SerializeEntity(YAML::Emitter& out, Entity& entity)
 	{
 		CRESTA_PROFILE_FUNCTION();
 
@@ -253,7 +254,6 @@ namespace Cresta
 
 			out << YAML::Key << "BoxCollider";
 			out << YAML::BeginMap;
-			out << YAML::Key << "Center" << YAML::Value << BoxCollComp.GetCenter();
 			out << YAML::Key << "Rotation" << YAML::Value << BoxCollComp.GetRotation();
 			out << YAML::Key << "Size" << YAML::Value << BoxCollComp.GetSize();
 			out << YAML::Key << "Trigger" << YAML::Value << BoxCollComp.IsTrigger();
@@ -271,6 +271,17 @@ namespace Cresta
 			out << YAML::BeginMap; 
 			out << YAML::EndMap; //
 		}
+
+		if (entity.HasComponent<ScriptComponent>())
+		{
+			auto& ScriptComp = entity.GetComponent<ScriptComponent>();
+
+			out << YAML::Key << "ScriptComponent";
+			out << YAML::BeginMap;
+			out << YAML::Key << "Path" << YAML::Value << ScriptComp.GetPath();
+			out << YAML::EndMap;
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -331,13 +342,13 @@ namespace Cresta
 
 				if (option == CREATE_ENTITIES)
 				{
-					Entity& deserializedEntity = scene.CreateEntity(name,uuid);
+					Ref<Entity> deserializedEntity = scene.CreateEntity(name,uuid);
 
 					auto transformComponent = entity["TransformComponent"];
 					if (transformComponent)
 					{
 						// Entities always have transforms
-						auto& tc = deserializedEntity.GetComponent<Transform>();
+						auto& tc = deserializedEntity->GetComponent<Transform>();
 						tc.SetPosition(transformComponent["Translation"].as<glm::vec3>());
 						tc.SetRotation(transformComponent["Rotation"].as<glm::quat>());
 						tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
@@ -346,7 +357,7 @@ namespace Cresta
 					auto spriteRendererComponent = entity["SpriteRendererComponent"];
 					if (spriteRendererComponent)
 					{
-						auto& src = deserializedEntity.AddComponent<SpriteRenderer>();
+						auto& src = deserializedEntity->AddComponent<SpriteRenderer>();
 						src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 						if (spriteRendererComponent["TexturePath"])
 						{
@@ -376,58 +387,52 @@ namespace Cresta
 								ModelID = data["ID"].as<uint64_t>();
 							}
 
-							auto& comp = deserializedEntity.AddComponent<MeshRenderer>(path, ModelID);
+							auto& comp = deserializedEntity->AddComponent<MeshRenderer>(path, ModelID);
 						}
 					}
 
 					auto animatorComponent = entity["Animator"];
 					if (animatorComponent)
 					{
-						auto& animator = deserializedEntity.AddComponent<AnimatorComponent>();
+						auto& animator = deserializedEntity->AddComponent<AnimatorComponent>();
 						animator.SetPath(animatorComponent["path"].as<std::string>());
 					}
 
 					auto RigibodyComponent = entity["Rigidbody"];
 					if (RigibodyComponent)
 					{
-						auto& rigidbody = deserializedEntity.AddComponent<Rigidbody>();
+						auto& rigidbody = deserializedEntity->AddComponent<Rigidbody>();
 					}
 
 					auto SphereColliderComponent = entity["SphereCollider"];
 					if (SphereColliderComponent)
 					{
-						auto& spherecollider = deserializedEntity.AddComponent<SphereCollider>();
+						auto& spherecollider = deserializedEntity->AddComponent<SphereCollider>();
 					}
 
 					auto CapsuleColliderComponenet = entity["CapsuleCollider"];
 					if (CapsuleColliderComponenet)
 					{
-						auto& Capsulecollider = deserializedEntity.AddComponent<CapsuleCollider>();
+						auto& Capsulecollider = deserializedEntity->AddComponent<CapsuleCollider>();
 					}
 
 					auto BoxColliderComponent = entity["BoxCollider"];
 					if (BoxColliderComponent)
 					{
-						auto& boxcollider = deserializedEntity.AddComponent<BoxCollider>();
+						auto& boxcollider = deserializedEntity->AddComponent<BoxCollider>();
 						auto Center = BoxColliderComponent["Center"];
 						auto Rotation = BoxColliderComponent["Rotation"];
 						auto Size = BoxColliderComponent["Size"];
 						auto Trigger = BoxColliderComponent["Trigger"];
 
-						boxcollider.SetCenter({
-							Center[0].as<float>(),
-							Center[1].as<float>(),
-							Center[2].as<float>()
-							});
-
 						boxcollider.SetRotation({
-							Rotation[3].as<float>(),
 							Rotation[0].as<float>(),
 							Rotation[1].as<float>(),
-							Rotation[2].as<float>()
+							Rotation[2].as<float>(),
+							Rotation[3].as<float>()
 							});
 
-						boxcollider.SetSize({
+						boxcollider.SetScale({
 							Size[0].as<float>(),
 							Size[1].as<float>(),
 							Size[2].as<float>()
@@ -435,16 +440,24 @@ namespace Cresta
 
 						boxcollider.SetTrigger(Trigger.as<bool>());
 					}
+
+					auto ScriptComp = entity["ScriptComponent"];
+					if (ScriptComp)
+					{
+						auto& script = deserializedEntity->AddComponent<ScriptComponent>();
+						script.SetPath(ScriptComp["Path"].as<std::string>());
+
+					}
 				}
 				else if(option == EDIT_ENTITIES)
 				{
-					Entity& deserializedEntity = scene.FindEntityByID(*(new UUID(uuid)));
+					Ref<Entity> deserializedEntity = scene.FindEntityByID(*(new UUID(uuid)));
 
 					auto transformComponent = entity["TransformComponent"];
 					if (transformComponent)
 					{
 						// Entities always have transforms
-						auto& tc = deserializedEntity.GetComponent<Transform>();
+						auto& tc = deserializedEntity->GetComponent<Transform>();
 						tc.SetPosition(transformComponent["Translation"].as<glm::vec3>());
 						tc.SetRotation(transformComponent["Rotation"].as<glm::quat>());
 						tc.SetScale(transformComponent["Scale"].as<glm::vec3>());
@@ -453,7 +466,7 @@ namespace Cresta
 					auto spriteRendererComponent = entity["SpriteRendererComponent"];
 					if (spriteRendererComponent)
 					{
-						auto& src = deserializedEntity.GetComponent<SpriteRenderer>();
+						auto& src = deserializedEntity->GetComponent<SpriteRenderer>();
 						src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 						if (spriteRendererComponent["TexturePath"])
 						{
@@ -472,56 +485,58 @@ namespace Cresta
 					{
 						std::string path = MeshRendererComponenet["path"].as<std::string>();
 
-						auto& comp = deserializedEntity.GetComponent<MeshRenderer>();
+						auto& comp = deserializedEntity->GetComponent<MeshRenderer>();
 					}
 
 					auto RigibodyComponent = entity["Rigidbody"];
 					if (RigibodyComponent)
 					{
-						auto& rigidbody = deserializedEntity.GetComponent<Rigidbody>();
+						auto& rigidbody = deserializedEntity->GetComponent<Rigidbody>();
 					}
 
 					auto SphereColliderComponent = entity["SphereCollider"];
 					if (SphereColliderComponent)
 					{
-						auto& spherecollider = deserializedEntity.GetComponent<SphereCollider>();
+						auto& spherecollider = deserializedEntity->GetComponent<SphereCollider>();
 					}
 
 					auto CapsuleColliderComponenet = entity["CapsuleCollider"];
 					if (CapsuleColliderComponenet)
 					{
-						auto& Capsulecollider = deserializedEntity.GetComponent<CapsuleCollider>();
+						auto& Capsulecollider = deserializedEntity->GetComponent<CapsuleCollider>();
 					}
 
 					auto BoxColliderComponent = entity["BoxCollider"];
 					if (BoxColliderComponent)
 					{
-						auto& boxcollider = deserializedEntity.GetComponent<BoxCollider>();
+						auto& boxcollider = deserializedEntity->GetComponent<BoxCollider>();
 						auto Center = BoxColliderComponent["Center"];
 						auto Rotation = BoxColliderComponent["Rotation"];
 						auto Size = BoxColliderComponent["Size"];
 						auto Trigger = BoxColliderComponent["Trigger"];
 
-						boxcollider.SetCenter({ 
-							Center[0].as<float>(), 
-							Center[1].as<float>(),
-							Center[2].as<float>() 
-							});
 
 						boxcollider.SetRotation({
-							Rotation[3].as<float>(),
 							Rotation[0].as<float>(),
 							Rotation[1].as<float>(),
-							Rotation[2].as<float>()
+							Rotation[2].as<float>(),
+							Rotation[3].as<float>()
 							});
 
-						boxcollider.SetSize({
+						boxcollider.SetScale({
 							Size[0].as<float>(),
 							Size[1].as<float>(),
 							Size[2].as<float>()
 							});
 
 						boxcollider.SetTrigger(Trigger.as<bool>());
+					}
+
+					auto ScriptComp = entity["ScriptComponent"];
+					if (ScriptComp)
+					{
+						auto& script = deserializedEntity->GetComponent<ScriptComponent>();
+						script.SetPath(ScriptComp["Path"].as<std::string>());
 					}
 				}
 			}

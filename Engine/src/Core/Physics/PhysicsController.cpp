@@ -150,6 +150,7 @@ namespace Cresta
 	{
 		CreateBody(EntityID);
 		m_BodyInterface->SetMotionType(m_EntityToBody[EntityID], EMotionType::Dynamic, EActivation::Activate);
+
 		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(m_EntityToBody[EntityID]);
 
 		if (Layer == Layers::Colliders)
@@ -258,8 +259,9 @@ namespace Cresta
 	}
 
 
-	void PhysicsController::SetBodyRotation(const UUID& EntityID, const glm::quat& rotation)
+	void PhysicsController::SetBodyRotation(const UUID& EntityID, const glm::quat& v_rotation)
 	{
+		glm::quat rotation = glm::normalize(v_rotation);
 		m_BodyInterface->SetRotation(m_EntityToBody[EntityID], { rotation.x, rotation.y, rotation.z, rotation.w }, EActivation::Activate);
 	}
 

@@ -18,18 +18,18 @@ namespace Cresta
 
 		void OnImGuiRender();
 
-		Entity* GetSelectedEntity();
-		void SetSelectedEntity(Entity& entity);
+		Ref<Entity>& GetSelectedEntity();
+		void SetSelectedEntity(const Ref<Entity>& entity);
 		void SetSelectedEntity(entt::entity entity);
 	
 	private:
 		Ref<Camera> m_Camera;
-		bool DrawEntityNode(Entity& entity); // Returns False if Entity is nolonger valide i.e it has been deleted
+		bool DrawEntityNode(const Ref<Entity>& entity); // Returns False if Entity is nolonger valide i.e it has been deleted
 		void DrawInspectorWindow();
 
 	private:
 		Ref<Scene> m_Scene;
-		Entity* m_SelectedEntity;
+		Ref<Entity> m_SelectedEntity;
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
 	};

@@ -131,11 +131,9 @@ namespace Cresta
 		}
 		IDComponent(Entity* entity) 
 		{ 
-			std::cout << "Entity* entity Construct\n"; 
 		}
 		IDComponent(Entity* entity, uint64_t ID) : m_ID(ID)	
 		{
-			std::cout << "Entity* entity Construct\n";
 		}
 
 		void OnComponentAdded();
@@ -164,6 +162,8 @@ namespace Cresta
 			return "Tag Component";
 		}
 	};
+
+	class TransformWrapper;
 
 	class Transform : public ComponentTemplate 
 	{
@@ -198,12 +198,25 @@ namespace Cresta
 		void OnComponentRemoved() override;
 
 	private:
+		inline void PhysicsSetPosition(const glm::vec3& Position) { m_Translation = Position;	OnValidate.post(true); }
+		inline void PhysicsSetScale(const glm::vec3& Scale) { m_Scale = Scale;			OnValidate.post(true); }
+		inline void PhysicsSetRotation(const glm::quat& rotation)
+		{
+			m_Rotation = rotation;
+			this->rotation = glm::degrees(glm::eulerAngles(m_Rotation));
+
+			OnValidate.post(true);
+		}
+
+	private:
 		glm::vec3 m_Translation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 rotation = { 0.0f,0.0f, 0.0f };
-		glm::quat m_Rotation = { 0.0f, 0.0f, 0.0f, 1.0f };
+		glm::quat m_Rotation = { 1.0f, 0.0f, 0.0f, 0.0f };
 		glm::vec3 m_Scale = { 1.0f, 1.0f, 1.0f };
 	public:
 		Dispatcher OnValidate;
+
+		friend class TransformWrapper;
 	};
 
 	class CameraComponent : public ComponentTemplate

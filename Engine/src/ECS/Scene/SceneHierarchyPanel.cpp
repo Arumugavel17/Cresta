@@ -46,16 +46,16 @@ namespace Cresta
 			
 			for (auto& i : m_Scene->m_EntityMap)
 			{
-				DeleteEntity = !DrawEntityNode(*i.second);
+				DeleteEntity = !DrawEntityNode(i.second);
 				if (DeleteEntity)
 				{
 					EntityToDelete = i.second;
 				}
 			}
 
-			if (DeleteEntity)
+			if (EntityToDelete)
 			{
-				m_Scene->DestroyEntity(*EntityToDelete);
+				m_Scene->DestroyEntity(EntityToDelete);
 				if (m_SelectedEntity && m_SelectedEntity->IsValid() && *m_SelectedEntity == *EntityToDelete)
 				{
 					m_SelectedEntity = nullptr;
@@ -82,14 +82,14 @@ namespace Cresta
 		DrawInspectorWindow();
 	}
 
-	Entity* SceneHierarchyPanel::GetSelectedEntity()
+	Ref<Entity>& SceneHierarchyPanel::GetSelectedEntity()
 	{
 		return m_SelectedEntity;
 	}
 
-	void SceneHierarchyPanel::SetSelectedEntity(Entity& entity)
+	void SceneHierarchyPanel::SetSelectedEntity(const Ref<Entity>& entity)
 	{
-		m_SelectedEntity = &entity;
+		m_SelectedEntity = entity;
 	}
 
 	void SceneHierarchyPanel::SetSelectedEntity(entt::entity entity)
@@ -99,7 +99,7 @@ namespace Cresta
 			entt::entity k = (entt::entity)*i.second;
 			if (k == entity)
 			{
-				m_SelectedEntity = i.second.get();
+				m_SelectedEntity = i.second;
 			}
 		}
 	}
@@ -121,14 +121,14 @@ namespace Cresta
 		}	
 	}
 
-	bool SceneHierarchyPanel::DrawEntityNode(Entity& entity)
+	bool SceneHierarchyPanel::DrawEntityNode(const Ref<Entity>& entity)
 	{
 		CRESTA_PROFILE_FUNCTION();
 
-		auto& tag = entity.GetComponent<TagComponent>().Tag;
+		auto& tag = entity->GetTage();
 
 		ImGuiTreeNodeFlags flags;
-		if (m_SelectedEntity && m_SelectedEntity->IsValid() && *m_SelectedEntity == entity)
+		if (m_SelectedEntity && m_SelectedEntity->IsValid() && m_SelectedEntity == entity)
 		{
 			flags = ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_OpenOnArrow;
 
@@ -139,10 +139,10 @@ namespace Cresta
 		}
 
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)*entity, flags, tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
-			m_SelectedEntity = &entity;
+			m_SelectedEntity = entity;
 		}
 
 		bool EntityAlive = true;
@@ -151,6 +151,11 @@ namespace Cresta
 			if (ImGui::MenuItem("Delete Entity"))
 			{
 				EntityAlive = false;
+			}
+			
+			if (ImGui::MenuItem("Duplicate Entity"))
+			{
+				m_Scene->DuplicateEntity(m_SelectedEntity);
 			}
 
 			ImGui::EndPopup();

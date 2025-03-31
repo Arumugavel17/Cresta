@@ -1,88 +1,30 @@
 #pragma once
 #include "Crestaph.hpp"
 #include "Components.hpp"
-#include "RendererComponents.hpp"
-#include "PhysicsComponents.hpp"
 #include "ECS/Entity.hpp"
+#include "WrapperClasses.hpp"
 
 #define SOL_ALL_SAFETIES_ON 1
 #include <sol/sol.hpp>
+#include<imgui/imgui.h>
 
 namespace Cresta
 {
-	struct vec3
-	{
-		float x, y, z;
-	};
-	
-	struct quat
-	{
-		float x, y, z, w;
-	};
-
-	inline vec3 CreateVec3(float x, float y, float z)
-	{
-		return vec3(x,y,z);
-	}
-
-	class TransformWrapper
-	{
-	public:
-
-		inline void SetPosition(const vec3& Position) { TransformComponent->SetPosition({ Position.x,Position.y,Position.z }); }
-		inline void SetScale(const vec3& Scale) { TransformComponent->SetScale({ Scale.x,Scale.y,Scale.z }); }
-		inline void SetRotation(const quat& Rotation) { TransformComponent->SetRotation({ Rotation.x,Rotation.y,Rotation.z,Rotation.w }); }
-
-		inline constexpr vec3& GetPosition() const 
-		{ 
-			glm::vec3 position = TransformComponent->GetPosition();
-			return *(new vec3(position.x, position.y, position.z));
-		}
-
-		inline constexpr quat& GetRotation() const 
-		{
-			glm::quat rotation = TransformComponent->GetRotation();
-			return *(new quat(rotation.x, rotation.y, rotation.z, rotation.w));
-		}
-
-		inline constexpr vec3& GetScale() const 
-		{
-			glm::vec3 scale = TransformComponent->GetScale();
-			return *(new vec3(scale.x, scale.y, scale.z));
-		}
-
-		Transform* TransformComponent;
-	};
-
-	class EntityWrapper
-	{
-	public:
-		EntityWrapper(Entity* entity) : p_Entity(entity)
-		{
-
-		}
-
-		TransformWrapper& GetTransform()
-		{
-			m_TransformWrapper.TransformComponent = &p_Entity->GetComponent<Transform>();
-			return m_TransformWrapper;
-		}
-
-	private:
-		Entity* p_Entity;
-		TransformWrapper m_TransformWrapper;
-	};
-
 	class ScriptComponent : public ComponentTemplate
 	{
 	public:
-
-		ScriptComponent(Entity* entiy) : ComponentTemplate(entiy), m_ScriptPath(""), m_EntityWrapper(p_Entity)
+		ScriptComponent(Entity* entiy) : ComponentTemplate(entiy), m_ScriptPath(""), m_EntityWrapper(entiy)
 		{
 			m_Lua.open_libraries(sol::lib::base);
 			m_Lua.set_function("RegisterEntity", [this](sol::table entityTable) {
 				this->m_ComponentTable = entityTable;
 				});
+
+			m_Lua.new_usertype<SceneWrapper>(
+				"Scene",
+				sol::constructors<SceneWrapper>(), // Constructor binding
+				"CreateEntity", &SceneWrapper::CreateEntity
+			);
 
 			m_Lua.new_usertype<EntityWrapper>(
 				"Entity",
@@ -90,20 +32,48 @@ namespace Cresta
 				"GetTransform", &EntityWrapper::GetTransform
 			);
 
-			m_Lua.new_usertype<vec3>(
-				"vec3",
+			m_Lua.new_usertype<vec3>("vec3",
 				sol::constructors<vec3(), vec3(float, float, float)>(),
+
 				"x", &vec3::x,
 				"y", &vec3::y,
-				"z", &vec3::z
+				"z", &vec3::z,
+
+				sol::meta_function::addition, sol::resolve<vec3(const vec3&) const>(&vec3::operator+),
+				sol::meta_function::subtraction, sol::resolve<vec3(const vec3&) const>(&vec3::operator-),
+				sol::meta_function::multiplication, sol::resolve<vec3(float) const>(&vec3::operator*),
+				sol::meta_function::division, sol::resolve<vec3(float) const>(&vec3::operator/),
+				sol::meta_function::equal_to, sol::resolve<bool(const vec3&) const>(&vec3::operator==),
+
+				"dot", &vec3::dot,
+				"cross", &vec3::cross,
+
+				"normalize", [](vec3& v) {
+					glm::vec3 gv = v;
+					gv = glm::normalize(gv);
+					v = { gv.x, gv.y, gv.z };
+				}
 			);
 
 			m_Lua.new_usertype<quat>("quat",
 				sol::constructors<quat(), quat(float, float, float, float)>(),
+
+				"w", &quat::w,
 				"x", &quat::x,
 				"y", &quat::y,
 				"z", &quat::z,
-				"w", &quat::w
+
+				sol::meta_function::multiplication, sol::resolve<quat(const quat&) const>(&quat::operator*),
+				sol::meta_function::addition, sol::resolve<quat(const quat&) const>(&quat::operator+),
+				sol::meta_function::equal_to, sol::resolve<bool(const quat&) const>(&quat::operator==),
+					
+				"normalize", [](quat& q) {
+					glm::quat gq = q;
+					gq = glm::normalize(gq);
+					q = { gq.w, gq.x, gq.y, gq.z };
+				},
+
+				"fromAxisAngle", sol::factories(&quat::fromAxisAngle) // Static method binding
 			);
 
 			m_Lua.new_usertype<TransformWrapper>(
@@ -116,7 +86,8 @@ namespace Cresta
 				"GetScale",		&TransformWrapper::GetScale
 			);
 
-			m_Lua["entity"] = &m_EntityWrapper;
+			m_Lua["thisEntity"] = &m_EntityWrapper;
+			m_Lua["scene"] = &m_SceneWrapper;
 
 			m_Lua.set_function("CreateVec3", CreateVec3);
 		}
@@ -209,36 +180,18 @@ namespace Cresta
 			}
 		}
 
-		void UI() override
-		{
-			ImGui::Text("Script Component");
-
-			char buffer[128];
-			std::strncpy(buffer, m_ScriptPath.string().c_str(), sizeof(buffer) - 1);
-			buffer[sizeof(buffer) - 1] = '\0';
-
-			if (ImGui::InputText("TextPath", buffer, sizeof(buffer), ImGuiInputTextFlags_ReadOnly))
-			{
-				SetPath(buffer);
-			}
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH");
-				if (payload != nullptr)
-				{
-					std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
-					SetPath(tempString);
-				}
-				ImGui::EndDragDropTarget();
-			}
-		}
 
 		std::string ToString() override
 		{
 			return "Script Component";
 		}
 
+		std::string GetPath()
+		{
+			return m_ScriptPath.string();
+		}
+
+		void UI() override;
 	private:
 		std::filesystem::path m_ScriptPath;
 		std::filesystem::file_time_type m_ScriptWriteTime;
@@ -247,6 +200,7 @@ namespace Cresta
 		sol::table m_MethodsTable;
 		sol::table m_ComponentTable;
 
+		SceneWrapper m_SceneWrapper;
 		EntityWrapper m_EntityWrapper;
  	};
 }

@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "Application.hpp"
 #include "Core/Time.hpp"
 #include "Platform/OpenGL/Utils.hpp"
 #include "ECS/Scene/SceneSerializer.hpp"
@@ -133,6 +134,11 @@ namespace Cresta
 				break;
 			(*it)->OnEvent(e);
 		}
+	}
+
+	Ref<Scene> Application::GetActiveScene()
+	{
+		return sp_ActiveScene;
 	}
 
 	void Application::NewScene()

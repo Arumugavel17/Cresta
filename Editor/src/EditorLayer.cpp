@@ -180,7 +180,6 @@ namespace Editor
             rotation.z = 0;
         }
 
-
         return true;
     }
 
@@ -190,7 +189,15 @@ namespace Editor
         ImGui::Begin("Scene");
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        uint64_t textureID;
+        if (Input::GetKeyDown(Key::K))
+        {
+            textureID = m_Framebuffer->GetDepthAttachement();
+        }
+        else
+        {
+            textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        }
 
         m_ViewportSize = {
             viewportPanelSize.x,
@@ -208,7 +215,7 @@ namespace Editor
         m_SceneActive = ImGui::IsWindowFocused(ImGuiFocusedFlags_None);
         m_EditorCamera->SetCameraMovementEnabled(m_SceneActive);
 
-        ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(1,1,1,1));
 
         ImVec2 viewportMinRegion = ImGui::GetWindowContentRegionMin();
         ImVec2 viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -216,7 +223,7 @@ namespace Editor
         ImVec2 m_ViewportBoundsMin = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
         ImVec2 m_ViewportBoundsMax = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-        Entity* selectedEntity = m_HierarchyPanel->GetSelectedEntity();
+        Cresta::Ref<Entity> selectedEntity = m_HierarchyPanel->GetSelectedEntity();
         if (selectedEntity && selectedEntity->IsValid() && m_GizmoType != -1)
         {
 

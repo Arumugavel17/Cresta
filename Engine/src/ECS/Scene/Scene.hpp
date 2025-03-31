@@ -17,6 +17,7 @@ namespace Cresta
 	class Entity;
 	class Physics;
 	class SceneHierarchyPanel;
+	class SceneWrapper;
 
 	class Scene
 	{
@@ -38,11 +39,11 @@ namespace Cresta
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity& CreateEntity(const std::string& name = std::string(),uint64_t ID = -1);
-		Entity& FindEntityByName(std::string name);
-		Entity& FindEntityByID(UUID& ID);
-
-		Entity* GetPrimaryCameraEntity();
+		Ref<Entity> DuplicateEntity(const Ref<Entity> OriginalEntity,const std::string& name = std::string());
+		Ref<Entity> CreateEntity(const std::string& name = std::string(),uint64_t ID = -1);
+		Ref<Entity> FindEntityByName(std::string name);
+		Ref<Entity> FindEntityByID(UUID& ID);
+		Ref<Entity> GetPrimaryCameraEntity();
 
 		bool IsRunning() const { return m_Running; }
 		bool IsPaused() const { return m_Paused; }
@@ -51,7 +52,7 @@ namespace Cresta
 		void FixedUpate();
 		void OnUpdate();
 
-		void DestroyEntity(Entity& entity);
+		void DestroyEntity(Ref<Entity> entity);
 		void AddSceneUpdateCallBack(const std::function<void()>& func);
 		void RemoveSceneUpdateCallBack(const std::function<void()>& func);
 
@@ -70,6 +71,7 @@ namespace Cresta
 		void InvokeSceneUpdateCallBacks();
 
 	private:
+
 		std::unordered_map<UUID, Ref<Entity>> m_EntityMap;
 		std::vector<std::function<void()>> m_SceneUpdateCallBack;
 
@@ -83,5 +85,6 @@ namespace Cresta
 		CubeMap m_CubeMap;
 		
 		friend class SceneHierarchyPanel;
+		friend class SceneWrapper;
 	};
 }

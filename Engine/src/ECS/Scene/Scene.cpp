@@ -1,4 +1,5 @@
 #include "Scene.hpp"
+#include "Scene.hpp"
 #include "Core/Application.hpp"
 #include "Core/Physics/Physics.hpp"
 #include "Renderer/PrimitiveMeshes.hpp"
@@ -28,24 +29,30 @@ namespace Cresta
 	{
 		sm_Count--;
 	}
+	
+	Ref<Entity> Scene::DuplicateEntity(const Ref<Entity> OriginalEntity, const std::string& name)
+	{
+		Ref<Entity> newEntity = CreateEntity(OriginalEntity->GetTage());
+		return newEntity;
+	}
 
-	Entity& Scene::CreateEntity(const std::string& name, uint64_t ID)
+
+	Ref<Entity> Scene::CreateEntity(const std::string& name, uint64_t ID)
 	{
 		CRESTA_PROFILE_FUNCTION();
-		Ref<Entity> entity1 = CreateRef<Entity>(m_Registry.create(), this);
-		Entity& entity = *entity1;
+		Ref<Entity> entity = CreateRef<Entity>(m_Registry.create(), this);
 		if (ID == -1) 
 		{
-			entity.AddComponent<IDComponent>();
+			entity->AddComponent<IDComponent>();
 		}
 		else
 		{
-			entity.AddComponent<IDComponent>(ID);
+			entity->AddComponent<IDComponent>(ID);
 		}
-		entity.AddComponent<Transform>();
+		entity->AddComponent<Transform>();
 		
-		auto& tag = entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
-		m_EntityMap[entity.GetComponent<IDComponent>().GetUUID()] = entity1;
+		auto& tag = entity->AddComponent<TagComponent>(name.empty() ? "Entity" : name);
+		m_EntityMap[entity->GetComponent<IDComponent>().GetUUID()] = entity;
 
 		InvokeSceneUpdateCallBacks();
 
@@ -55,11 +62,12 @@ namespace Cresta
 		return entity;
 	}
 
-	void Scene::DestroyEntity(Entity& entity)
+	void Scene::DestroyEntity(Ref<Entity> entity)
 	{
 		CRESTA_PROFILE_FUNCTION();
-		const UUID& ID = entity.GetUUID();
-		m_Registry.destroy(entity);
+		const UUID& ID = entity->GetUUID();
+		m_EntityMap[ID].~shared_ptr();
+		m_Registry.destroy(*entity);
 		m_EntityMap.erase(ID);
 		InvokeSceneUpdateCallBacks();
 	}
@@ -125,7 +133,7 @@ namespace Cresta
 		SceneSerializer::Serialize(*this,path.string());
 	}
 
-	Entity* Scene::GetPrimaryCameraEntity()
+	Ref<Entity> Scene::GetPrimaryCameraEntity()
 	{
 		CRESTA_PROFILE_FUNCTION();
 		auto view = m_Registry.view<CameraComponent>();
@@ -134,13 +142,13 @@ namespace Cresta
 			const auto& camera = view.get<CameraComponent>(entity);
 			if (camera.Primary)
 			{
-				return new Entity{ entity, this };
+				return CreateRef<Entity>(entity, this);
 			}
 		}
 		return nullptr;
 	}
 
-	Entity& Scene::FindEntityByName(std::string name)
+	Ref<Entity> Scene::FindEntityByName(std::string name)
 	{
 		CRESTA_PROFILE_FUNCTION();
 		auto view = m_Registry.view<TagComponent>();
@@ -149,19 +157,19 @@ namespace Cresta
 			const TagComponent& tc = view.get<TagComponent>(entity);
 			if (tc.Tag == name)
 			{
-				return *m_EntityMap[m_Registry.get<IDComponent>(entity).GetUUID()];
+				return m_EntityMap[m_Registry.get<IDComponent>(entity).GetUUID()];
 			}
 		}
 	}
 
-	Entity& Scene::FindEntityByID(UUID& ID)
+	Ref<Entity> Scene::FindEntityByID(UUID& ID)
 	{
 		CRESTA_PROFILE_FUNCTION();
 		for (auto& i : m_EntityMap)
 		{
 			if (i.first == ID)
 			{
-				return *i.second;
+				return i.second;
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 #include "PhysicsComponents.hpp"
 #include "Components.hpp"
+#include "ScriptComponent.hpp"
 #include "ECS/Scene/SceneHierarchyPanelUtils.hpp"
 #include "Core/Application.hpp"
 
@@ -159,6 +160,31 @@ namespace Cresta
 		
 		char buffer[128];
 		std::strncpy(buffer, m_Path.c_str(), sizeof(buffer) - 1);
+		buffer[sizeof(buffer) - 1] = '\0';
+
+		if (ImGui::InputText("TextPath", buffer, sizeof(buffer), ImGuiInputTextFlags_ReadOnly))
+		{
+			SetPath(buffer);
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH");
+			if (payload != nullptr)
+			{
+				std::string tempString(static_cast<const char*>(payload->Data), payload->DataSize);
+				SetPath(tempString);
+			}
+			ImGui::EndDragDropTarget();
+		}
+	}
+
+	void ScriptComponent::UI()
+	{
+		ImGui::Text("Script Component");
+
+		char buffer[128];
+		std::strncpy(buffer, m_ScriptPath.string().c_str(), sizeof(buffer) - 1);
 		buffer[sizeof(buffer) - 1] = '\0';
 
 		if (ImGui::InputText("TextPath", buffer, sizeof(buffer), ImGuiInputTextFlags_ReadOnly))

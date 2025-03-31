@@ -11,17 +11,23 @@ namespace Cresta
 	{
 	public:
 		Entity() = default;
-		Entity(entt::entity handle, Scene* scene = nullptr) : m_EntityHandle(handle), m_Scene(scene) {}
+		Entity(entt::entity handle, Scene* scene = nullptr) : m_EntityHandle(handle), m_Scene(scene) 
+		{
+			//std::cout << "Entity Created: " << "\n";
+		}
 		Entity(const Entity& other)
 		{
 			OnFixedUpdateFunctions = other.OnFixedUpdateFunctions;
 			OnUpdateFunctions = other.OnUpdateFunctions;
 			m_EntityHandle = other.m_EntityHandle;
 			m_Scene = other.m_Scene;
+
+			//std::cout << "Entity Created: " << "\n";
 		}
 
 		~Entity()
 		{
+			//std::cout << "Deleted Entity: " << GetTage() << "\n";
 		}
 
 		template<typename T, typename... Args>
@@ -61,14 +67,14 @@ namespace Cresta
 		}
 
 		template<typename T>
-		T& GetComponent() 
+		T& GetComponent() const
 		{
 			CRESTA_ASSERT(!HasComponent<T>(), "Entity does not have component!");
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 
 		template<typename T>
-		bool HasComponent() 
+		bool HasComponent() const
 		{
 			return m_Scene->m_Registry.has<T>(m_EntityHandle);
 		}
@@ -112,7 +118,7 @@ namespace Cresta
 
 		UUID GetUUID() { return { GetComponent<IDComponent>().GetUUID() }; }
 		inline void SetTag(const std::string& tag) { GetComponent<TagComponent>().Tag = tag; }
-		inline const std::string& GetTage() { return GetComponent<TagComponent>().Tag; };
+		inline const std::string& GetTage() const { return GetComponent<TagComponent>().Tag; };
 
 		inline bool IsValid() const { return m_EntityHandle != entt::null; }
 		bool operator==(const Entity& other) const

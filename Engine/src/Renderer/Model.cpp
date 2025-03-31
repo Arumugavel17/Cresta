@@ -10,6 +10,16 @@ namespace Cresta
 	Model::Model(const std::string& Path)
 	{
 		LoadModel(Path);
+
+		std::cout << "BoneCounter: " << m_BoneCounter << "\n";
+
+		for (auto& [name,BoneInfo] : m_BoneInfoMap)
+		{
+			std::cout << "Name: " << name << "\n";
+			std::cout << "BoneInfo: { ID: " << BoneInfo.id << " }\n";
+		}
+		CRESTA_ASSERT("k");
+
 		SetupVAO();
 	}
 

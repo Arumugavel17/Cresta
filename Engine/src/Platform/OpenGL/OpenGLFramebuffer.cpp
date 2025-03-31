@@ -93,7 +93,7 @@ namespace Cresta
 			switch (p_DepthAttachmentSpecification.TextureFormat)
 			{
 			case FramebufferTextureFormat::DEPTH24STENCIL8:
-				Utils::AttachDepthTexture(p_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+				Utils::AttachDepthTexture(p_DepthAttachment, m_Specification.Samples, GL_DEPTH_COMPONENT32F, GL_DEPTH_ATTACHMENT, m_Specification.Width, m_Specification.Height);
 				break;
 			}
 		}
