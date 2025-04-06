@@ -2,6 +2,7 @@
 #include "SceneHierarchyPanelUtils.hpp"
 #include "Core/Input.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
+#include "ECS/Components/AnimationController.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)

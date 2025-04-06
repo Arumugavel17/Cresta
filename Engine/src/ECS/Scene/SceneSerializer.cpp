@@ -4,6 +4,8 @@
 #include "ECS/UUID.hpp"
 #include "ECS/Entity.hpp"
 #include "ECS/Components/ScriptComponent.hpp"
+#include "ECS/Components/AnimationController.hpp"
+
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 
@@ -174,32 +176,32 @@ namespace Cresta
 		return out;
 	}
 
-	static void SerializeEntity(YAML::Emitter& out, Entity& entity)
+	static void SerializeEntity(YAML::Emitter& out, entt::entity& entity, entt::registry& registry)
 	{
 		CRESTA_PROFILE_FUNCTION();
 
-		CRESTA_ASSERT(!entity.HasComponent<IDComponent>());
+		CRESTA_ASSERT(!registry.has<IDComponent>(entity));
 
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
+		out << YAML::Key << "Entity" << YAML::Value << (uint64_t) registry.get<IDComponent>(entity).GetUUID();
 
-		if (entity.HasComponent<TagComponent>())
+		if (registry.has<TagComponent>(entity))
 		{
 			out << YAML::Key << "TagComponent";
 			out << YAML::BeginMap; // TagComponent
 
-			auto& tag = entity.GetComponent<TagComponent>().Tag;
+			auto& tag = registry.get<TagComponent>(entity).Tag;
 			out << YAML::Key << "Tag" << YAML::Value << tag;
 
 			out << YAML::EndMap; // TagComponent
 		}
 
-		if (entity.HasComponent<Transform>())
+		if (registry.has<Transform>(entity))
 		{
 			out << YAML::Key << "TransformComponent";
 			out << YAML::BeginMap; // TransformComponent
 
-			auto& tc = entity.GetComponent<Transform>();
+			auto& tc = registry.get<Transform>(entity);
 			out << YAML::Key << "Translation" << YAML::Value << tc.GetPosition();
 			out << YAML::Key << "Rotation" << YAML::Value << tc.GetRotation();
 			out << YAML::Key << "Scale" << YAML::Value << tc.GetScale();
@@ -207,12 +209,12 @@ namespace Cresta
 			out << YAML::EndMap; // TransformComponent
 		}
 
-		if (entity.HasComponent<SpriteRenderer>())
+		if (registry.has<SpriteRenderer>(entity))
 		{
 			out << YAML::Key << "SpriteRendererComponent";
 			out << YAML::BeginMap; // SpriteRendererComponent
 
-			auto& spriteRendererComponent = entity.GetComponent<SpriteRenderer>();
+			auto& spriteRendererComponent = registry.get<SpriteRenderer>(entity);
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			if (spriteRendererComponent.Texture)
 				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
@@ -222,35 +224,35 @@ namespace Cresta
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
-		if (entity.HasComponent<MeshRenderer>())
+		if (registry.has<MeshRenderer>(entity))
 		{
 			out << YAML::Key << "MeshRenderer";
 			out << YAML::BeginMap; // MeshRendererComponent
 
-			auto& MeshRendererComponent = entity.GetComponent<MeshRenderer>();
+			auto& MeshRendererComponent = registry.get<MeshRenderer>(entity);
 			out << YAML::Key << "path" << YAML::Value << MeshRendererComponent.GetPath();
 			out << YAML::EndMap; 
 		}
 
-		if (entity.HasComponent<AnimatorComponent>())
+		if (registry.has<AnimatorComponent>(entity))
 		{
 			out << YAML::Key << "Animator";
 			out << YAML::BeginMap; // AnimatorComponent
 
-			auto& animatorComponent = entity.GetComponent<AnimatorComponent>();
+			auto& animatorComponent = registry.get<AnimatorComponent>(entity);
 			out << YAML::Key << "path" << YAML::Value << animatorComponent.GetPath();
 			out << YAML::EndMap; 
 		}
 
-		if (entity.HasComponent<Rigidbody>())
+		if (registry.has<Rigidbody>(entity))
 		{
 			out << YAML::Key << "Rigidbody";
 			out << YAML::BeginMap; 
 			out << YAML::EndMap; 
 		}
-		if (entity.HasComponent<BoxCollider>())
+		if (registry.has<BoxCollider>(entity))
 		{
-			auto& BoxCollComp = entity.GetComponent<BoxCollider>();
+			auto& BoxCollComp = registry.get<BoxCollider>(entity);
 
 			out << YAML::Key << "BoxCollider";
 			out << YAML::BeginMap;
@@ -259,22 +261,22 @@ namespace Cresta
 			out << YAML::Key << "Trigger" << YAML::Value << BoxCollComp.IsTrigger();
 			out << YAML::EndMap; 
 		}
-		if (entity.HasComponent<SphereCollider>())
+		if (registry.has<SphereCollider>(entity))
 		{
 			out << YAML::Key << "SphereCollider";
 			out << YAML::BeginMap; 
 			out << YAML::EndMap; //
 		}
-		if (entity.HasComponent<CapsuleCollider>())
+		if (registry.has<CapsuleCollider>(entity))
 		{
 			out << YAML::Key << "CapsuleCollider";
 			out << YAML::BeginMap; 
 			out << YAML::EndMap; //
 		}
 
-		if (entity.HasComponent<ScriptComponent>())
+		if (registry.has<ScriptComponent>(entity))
 		{
-			auto& ScriptComp = entity.GetComponent<ScriptComponent>();
+			auto& ScriptComp = registry.get<ScriptComponent>(entity);
 
 			out << YAML::Key << "ScriptComponent";
 			out << YAML::BeginMap;
@@ -295,8 +297,7 @@ namespace Cresta
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		scene.m_Registry.each([&](auto entityID)
 			{
-				Entity entity = { entityID, &scene };
-				SerializeEntity(out, entity);
+				SerializeEntity(out, entityID, scene.m_Registry);
 			});
 		out << YAML::EndSeq;
 		out << YAML::EndMap;

@@ -1,8 +1,12 @@
 #include "PhysicsComponents.hpp"
+#include "PhysicsComponents.hpp"
+#include "PhysicsComponents.hpp"
+#include "PhysicsComponents.hpp"
 #include "Components.hpp"
 #include "ScriptComponent.hpp"
 #include "ECS/Scene/SceneHierarchyPanelUtils.hpp"
 #include "Core/Application.hpp"
+#include "AnimationController.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>      // Internal functions (required for DockBuilder APIs)
@@ -111,14 +115,14 @@ namespace Cresta
 
 		if (Cresta::Utils::DrawVec3Control("Size", m_LocalScale, 1.0f))
 		{
-			Revaluate(p_Entity,true);
+			Revaluate(p_Entity, ColliderShape::BoxCollider,true);
 		}
 
 		if (Cresta::Utils::DrawVec3Control("Rotation", rotation))
 		{
 			glm::quat deltaRotation = glm::quat(glm::radians(rotation)) - m_LocalRotation;
 			m_LocalRotation += deltaRotation;
-			Revaluate(p_Entity, true);
+			Revaluate(p_Entity, ColliderShape::BoxCollider,true);
 		}
 
 		if (ImGui::Checkbox("IsTrigger", &m_IsTrigger))
@@ -134,6 +138,12 @@ namespace Cresta
 		ImGui::Text("Capsule Collider");
 	}
 
+
+	void SphereCollider::SetColliderRadius()
+	{
+		
+	}
+
 	void SphereCollider::UI()
 	{
 		CRESTA_PROFILE_FUNCTION();
@@ -142,7 +152,7 @@ namespace Cresta
 		ImGui::SameLine();
 		if (ImGui::InputFloat("Radius", &m_Radius))
 		{
-			Physics::SetBodyShapeScale(p_Entity->GetUUID(),glm::vec3(m_Radius));
+			Physics::SetBodyRadius(p_Entity->GetUUID(),m_Radius);
 		}
 	}
 

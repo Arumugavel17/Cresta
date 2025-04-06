@@ -1,9 +1,7 @@
 #include "Application.hpp"
-#include "Application.hpp"
 #include "Core/Time.hpp"
 #include "Platform/OpenGL/Utils.hpp"
 #include "ECS/Scene/SceneSerializer.hpp"
-
 #include "Crestaph.hpp"
 
 namespace Cresta
@@ -25,10 +23,9 @@ namespace Cresta
 	void Application::Init()
 	{
 		CRESTA_PROFILE_FUNCTION();
-
 		sp_ActiveScene = CreateRef<Scene>();
-		p_ImGUILayer = new ImGUILayer(sp_ActiveScene);
 
+		p_ImGUILayer = new ImGUILayer(sp_ActiveScene);
 		PushOverlay(p_ImGUILayer);
 	}
 

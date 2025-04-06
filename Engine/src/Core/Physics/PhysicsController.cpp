@@ -1,8 +1,12 @@
 #include "PhysicsController.hpp"
+
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Collision/Shape/CompoundShape.h>
 
+#define JOLT
+
+#ifdef JOLT
 namespace Cresta
 {
 	void PhysicsController::TraceImpl(const char* inFMT, ...)
@@ -125,7 +129,7 @@ namespace Cresta
 				body.SetShapeInternal(new BoxShape(cm_HalfExtents), true);
 				break;
 			case ColliderShape::SphereCollider:
-				body.SetShapeInternal(new SphereShape(cm_Radius), true);
+				body.SetShapeInternal(new SphereShape(10), true);
 				break;
 			case ColliderShape::CapsuleCollider:
 				body.SetShapeInternal(new CapsuleShape(cm_CapsuleHalfHeight, cm_Radius), true);
@@ -197,6 +201,11 @@ namespace Cresta
 
 	}
 
+	void PhysicsController::SetBodyShapeRadius(const UUID& EntityID, float radius)
+	{
+		m_BodyInterface->SetShape(m_EntityToBody[EntityID],new ScaledShape(new SphereShape(1.0f),Vec3(radius, radius, radius)),true,EActivation::Activate);
+	}
+
 	void PhysicsController::SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale)
 	{
 		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
@@ -206,10 +215,11 @@ namespace Cresta
 			Vec3 Scale({ scale.x,scale.y,scale.z });
 
 			Body& body = lock.GetBody();
+
 			Vec3 BodyScale = body.GetShape()->GetLocalBounds().GetExtent();
 			Vec3 CenterOfMass = body.GetShape()->GetCenterOfMass();
 
-			if (Scale == BodyScale) 
+			if (Scale == BodyScale)
 			{
 				lock.ReleaseLock();
 				return;
@@ -221,6 +231,7 @@ namespace Cresta
 				m_PhysicsSystem.GetBodyInterfaceNoLock().SetShape(body.GetID(), new_shape.Get(), true, EActivation::Activate);
 			}
 			lock.ReleaseLock();
+		
 			AABox Box = body.GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
 
 			m_BodyInterface->ActivateBodiesInAABox(
@@ -293,3 +304,5 @@ namespace Cresta
 		m_PhysicsSystem.RestoreState(m_InitialStateRecorder);
 	}
 }
+
+#endif

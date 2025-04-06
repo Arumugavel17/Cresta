@@ -3,6 +3,7 @@
 #include "RendererComponents.hpp"
 #include "PhysicsComponents.hpp"
 #include "ECS/Entity.hpp"
+#include "Core/Input.hpp"
 
 namespace Cresta
 {
