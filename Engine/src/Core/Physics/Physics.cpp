@@ -1,4 +1,5 @@
 #include "Physics.hpp"
+#include "Physics.hpp"
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
@@ -49,6 +50,11 @@ namespace Cresta
 	void Physics::SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& scale)
 	{
 		sm_PhysicsController->SetBodyShapeOffset(EntityID, scale);
+	}
+
+	void Physics::SetBodyRadius(const UUID& EntityID, const float radius)
+	{
+		sm_PhysicsController->SetBodyShapeRadius(EntityID, radius);
 	}
 
 	void Physics::SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale)

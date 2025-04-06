@@ -3,6 +3,7 @@
 #include "PhysicsUtils.hpp"
 #include "entt/entt.hpp"
 #include "ECS/UUID.hpp"
+
 #include <Jolt/Physics/StateRecorder.h>
 #include <Jolt/Physics/StateRecorderImpl.h>
 
@@ -47,6 +48,7 @@ namespace Cresta
 
 		void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
 		void SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& CenterOfMass);
+		void SetBodyShapeRadius(const UUID& EntityID, float radius);
 		void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
 		void SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale);
 

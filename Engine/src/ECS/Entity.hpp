@@ -25,9 +25,62 @@ namespace Cresta
 			//std::cout << "Entity Created: " << "\n";
 		}
 
+		void CleanUp()
+		{
+			if (HasComponent<BoxCollider>())
+			{
+				BoxCollider& component = m_Scene->m_Registry.get<BoxCollider>(m_EntityHandle);
+				component.OnComponentRemoved();
+				m_Scene->m_Registry.remove<BoxCollider>(m_EntityHandle);
+
+				OnStartFunctions.erase(
+					std::remove_if(OnStartFunctions.begin(), OnStartFunctions.end(),
+						[&](const auto& pair) { return pair.first == typeid(BoxCollider).name(); }),
+					OnStartFunctions.end());
+
+				OnRenderFunctions.erase(
+					std::remove_if(OnRenderFunctions.begin(), OnRenderFunctions.end(),
+						[&](const auto& pair) { return pair.first == typeid(BoxCollider).name(); }),
+					OnRenderFunctions.end());
+			}
+
+			if (HasComponent<SphereCollider>())
+			{
+				SphereCollider& component = m_Scene->m_Registry.get<SphereCollider>(m_EntityHandle);
+				component.OnComponentRemoved();
+				m_Scene->m_Registry.remove<SphereCollider>(m_EntityHandle);
+
+				OnStartFunctions.erase(
+					std::remove_if(OnStartFunctions.begin(), OnStartFunctions.end(),
+						[&](const auto& pair) { return pair.first == typeid(SphereCollider).name(); }),
+					OnStartFunctions.end());
+
+				OnRenderFunctions.erase(
+					std::remove_if(OnRenderFunctions.begin(), OnRenderFunctions.end(),
+						[&](const auto& pair) { return pair.first == typeid(SphereCollider).name(); }),
+					OnRenderFunctions.end());
+			}
+
+			if (HasComponent<CapsuleCollider>())
+			{
+				CapsuleCollider& component = m_Scene->m_Registry.get<CapsuleCollider>(m_EntityHandle);
+				component.OnComponentRemoved();
+				m_Scene->m_Registry.remove<CapsuleCollider>(m_EntityHandle);
+
+				OnStartFunctions.erase(
+					std::remove_if(OnStartFunctions.begin(), OnStartFunctions.end(),
+						[&](const auto& pair) { return pair.first == typeid(CapsuleCollider).name(); }),
+					OnStartFunctions.end());
+
+				OnRenderFunctions.erase(
+					std::remove_if(OnRenderFunctions.begin(), OnRenderFunctions.end(),
+						[&](const auto& pair) { return pair.first == typeid(CapsuleCollider).name(); }),
+					OnRenderFunctions.end());
+			}
+		}
+
 		~Entity()
 		{
-			//std::cout << "Deleted Entity: " << GetTage() << "\n";
 		}
 
 		template<typename T, typename... Args>

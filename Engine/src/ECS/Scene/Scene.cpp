@@ -65,6 +65,7 @@ namespace Cresta
 	void Scene::DestroyEntity(Ref<Entity> entity)
 	{
 		CRESTA_PROFILE_FUNCTION();
+		entity->CleanUp();
 		const UUID& ID = entity->GetUUID();
 		m_EntityMap[ID].~shared_ptr();
 		m_Registry.destroy(*entity);

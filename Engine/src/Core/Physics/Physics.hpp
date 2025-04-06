@@ -30,6 +30,7 @@ namespace Cresta
 		static void SetGravityFactor(const UUID& EntityID, float gravityfactor);
 
 		static void SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& scale);
+		static void SetBodyRadius(const UUID& EntityID, const float radius);
 		static void SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale);
 
 	private:

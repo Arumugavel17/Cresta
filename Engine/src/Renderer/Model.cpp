@@ -18,7 +18,6 @@ namespace Cresta
 			std::cout << "Name: " << name << "\n";
 			std::cout << "BoneInfo: { ID: " << BoneInfo.id << " }\n";
 		}
-		CRESTA_ASSERT("k");
 
 		SetupVAO();
 	}
