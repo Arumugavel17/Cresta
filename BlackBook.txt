@@ -1,0 +1,590 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{titling}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{ragged2e}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{lipsum}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{enumitem}
+
+\pagestyle{empty}
+
+\begin{document}
+
+% Cover Page
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{Shri Vile Parle Kelavani Mandal} \\[0.5em]
+    \textbf{\LARGE Shri Bhagubhai Mafatlal Polytechnic and}\\
+    \textbf{\LARGE College of Engineering} \\[0.5em]
+    Vile Parle-(West), Mumbai-400056 \\[2em]
+    
+    \includegraphics[width=0.3\textwidth]{college_logo.png} \\[2em]
+    
+    \textbf{\Large Information Technology Department} \\[0.5em]
+    \textbf{VI Semester Diploma} \\[2em]
+    
+    \textbf{Cresta: 3D (Game Engine)} \\[4em]
+    
+    \textbf{Synopsis by} \\[0.5em]
+    (Group no. 12) \\[0.5em]
+    Arumugavel Subramanian (57498220011) \\[4em]
+    
+    \textbf{Under Guidance Of} \\[0.5em]
+    Mrs. Swapna Naik
+\end{center}
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+
+% INDEX PAGE
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\LARGE INDEX}\\
+\end{center}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{|c|>{\raggedright\arraybackslash}X|c|}
+\hline
+\textbf{Sr. No.} & \textbf{Contents} & \textbf{Page no.} \\
+\hline
+ & ABSTRACT & 3 \\
+\hline
+1. & INTRODUCTION & 3 \\
+\hline
+2. & PROBLEM STATEMENT & 4 \\
+\hline
+3. & \parbox[t]{\hsize}{
+    ARCHITECTURE
+    \begin{enumerate}
+      \item[3.1] Project and Application Lifecycle 
+        \begin{enumerate}[label=\Roman*.]
+            \item Core Application Creation
+            \item Editor Application  Setup
+            \item Project Handling
+            \item Application Loop
+        \end{enumerate}
+      \item[3.2] Renderer Abstraction and OpenGL
+        \begin{enumerate}[label=\Roman*.]
+            \item Renderer
+                \begin{enumerate}[label=\roman*]
+                    \item Model Loader
+                    \item Draw Model
+                \end{enumerate}
+            \item Renderer Principle
+            \item OpenGL Implementation
+        \end{enumerate}
+      \item[3.3] Profiler
+        \begin{enumerate}[label=\Roman*.]
+            \item Bench Marker
+            \item Instrumentation Timer 
+        \end{enumerate}
+      \item[3.4] Scene \& ECS
+        \begin{enumerate}[label=\Roman*.]
+            \item Scene
+            \item ECS
+            \item Life Cycle Methods
+            \item Components
+            \begin{enumerate}[label=\roman*]
+                \item ID Component
+                \item Tag Component
+                \item Transform
+            \end{enumerate}
+        \end{enumerate}
+    \end{enumerate}
+} & 8 \\
+\hline
+\end{tabularx}
+\caption*{}
+\end{table}
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+
+% INDEX PAGE
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{|c|>{\raggedright\arraybackslash}X|c|}
+\hline
+\textbf{Sr. No.} & \textbf{Contents} & \textbf{Page no.} \\
+\hline
+ & \begin{enumerate}[label=\roman*.]
+    \setcounter{enumi}{3} % Will make the next item 5
+        \item Renderer Components
+            \begin{enumerate}
+                \item Mesh Renderer 
+                \item Sprite Renderer
+            \end{enumerate}
+        \item Physics Components
+            \begin{enumerate}
+                \item Rigid Body
+                \item Box Collider
+                \item Sphere Collider
+                \item Capsule Collider
+            \end{enumerate}
+        \item Script
+            \begin{enumerate}
+                \item User Scripting using Lua
+                \item  Sol3
+            \end{enumerate}
+\end{enumerate}
+\begin{enumerate}[label=\Roman*]
+    \setcounter{enumi}{4}
+    \item Animator
+        \begin{enumerate}
+            \item Animator
+            \item Animation
+        \end{enumerate}
+     \item Physics
+        \begin{enumerate}
+            \item Physics Class \& Controller
+            \item JOLT
+        \end{enumerate}
+\end{enumerate}
+& \\
+\hline
+4. & FEATURES & 11 \\
+\hline
+5. & REQUIREMENTS & 13 \\
+\hline
+6. & APPLICATIONS & 14 \\
+\hline
+7. & LIMITATIONS & 14 \\
+\hline
+8. & FUTURE SCOPE & 15 \\
+\hline
+9. & CONCLUSION & 15 \\
+\hline
+ & REFERENCES  & 16 \\
+\hline
+\end{tabularx}
+\caption*{}
+\end{table}
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\setcounter{section}{1}
+\begin{center}
+    \textbf{\LARGE \Roman{section}. ABSTRACT}
+\end{center}
+
+\justifying
+\onehalfspacing
+Cresta3D is an open-source 3D game engine developed in C++ with a focus on modularity and extensibility. It leverages the OpenGL graphics API to deliver a real-time rendering pipeline and supports industry-standard file formats such as OBJ and FBX for model and animation integration. The engine architecture incorporates a scene management system, component-based entity handling, and a customizable scripting layer. Additional subsystems include an editor interface, project configuration framework, and runtime debugging tools. The project integrates and extends open-source libraries to deliver essential game engine functionality, providing a practical platform for game development and engine-level experimentation.
+
+
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\setcounter{section}{2}
+\section*{\centering \Roman{section}. INTRODUCTION}
+\addcontentsline{toc}{section}{INTRODUCTION}
+
+\justifying
+\onehalfspacing
+Cresta3D is a lightweight, extensible game engine developed in C++ utilizing the OpenGL graphics API for rendering. Inspired by the Hazel game engine by Yan Chernikov, Cresta3D introduces a structured 3D rendering system with support for both OBJ and FBX asset pipelines, enabling developers to import static and animated models seamlessly. The engine supports a basic physics framework that provides primitive collision shapes such as box, sphere, and capsule, visualized in-editor using gizmos. It features an integrated scripting system powered by Lua, allowing runtime behavior customization without recompilation. Cresta3D is designed as a learning-oriented project, aiming to replicate core features of professional-grade engines while maintaining accessibility for students and indie developers.
+
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\setcounter{section}{3}
+\begin{center}
+    \textbf{\LARGE \Roman{section}. PROBLEM STATEMENT}
+\end{center}
+
+\justifying
+\onehalfspacing
+Modern game developers require a lightweight, high-performance, and modular engine that facilitates rapid development while maintaining flexibility and control. An ideal engine must support:
+\begin{itemize}
+  \item A real-time rendering pipeline with support for UI overlays and editor tools.
+  \item A physics subsystem for simulating rigid bodies, collision detection, and dynamic interactions.
+  \item A runtime scripting environment (e.g., Lua) that enables real-time behavior changes without recompilation.
+  \item A robust input system capable of handling multi-device input and advanced features like mouse picking.
+  \item Optimization tools for efficient handling of high-polygon 3D scenes and large asset datasets.
+  \item A modular scene and entity-component system (ECS) for scalability and maintainability.
+  \item An asset management system for importing, serializing, and streaming models, textures, and animations.
+  \item A profiling system to analyze CPU and GPU performance bottlenecks in real time.
+  \item Editor tooling support to enable in-editor manipulation of objects, cameras, lighting, and physics components.
+  \item Shader system support for custom visual effects, with hot-reload capabilities.
+  \item Platform abstraction layers to enable cross-platform deployment across Windows, Linux, and potentially mobile platforms.
+\end{itemize}
+Cresta3D is designed to fulfill these requirements by offering a customizable, developer-centric platform that combines usability with the essential features needed for robust 3D game development.
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\setcounter{section}{3}
+\begin{center}
+    \textbf{\LARGE \Roman{section}. Architecture}
+\end{center}
+
+\justifying
+\onehalfspacing
+
+\subsection*{3.1. Project and Application Lifecycle}
+
+ \includegraphics[width=1.0\textwidth]{Diagram/AllComponents.png} \\[2em]
+
+This section describes the lifecycle and initialization sequence followed by the Cresta3D engine when launching or creating a new project.
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\justifying
+\onehalfspacing
+
+\begin{enumerate}[label={}]
+    \item \textbf{I. Core Application Creation:} \\
+
+     \includegraphics[width=0.8\textwidth]{Diagram/Core_Application.png} \\[2em]
+All Cresta3D applications are built on top of a core Application class that orchestrates the initialization and management of fundamental subsystems. Among these, the Renderer plays a critical role by abstracting raw OpenGL calls into a cleaner, engine-friendly interface. It manages shader programs, buffer objects, textures, and handles batching and draw call submission, ensuring efficient rendering and minimal GPU overhead. This abstraction layer simplifies the rendering process for higher-level systems while maintaining performance.
+In parallel, the Application class also integrates an ImGui overlay, which is updated each frame within the main application loop. Through ImGui, developers can inspect and modify engine state, tweak runtime parameters, view performance stats, and interact with editor tools—all without pausing the application. Input events are routed through this layer, ensuring that UI interactions coexist smoothly with the rest of the system.
+By centralizing system setup and loop integration, the Application class provides a robust foundation for building flexible.
+\end{enumerate}
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\justifying
+\onehalfspacing
+
+\begin{enumerate}[label={}]
+    \item \textbf{II. Editor Application Setup:} \\
+     \includegraphics[width=0.7\textwidth]{Diagram/Editor_Application_Loop.png} \\[2em]
+    The \texttt{EditorApplication} class extends the core application to add an Editor Layer. It handles:
+    \begin{itemize}
+        \item Editor UI instantiation and layout configuration.
+        \item Scene loading and serialization control.
+        \item Input routing for tools like the editor camera and gizmo interaction.
+        \item Lifecycle control, delaying the main loop until a valid project is selected.
+    \end{itemize}
+
+    \item \textbf{III. Project Handling:}
+    \begin{itemize}
+        \item The application loads a list of existing projects from a central project registry (e.g., \texttt{Project.json}).
+        \item The user may choose to create a new project or open an existing one.
+        \item On new project creation a new project directory structure is generated and Core files and configuration templates are initialized (e.g., default scene, asset folder). The path is set internally, and control passes to the Editor.
+        \item On opening an existing project engine parses project metadata, which currently only include project name, path and last project opened timestamp.
+    \end{itemize}
+\end{enumerate}
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\justifying
+\onehalfspacing
+
+\begin{itemize}[label={}]
+    \item \textbf{IV. Application Loop:} \\
+    The Application loop (or game loop) is the core part of the Application that keeps the game/Engine running. It's a continuous loop that performs all the necessary updates and rendering until the game is closed. Cleanup and Exit: Handles memory cleanup before terminating the application.
+\end{itemize}
+
+\subsection*{3.2. Renderer Abstraction and OpenGL}
+A graphics API (Application Programming Interface) is a set of tools and functions that allows developers to interact with the GPU (Graphics Processing Unit) to render 2D and 3D graphics in applications like games, simulations, or visualization software.
+Cresta Uses OpenGL Cross-platform, widely used, older but still popular Graphics API.
+
+\begin{enumerate}[label={}]
+    \item \textbf{I. Renderer:} \\
+    The Renderer in Cresta works in conjunction with RendererCommands. While the Renderer acts as a high-level interface that organizes and manages rendering operations, the RendererCommands handle the actual execution of low-level OpenGL commands.
+    Rendering an object using a graphics API like OpenGL involves a complex sequence of method calls that must be executed in the correct order. Cresta abstracts this complexity—by encapsulating it within the Renderer and RendererCommands—so that developers working within the engine don’t need to worry about the underlying OpenGL details. This allows them to work entirely within the fully abstracted Cresta environment.
+    \begin{enumerate}[label={}]
+        \item \textbf{i. Model Loader:}\\
+        The Model class is responsible for loading, processing, and rendering 3D models using the Assimp library. It handles complex model structures that may include multiple meshes, textures, and bones required for skeletal animations. Upon loading a model from a file path, it recursively processes the scene hierarchy to extract mesh data, including vertex positions, normals, texture coordinates, and bone weights. It manages bone information throuh a mapping system that assigns unique IDs to each bone, enabling proper animation handling. The class also caches textures to prevent redundant loading and provides functions to render the complete model using a shader. Overall, it serves as a central structure for integrating detailed and animated 3D assets into a rendering engine.
+        
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\justifying
+\onehalfspacing
+
+        \item \textbf{ii. Draw Model:}\\
+        The Draw method of the Model class is responsible for rendering the entire model by iterating over all its constituent meshes. It takes a Shader object as a parameter and passes it to each mesh’s Draw function. This ensures that every mesh in the model is rendered using the specified shader program, which handles lighting, textures, and other graphical effects. The method acts as a single entry point to render the full model, abstracting away the complexity of drawing individual meshes and applying the appropriate materials and textures during rendering.
+    \end{enumerate}
+    
+    \item \textbf{II. Renderer Principle:} \\
+   The Renderer and RendererCommand classes act as abstract base classes, each declaring pure virtual methods for initializing the renderer, executing commands, and managing rendering contexts. Platform- or API-specific implementations like OpenGLRenderer inherit from these and define the actual behavior. This setup enables the engine to configure the rendering pipeline during initialization without exposing low-level API details.This interface-driven design extends to other core components—VertexBuffer, IndexBuffer, VertexArrayObject, and Framebuffer—promoting a clean abstraction layer. As a result, the engine stays API-agnostic while supporting multiple graphics backends.
+
+   \item \textbf{III. OpenGL Implementation:}  \\
+   OpenGL implementation includes Implementation of Vertex Buffer, Index Buffer, Frame Buffer, Shader, Texture, Uniform Buffer, Vertex Array Object and Input System.
+   If you don't understand that read the next part carefully.\\
+   Renderer module does not include implementation of the methods to use the correct Graphics API instruction set,
+   so we extend the Renderer and implement the methods and during initialization we Initialize the OpenGL classes.
+\end{enumerate}
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\justifying
+\onehalfspacing
+
+\subsection*{3.3. Profiler}
+
+ \includegraphics[width=1.0\textwidth]{Diagram/Flowcharts.png} \\[2em]
+
+\begin{enumerate}[label={}]
+    \item \textbf{I. Bench Marker:} \\
+    The BenchMarker class is a singleton profiler that manages performance logging in Chrome Tracing-compatible JSON format. It starts a profiling session with BeginSession(), opening a file and writing a JSON header. During execution, WriteProfile() logs profiling data—such as function name, duration, thread ID, and start time—into the file. EndSession() finalizes the session by writing a footer and cleaning up resources. If a session is already active, it’s properly closed before starting a new one. The class ensures clean, structured profiling output for performance analysis.
+\end{enumerate}
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\begin{enumerate}[label={}]
+\item \textbf{II. Instrumentation Timer:} \\
+   The InstrumentationTimer is a lightweight RAII-based(Resource Acquisition Is Initialization) utility that measures the duration of a scoped code block. When created, it records the start time using a high-resolution clock. Upon destruction—or when Stop() is manually called—it calculates the elapsed time and sends the profiling data (name, duration, thread ID, and start timestamp) to the BenchMarker via WriteProfile(). This allows automatic and precise timing of functions or scopes with minimal code and ensures the data is logged even if the scope exits unexpectedly.
+\end{enumerate}
+
+\subsection*{3.4. Scene \& ECS}
+
+ \includegraphics[width=0.9\textwidth]{Diagram/ECS.png} \\[2em]
+\begin{enumerate}[label={}]
+    \item \textbf{I. Scene:} \\
+    The Scene class in Cresta acts as the central manager for all game entities and their behaviors. It encapsulates an entt::registry, which is the backbone of the Entity Component System (ECS) architecture, allowing efficient management of entities and their associated components. The class provides utility functions to create, duplicate, find, and destroy entities using names or UUIDs. It supports physics integration by interfacing with physics-related operations like assigning rigid bodies or colliders. Additionally, it handles scene rendering aspects such as drawing the skybox and serializing scene data to disk.   
+\end{enumerate}
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\begin{enumerate}[label={}]
+    \item \textbf{II. ECS:} \\
+    ECS (Entity-Component-System) is a software architectural pattern commonly used in game engines and simulations to organize complex systems efficiently and flexibly. It breaks down into three core parts:
+    \begin{itemize}
+    \item \textbf{Entity:} \\
+    An Entity is a general-purpose object that acts as a unique ID or placeholder. It doesn’t contain data or logic by itself—it simply represents  "something" in the game (like a player, light, or bullet).
+    \item \textbf{Component:} \\
+    A Component is a simple data structure that holds data and logic. Each  component represents a specific aspect or feature of an entity. For example: Transform Component(position, rotation, scale), Mesh, Camera Component
+    By combining components, you define the behavior and characteristics of an  entity.
+    \item \textbf{System:} \\
+    A System contains the logic that operates on entities with a specific set of components. It iterates over all matching entities and applies behavior to them. For instance:
+    A Physics System might update all entities with Rigid Body Component and transform Component.
+    A Render System might draw all entities with Mesh Renderer Component.
+    \end{itemize}
+
+    \item \textbf{III. Life Cycle Methods:} \\
+    In the Cresta game engine, the ECS architecture is enhanced with a structured life cycle system that allows components to define specific behaviors at different stages of the game loop. Each entity can register components that optionally implement key life cycle methods such as OnStart, OnUpdate, OnFixedUpdate, OnRender, and OnEnd. These methods are automatically detected and stored as callable functions when a component is added to an entity.
+\begin{itemize}
+    \item \textbf{OnStart:} Called at the start of play mode   
+    \item \textbf{OnUpdate:} called at every frame of the play mode
+    \item \textbf{OnRender:} called at every frame (both play and normal mode).
+    \item \textbf{OnFixedUpdate:} called at Fixed duration during play mode.
+    \item \textbf{OnEnd:} called at the End of play mode.
+\end{itemize}
+
+\end{enumerate}
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+
+\begin{itemize}[label={}]
+    \item \textbf{IV. Components:}
+    \begin{itemize}[label={}]
+        \item \textbf{i. ID Component:}
+        ID component uses the UUID class which creates a random integer of 64 bits size (uint64\_t) which acts as a unique Identifier for each Entity.
+        This ID used by Model render, Physics System and other modules to keep track of individual entity and maintain a relation between UUID and local identifier.
+        For example: Physics System maintains a map to maintain the list of created physics bodies and the UUID to identify them. 
+        \item \textbf{ii. Tag Component:}
+        This is just string identifier for a entity which is not unique to the entity.
+        \item \textbf{Transform:}
+        Transform Component is responsible for creating and maintaining data related to Position, Rotation and Scale of the Entity, also inform other component about the change in the data that rely on the transform component for their function.  
+        \item \textbf{iii. Renderer Components:}
+        Render Components are category of components who's primary objective is to render an object on to the screen. This does not include components which render Gizmos or object as secondary functions(eg. BoxCollider).
+        \begin{itemize}
+            \item \textbf{Mesh Renderer:}
+            This Component uses the Model class of the Renderer to load model file such as obj or fbx and provide the functionality to render this model onto the screen, nothing else.
+            \item \textbf{Sprite Renderer:}
+            Sprite Renderer lets you render a texture onto the screen and lets you modify texture properties, such as texture size, rgb values.   
+        \end{itemize}
+        \item \textbf{iv. Physics Components:}
+        \begin{itemize}
+            \item \textbf{Rigid Body:}
+            Rigid Body component lets the entity be effected by Gravity.
+            \item \textbf{Box Collider:}
+            This provides collision detection to a entity with a box around it, and also lets it act as a trigger.
+            Box Collider Component lets you edit the rotation and scale of the box collider with the entity center position as the box collider center position.
+            \item \textbf{Sphere Collider:}
+            Sphere Collider add the collision option with sphere shape.
+            \item \textbf{Capsule Collider:}
+            Capsule Collider add the collision option with Capsule shape.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+
+\newpage
+% Draw page border
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=1pt]
+       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
+        ($(current page.south east) + (-0.5in,0.5in)$);
+\end{tikzpicture}
+    \begin{itemize}[label={}]
+        \item \textbf{v. Script:}
+        Script component Lets the user add the custom user script to the an Entity in the Scene.
+        \begin{itemize}[label={}]
+            \item User Scripting using Lua
+            \item Sol3
+        \end{itemize}
+    \end{itemize}
+    \begin{itemize}
+        \item \textbf{vi. Animator:}
+        \item \textbf{vii. Physics}
+    \end{itemize}
+\vfill
+\begin{center}
+    \thepage\ | \textit{Page}
+\end{center}
+
+\end{document}

@@ -123,12 +123,10 @@ namespace Cresta
 #define CRESTA_PROFILE_END_SESSION() ::Cresta::Profiler::BenchMarker::Get().EndSession()
 #define CRESTA_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Cresta::Profiler::CleanupOutputString(name, "__cdecl ");\
 											   ::Cresta::Profiler::InstrumentationTimer timer##line(fixedName##line.Data)
-#define CRESTA_PROFILE_SCOPE_LINE(name, line) CRESTA_PROFILE_SCOPE_LINE2(name, line)
-#define CRESTA_PROFILE_SCOPE(name) CRESTA_PROFILE_SCOPE_LINE(name, __LINE__)
-#define CRESTA_PROFILE_FUNCTION() CRESTA_PROFILE_SCOPE(__FUNCSIG__)
+#define CRESTA_PROFILE_FUNCTION() CRESTA_PROFILE_SCOPE_LINE2(__FUNCSIG__, __LINE__)
 #else
 #define CRESTA_PROFILE_BEGIN_SESSION(name, filepath)
 #define CRESTA_PROFILE_END_SESSION()
-#define CRESTA_PROFILE_SCOPE(name)
+#define CRESTA_PROFILE_SCOPE_LINE2(name, line)
 #define CRESTA_PROFILE_FUNCTION()
 #endif

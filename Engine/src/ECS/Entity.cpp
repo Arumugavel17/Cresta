@@ -1,6 +1,4 @@
 #include "Entity.hpp"
-#include "Entity.hpp"
-#include "Entity.hpp"
 
 namespace Cresta 
 {
