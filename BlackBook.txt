@@ -14,19 +14,30 @@
 \usepackage{enumitem}
 \usepackage{array}
 \usepackage{enumitem}
+\usepackage{minted}
+\usepackage{background}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amsfonts}
 
-\pagestyle{empty}
+\backgroundsetup{
+  scale=1,
+  color=black,
+  opacity=1,
+  angle=0,
+  position=current page.south west,
+  contents={
+    \begin{tikzpicture}[remember picture, overlay]
+      \draw[line width=1pt]
+        ($(current page.north west)+(0.5in,-0.5in)$) rectangle
+        ($(current page.south east)+(-0.5in,0.5in)$);
+    \end{tikzpicture}
+  }
+}
 
 \begin{document}
-
-% Cover Page
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \begin{center}
+\vspace*{3em}  % or adjust (e.g., 4em, 5em) to control how far down it shifts
     \textbf{Shri Vile Parle Kelavani Mandal} \\[0.5em]
     \textbf{\LARGE Shri Bhagubhai Mafatlal Polytechnic and}\\
     \textbf{\LARGE College of Engineering} \\[0.5em]
@@ -47,20 +58,7 @@
     Mrs. Swapna Naik
 \end{center}
 
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
-
 \newpage
-
-% INDEX PAGE
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \begin{center}
     \textbf{\LARGE INDEX}\\
 \end{center}
@@ -72,23 +70,40 @@
 \hline
 \textbf{Sr. No.} & \textbf{Contents} & \textbf{Page no.} \\
 \hline
- & ABSTRACT & 3 \\
+1. & ABSTRACT & 3 \\
 \hline
-1. & INTRODUCTION & 3 \\
+2. & INTRODUCTION & 3 \\
 \hline
-2. & PROBLEM STATEMENT & 4 \\
+3. & PROBLEM STATEMENT & 4 \\
 \hline
-3. & \parbox[t]{\hsize}{
+4. & FEATURES 
+\begin{enumerate}[label=4]
+    \begin{enumerate}[label*=.\arabic*]
+        \item Model Loading
+        \item Animation
+        \item Physics System
+        \item Project System
+        \item Scene System
+        \item Entity Component System
+        \item Renderer System using OpenGL
+        \item Item Selection in the Editor Window
+        \item User Scripting
+    \end{enumerate}
+\end{enumerate}
+& 4 \\
+\hline
+5. & \parbox[t]{\hsize}{
     ARCHITECTURE
-    \begin{enumerate}
-      \item[3.1] Project and Application Lifecycle 
+\begin{enumerate}[label=5]
+    \begin{enumerate}[label*=.\arabic*]
+      \item Project and Application Lifecycle 
         \begin{enumerate}[label=\Roman*.]
             \item Core Application Creation
             \item Editor Application  Setup
             \item Project Handling
             \item Application Loop
         \end{enumerate}
-      \item[3.2] Renderer Abstraction and OpenGL
+      \item Renderer Abstraction and OpenGL
         \begin{enumerate}[label=\Roman*.]
             \item Renderer
                 \begin{enumerate}[label=\roman*]
@@ -98,116 +113,62 @@
             \item Renderer Principle
             \item OpenGL Implementation
         \end{enumerate}
-      \item[3.3] Profiler
+      \item Profiler
         \begin{enumerate}[label=\Roman*.]
             \item Bench Marker
             \item Instrumentation Timer 
         \end{enumerate}
-      \item[3.4] Scene \& ECS
-        \begin{enumerate}[label=\Roman*.]
-            \item Scene
-            \item ECS
-            \item Life Cycle Methods
-            \item Components
-            \begin{enumerate}[label=\roman*]
-                \item ID Component
-                \item Tag Component
-                \item Transform
-            \end{enumerate}
-        \end{enumerate}
+
     \end{enumerate}
+\end{enumerate}
+
 } & 8 \\
 \hline
 \end{tabularx}
 \caption*{}
 \end{table}
 
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
-
 \newpage
-
-% INDEX PAGE
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
 
 \renewcommand{\arraystretch}{1.5}
 \begin{table}[h!]
 \centering
 \begin{tabularx}{\textwidth}{|c|>{\raggedright\arraybackslash}X|c|}
-\hline
-\textbf{Sr. No.} & \textbf{Contents} & \textbf{Page no.} \\
-\hline
- & \begin{enumerate}[label=\roman*.]
-    \setcounter{enumi}{3} % Will make the next item 5
-        \item Renderer Components
-            \begin{enumerate}
-                \item Mesh Renderer 
-                \item Sprite Renderer
-            \end{enumerate}
-        \item Physics Components
-            \begin{enumerate}
-                \item Rigid Body
-                \item Box Collider
-                \item Sphere Collider
-                \item Capsule Collider
-            \end{enumerate}
-        \item Script
-            \begin{enumerate}
-                \item User Scripting using Lua
-                \item  Sol3
-            \end{enumerate}
-\end{enumerate}
-\begin{enumerate}[label=\Roman*]
-    \setcounter{enumi}{4}
-    \item Animator
-        \begin{enumerate}
+    \hline
+    \textbf{Sr. No.} & \textbf{Contents} & \textbf{Page no.} \\
+    \hline
+    & \begin{enumerate}[label={5}]
+        \begin{enumerate}[label*=.\arabic*]
+            \setcounter{enumii}{3}
+            \item Scene \& ECS
+            \begin{enumerate}[label=\Roman*.]
+                \item Scene
+                \item ECS
+                \item Life Cycle Methods
+                \item Components
+            \end{enumerate}    
             \item Animator
-            \item Animation
+            \item Physics
         \end{enumerate}
-     \item Physics
-        \begin{enumerate}
-            \item Physics Class \& Controller
-            \item JOLT
-        \end{enumerate}
-\end{enumerate}
-& \\
-\hline
-4. & FEATURES & 11 \\
-\hline
-5. & REQUIREMENTS & 13 \\
-\hline
-6. & APPLICATIONS & 14 \\
-\hline
-7. & LIMITATIONS & 14 \\
-\hline
-8. & FUTURE SCOPE & 15 \\
-\hline
-9. & CONCLUSION & 15 \\
-\hline
- & REFERENCES  & 16 \\
-\hline
+    \end{enumerate} & \\
+    \hline
+    6. & REQUIREMENTS & 13 \\
+    \hline
+    7. & APPLICATIONS & 14 \\
+    \hline
+    8. & LIMITATIONS & 14 \\
+    \hline
+    9. & FUTURE SCOPE & 15 \\
+    \hline
+    10. & CONCLUSION & 15 \\
+    \hline
+     & REFERENCES  & 16 \\
+    \hline
 \end{tabularx}
 \caption*{}
 \end{table}
 
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
-
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
 
 \setcounter{section}{1}
 \begin{center}
@@ -217,7 +178,6 @@
 \justifying
 \onehalfspacing
 Cresta3D is an open-source 3D game engine developed in C++ with a focus on modularity and extensibility. It leverages the OpenGL graphics API to deliver a real-time rendering pipeline and supports industry-standard file formats such as OBJ and FBX for model and animation integration. The engine architecture incorporates a scene management system, component-based entity handling, and a customizable scripting layer. Additional subsystems include an editor interface, project configuration framework, and runtime debugging tools. The project integrates and extends open-source libraries to deliver essential game engine functionality, providing a practical platform for game development and engine-level experimentation.
-
 
 % Draw page border
 \begin{tikzpicture}[remember picture, overlay]
@@ -234,20 +194,7 @@ Cresta3D is an open-source 3D game engine developed in C++ with a focus on modul
 \onehalfspacing
 Cresta3D is a lightweight, extensible game engine developed in C++ utilizing the OpenGL graphics API for rendering. Inspired by the Hazel game engine by Yan Chernikov, Cresta3D introduces a structured 3D rendering system with support for both OBJ and FBX asset pipelines, enabling developers to import static and animated models seamlessly. The engine supports a basic physics framework that provides primitive collision shapes such as box, sphere, and capsule, visualized in-editor using gizmos. It features an integrated scripting system powered by Lua, allowing runtime behavior customization without recompilation. Cresta3D is designed as a learning-oriented project, aiming to replicate core features of professional-grade engines while maintaining accessibility for students and indie developers.
 
-
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
-
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \setcounter{section}{3}
 \begin{center}
     \textbf{\LARGE \Roman{section}. PROBLEM STATEMENT}
@@ -270,46 +217,64 @@ Modern game developers require a lightweight, high-performance, and modular engi
   \item Platform abstraction layers to enable cross-platform deployment across Windows, Linux, and potentially mobile platforms.
 \end{itemize}
 Cresta3D is designed to fulfill these requirements by offering a customizable, developer-centric platform that combines usability with the essential features needed for robust 3D game development.
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
-\setcounter{section}{3}
+\setcounter{section}{4}
 \begin{center}
-    \textbf{\LARGE \Roman{section}. Architecture}
+    \textbf{\LARGE \Roman{section}. FEATURES}
+\end{center}
+
+\begin{enumerate}[label={}]
+    \item \textbf{4.1 Model Loading: } \\
+    Cresta provides comprehensive model loading support through the Assimp (Open Asset Import Library) framework. This allows developers to import a wide variety of 3D formats such as FBX, OBJ, COLLADA, and more. The model loader processes meshes, textures, and materials, and extracts skeletal data for animated models. It also supports embedded textures within the model files, reducing external dependency issues. The loader is optimized to parse the scene hierarchy and organize vertex data into GPU-friendly formats, making rendering efficient and scalable.
+
+    \item \textbf{4.2 Animation: } \\
+    The engine includes a skeletal animation system that allows smooth real-time playback of character animations. Each model with a skeleton is processed to extract bone hierarchies, keyframes, and transformation data. Cresta performs per-frame interpolation between keyframes to ensure smooth animations. It also supports animation blending, allowing for transitions between animations like walking and running. The animation system is fully integrated with the ECS architecture, enabling component-driven animation control.
+
+    \item \textbf{4.3 Physics System: } \\
+    Powered by the Jolt Physics Engine, Cresta delivers a fast and lightweight physics simulation experience. The physics system supports dynamic and static rigid bodies, collision detection, gravity, and mass properties. Users can attach physical properties such as box, sphere, and mesh colliders to entities, allowing realistic interaction in a simulated world. The physics system is decoupled from the rendering pipeline, ensuring that logic updates and frame rendering do not interfere with each other.
+
+    \item \textbf{4.4 Project System: } \\
+    Cresta includes a flexible project management system that allows users to create and organize projects effortlessly. Each project contains its own set of assets, scenes, settings, and user-defined scripts. The system provides features like auto-saving, structured folder management, and compatibility with version control systems like Git. Projects can be opened, modified, and exported from within the editor, promoting ease of use and collaborative development.
+
+    \item \textbf{4.5 Scene System: } \\
+    Scenes in Cresta are represented as serialized graphs of entities and components. Users can create multiple scenes, load and unload them dynamically, and define hierarchical parent-child relationships among entities. The system handles scene saving/loading using efficient serialization formats such as JSON or binary blobs, ensuring fast startup and minimal file sizes. Scenes also encapsulate environmental settings like ambient light, background color, and global physics properties.
+
+    \item \textbf{4.6 Entity Component System (ECS): } \\
+    At the core of the engine lies the ECS architecture, designed for modularity and performance. Entities act as unique identifiers, while components store the actual data (like transforms, meshes, and physics bodies). Systems operate on entities that possess specific components, enabling parallel updates and cache-friendly data layouts. The ECS in Cresta allows for easy extension, letting developers define custom components and systems without touching core engine logic.
+
+    \item \textbf{4.7 Renderer System using OpenGL: } \\
+    The rendering system leverages modern OpenGL features such as shader pipelines, vertex buffer objects, framebuffer objects, and deferred rendering. It supports physically based rendering (PBR), enabling realistic materials and lighting. Dynamic lighting, shadow mapping, screen-space ambient occlusion (SSAO), and post-processing effects like bloom and HDR are integrated into the pipeline. The renderer also performs optimizations like frustum culling and level-of-detail (LOD) management to enhance performance.
+
+    \item \textbf{4.8 Item Selection in the Editor Window: } \\
+    Cresta’s editor supports real-time item selection using mouse picking. This is implemented using a color-based selection buffer where each renderable entity is assigned a unique color ID in a hidden render pass. When the user clicks in the editor viewport, the engine reads the pixel color under the mouse and maps it back to the corresponding entity. This enables precise selection and manipulation of objects, crucial for building and debugging complex scenes.
+
+    \item \textbf{4.9 User Scripting: } \\
+    User-defined scripting is enabled through Lua, a lightweight and embeddable scripting language. Scripts can be attached to entities via a ScriptComponent and are executed during runtime to control behavior such as movement, input response, AI routines, and event handling. The scripting system exposes a range of engine functions, allowing access to components, transformations, and engine events. This makes the engine highly extensible, especially for designers and developers who prefer scripting over recompiling native code.
+\end{enumerate}
+
+
+\justifying
+\onehalfspacing
+
+\newpage
+
+\setcounter{section}{5}
+\begin{center}
+    \textbf{\LARGE \Roman{section}. ARCHITECTURE}
 \end{center}
 
 \justifying
 \onehalfspacing
 
-\subsection*{3.1. Project and Application Lifecycle}
+\subsection*{4.1. Project and Application Lifecycle}
 
  \includegraphics[width=1.0\textwidth]{Diagram/AllComponents.png} \\[2em]
 
 This section describes the lifecycle and initialization sequence followed by the Cresta3D engine when launching or creating a new project.
 
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \justifying
 \onehalfspacing
 
@@ -322,19 +287,78 @@ In parallel, the Application class also integrates an ImGui overlay, which is up
 By centralizing system setup and loop integration, the Application class provides a robust foundation for building flexible.
 \end{enumerate}
 
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
+\newpage
+\justifying
+\onehalfspacing
+
+\begin{minted}[linenos, breaklines=true]{c++}
+#pragma once
+#include "ApplicationHeader.hpp"
+
+namespace Cresta 
+{
+	class Application
+	{
+	public:
+		Application();
+		virtual ~Application();
+
+		virtual void Run();
+		virtual void OnEvent(Event& e);
+		
+		Ref<Scene> GetActiveScene();
+
+		void NewScene();
+		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
+		void SaveScene();
+		void SaveSceneAs();
+
+		virtual void SaveProject(){}
+		virtual void NewProject(){}
+		virtual void OpenProject(){}
+		virtual void OpenProject(const std::filesystem::path& path){}
+
+		void SetSceneForLayers();
+
+		void Init();
+		void Close();
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* layer);
+		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
+		
+		Ref<Window> GetWindow() { return p_Window; }
+		static Application& GetApplication() { return *Application::sp_Instance; }
+
+	protected:
+		float p_LastFrameTime = 0.0f;
+		bool p_Running;
+		bool p_Minimized;
+		static Ref<Scene> sp_ActiveScene;
+		static Application* sp_Instance; 
+
+		Ref<Window> p_Window;
+		ImGUILayer* p_ImGUILayer;
+		LayerStack p_LayerStack;
+		std::filesystem::path p_ActiveScenePath;
+	
+	public:
+
+		struct ProjectPath
+		{
+			std::string ProjectFile;
+			std::filesystem::path ProjectFolder;
+		};
+
+		ProjectPath p_ActiveProjectPath;
+	};
+
+	Application* CreateApplication();
+}
+\end{minted}
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \justifying
 \onehalfspacing
 
@@ -357,19 +381,8 @@ By centralizing system setup and loop integration, the Application class provide
         \item On opening an existing project engine parses project metadata, which currently only include project name, path and last project opened timestamp.
     \end{itemize}
 \end{enumerate}
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \justifying
 \onehalfspacing
 
@@ -378,7 +391,51 @@ By centralizing system setup and loop integration, the Application class provide
     The Application loop (or game loop) is the core part of the Application that keeps the game/Engine running. It's a continuous loop that performs all the necessary updates and rendering until the game is closed. Cleanup and Exit: Handles memory cleanup before terminating the application.
 \end{itemize}
 
-\subsection*{3.2. Renderer Abstraction and OpenGL}
+\begin{minted}[linenos, breaklines=true]{c++}
+#pragma once
+#include "Core/Application.hpp"
+#include "EditorLayer.hpp"
+#include "Renderer/PrimitiveMeshes.hpp"
+
+namespace Editor 
+{
+	class EditorApplication : public Cresta::Application 
+	{
+	public:
+		EditorApplication()
+		{
+			m_EditorLayer = new EditorLayer(sp_ActiveScene);
+			PushLayer(m_EditorLayer);
+			Primitive::Init();
+		}
+
+		~EditorApplication() = default;
+
+		void SaveProject() override;
+		void NewProject() override;
+		void OpenProject() override;
+		std::string GetProjectFolder();
+
+		void OnEvent(Event& e) override;
+		void Run() override;
+	private:
+		EditorLayer* m_EditorLayer;
+	};
+}
+
+
+
+namespace Cresta
+{
+	Application* CreateApplication()
+	{
+		return new Editor::EditorApplication();
+	}
+}
+\end{minted}
+
+
+\subsection*{4.2. Renderer Abstraction and OpenGL}
 A graphics API (Application Programming Interface) is a set of tools and functions that allows developers to interact with the GPU (Graphics Processing Unit) to render 2D and 3D graphics in applications like games, simulations, or visualization software.
 Cresta Uses OpenGL Cross-platform, widely used, older but still popular Graphics API.
 
@@ -389,20 +446,8 @@ Cresta Uses OpenGL Cross-platform, widely used, older but still popular Graphics
     \begin{enumerate}[label={}]
         \item \textbf{i. Model Loader:}\\
         The Model class is responsible for loading, processing, and rendering 3D models using the Assimp library. It handles complex model structures that may include multiple meshes, textures, and bones required for skeletal animations. Upon loading a model from a file path, it recursively processes the scene hierarchy to extract mesh data, including vertex positions, normals, texture coordinates, and bone weights. It manages bone information throuh a mapping system that assigns unique IDs to each bone, enabling proper animation handling. The class also caches textures to prevent redundant loading and provides functions to render the complete model using a shader. Overall, it serves as a central structure for integrating detailed and animated 3D assets into a rendering engine.
-        
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \justifying
 \onehalfspacing
 
@@ -418,25 +463,202 @@ Cresta Uses OpenGL Cross-platform, widely used, older but still popular Graphics
    If you don't understand that read the next part carefully.\\
    Renderer module does not include implementation of the methods to use the correct Graphics API instruction set,
    so we extend the Renderer and implement the methods and during initialization we Initialize the OpenGL classes.
+
+\item \textbf{IV. OpenGL Rendering in Cresta Game Engine}
+OpenGL (Open Graphics Library) is used as the primary rendering API in the \textbf{Cresta} game engine. This section explains the key components and flow involved in the rendering process, including the Model-View-Projection (MVP) technique and perspective projection.
+
+\item \textbf{V. OpenGL Setup and Initialization}
+
+At the start of the rendering process, OpenGL must be initialized. This involves creating a rendering context, setting up buffers for storing vertices, and preparing shaders for execution on the GPU. In the \textbf{Cresta} engine, GLFW and GLEW are used for window management and handling OpenGL extensions, respectively.
+
+\begin{itemize}
+    \item \textbf{GLFW:} Used to create and manage windows, handle user input, and manage OpenGL contexts.
+    \item \textbf{GLEW:} Used to load OpenGL extensions and functions, ensuring compatibility across different platforms and OpenGL versions.
+\end{itemize}
+
+Once the OpenGL context is created, the engine sets the viewport, clears the color buffer, and prepares the frame for rendering.
+
+\item \textbf{VI. Shader Programs}
+
+Shaders are small programs that run on the GPU and are responsible for rendering vertices and fragments (pixels). The \textbf{Cresta} engine uses vertex and fragment shaders to control the pipeline of vertex processing and fragment coloring.
+
+\begin{itemize}
+    \item \textbf{Vertex Shader:} Processes each vertex and passes data such as position, texture coordinates, and normals to the next stage in the pipeline.
+    \item \textbf{Fragment Shader:} Responsible for calculating the final color of each pixel, taking into account lighting, textures, and other effects.
+\end{itemize}
+
+Shaders are compiled and linked into a shader program which is then used to draw objects on the screen. In the engine, the shader programs are managed and compiled dynamically based on the required material properties for each object.
+
+\item \textbf{VII. Rendering Pipeline}
+
+The OpenGL rendering pipeline is a sequence of stages that the engine uses to transform 3D data into a 2D image. The pipeline can be broken down into several key steps:
+
+\begin{enumerate}
+    \item \textbf{Vertex Processing:} The vertex shader processes vertices and performs transformations (like scaling, rotation, and translation) to convert them from object space to screen space.
+    \item \textbf{Primitive Assembly:} The processed vertices are grouped into geometric primitives (points, lines, triangles).
+    \item \textbf{Rasterization:} The geometric primitives are converted into fragments (potential pixels) on the screen.
+    \item \textbf{Fragment Processing:} The fragment shader calculates the color of each pixel, taking into account factors such as lighting and texture mapping.
+    \item \textbf{Final Output:} The final pixel values are written to the frame buffer and displayed on the screen.
 \end{enumerate}
 
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
+\item \textbf{VIII. Model-View-Projection (MVP) Technique}
+
+The MVP technique is used to convert 3D coordinates into 2D screen space. This transformation is done through three matrices: the Model matrix, the View matrix, and the Projection matrix.
+\begin{enumerate}[label={}]
+\item \textbf{i. Model Matrix}
+
+The Model matrix transforms an object’s local coordinates into world coordinates. It is responsible for scaling, rotating, and translating the model in the scene.
+
+Where:
+\item \textbf{ii. Translation}
+The translation matrix moves the object in 3D space:
+
+\[
+T = 
+\begin{bmatrix}
+1 & 0 & 0 & t_x \\
+0 & 1 & 0 & t_y \\
+0 & 0 & 1 & t_z \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\]
+
+\item \textbf{iii. Scaling}
+The scaling matrix resizes the object:
+
+\[
+S = 
+\begin{bmatrix}
+s_x & 0   & 0   & 0 \\
+0   & s_y & 0   & 0 \\
+0   & 0   & s_z & 0 \\
+0   & 0   & 0   & 1
+\end{bmatrix}
+\]
+
+\item \textbf{iv. Rotation}
+
+\subsubsection*{Rotation around X-axis}
+\[
+R_x(\theta) = 
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & \cos\theta & -\sin\theta & 0 \\
+0 & \sin\theta & \cos\theta & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\]
+
+\subsubsection*{Rotation around Y-axis}
+\[
+R_y(\theta) = 
+\begin{bmatrix}
+\cos\theta & 0 & \sin\theta & 0 \\
+0 & 1 & 0 & 0 \\
+-\sin\theta & 0 & \cos\theta & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\]
+
+\subsubsection*{Rotation around Z-axis}
+\[
+R_z(\theta) = 
+\begin{bmatrix}
+\cos\theta & -\sin\theta & 0 & 0 \\
+\sin\theta & \cos\theta & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\]
+\\
+\item \textbf{v. Combined Model Matrix}
+The complete model matrix is obtained by applying the transformations in the correct order:
+
+\[
+M = T \cdot R_z \cdot R_y \cdot R_x \cdot S
+\]
+
+\item \textbf{vi. View Matrix}
+
+The View matrix transforms the coordinates from world space to camera (view) space. It positions and orients the camera in the scene, defining the viewpoint.
+
+Where:
+
+The LookAt matrix is commonly used for this purpose to align the camera’s view.
+
+\item \textbf{vii. Projection Matrix}
+
+The Projection matrix transforms the coordinates from camera space into normalized device coordinates (NDC). In the case of perspective projection, it simulates the effects of depth and field of view.
+
+The perspective projection matrix is defined as:
+
+Where:
+
+This matrix introduces a perspective effect where objects further from the camera appear smaller, and objects closer to the camera appear larger.
+
+\item \textbf{viii. Final MVP Transformation}
+
+The final MVP matrix is a combination of these three matrices:
+
+This matrix is applied to each vertex in the vertex shader to transform the 3D coordinates into 2D screen coordinates.
+\end{enumerate}
+\end{enumerate}
+\begin{minted}[linenos, breaklines=true]{c++}
+#pragma once
+#include "Crestaph.hpp"
+#include "Renderer/Camera.hpp"
+#include "Renderer/Shader.hpp"
+#include "Renderer/RendererAPI.hpp"
+#include "Renderer/RendererCommand.hpp"
+#include "Renderer/Model.hpp"
+
+namespace Cresta 
+{
+	class Renderer
+	{
+	public:
+		static void Init();
+		static void Shutdown();
+
+		static void OnWindowResize(uint32_t width, uint32_t height);
+
+		static void BeginScene(Camera& camera);
+		
+		static void EndScene();
+		static void Flush();
+		static void DrawSprite(const glm::vec4& color, const Ref<Texture2D>& texture, const glm::mat4& transform, float Mixfactor = 0);
+		static void DrawTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount);
+		static void DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
+		static void DrawIndexed(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer);
+
+		static void DrawGizmoTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount);
+		static void DrawGizmoIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
+		static void DrawGizmoIndexed(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer);
+
+		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+	private:
+		struct SceneData
+		{
+			glm::vec3 CamerPosition;
+			glm::mat4 ViewProjectionMatrix;
+			glm::mat4 ProjectionMatrix;
+			glm::mat4 ViewMatrix;
+		};
+
+		static Ref<Shader> sm_SpriteShader;
+		static Ref<VertexArray> sm_SpriteVertexArray;
+		static Scope<SceneData> sm_SceneData;
+	};
+}
+
+\end{minted}
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
 
 \justifying
 \onehalfspacing
 
-\subsection*{3.3. Profiler}
+\subsection*{4.3. Profiler}
 
  \includegraphics[width=1.0\textwidth]{Diagram/Flowcharts.png} \\[2em]
 
@@ -444,44 +666,159 @@ Cresta Uses OpenGL Cross-platform, widely used, older but still popular Graphics
     \item \textbf{I. Bench Marker:} \\
     The BenchMarker class is a singleton profiler that manages performance logging in Chrome Tracing-compatible JSON format. It starts a profiling session with BeginSession(), opening a file and writing a JSON header. During execution, WriteProfile() logs profiling data—such as function name, duration, thread ID, and start time—into the file. EndSession() finalizes the session by writing a footer and cleaning up resources. If a session is already active, it’s properly closed before starting a new one. The class ensures clean, structured profiling output for performance analysis.
 \end{enumerate}
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
+
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
 
 \begin{enumerate}[label={}]
 \item \textbf{II. Instrumentation Timer:} \\
    The InstrumentationTimer is a lightweight RAII-based(Resource Acquisition Is Initialization) utility that measures the duration of a scoped code block. When created, it records the start time using a high-resolution clock. Upon destruction—or when Stop() is manually called—it calculates the elapsed time and sends the profiling data (name, duration, thread ID, and start timestamp) to the BenchMarker via WriteProfile(). This allows automatic and precise timing of functions or scopes with minimal code and ensures the data is logged even if the scope exits unexpectedly.
 \end{enumerate}
 
-\subsection*{3.4. Scene \& ECS}
+\begin{minted}[linenos, breaklines=true]{c++}
+#pragma once
+#include "Crestaph.hpp"
+
+namespace Cresta
+{
+	namespace Profiler
+	{
+		using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
+
+		struct ProfileResult
+		{
+			std::string Name;
+
+			FloatingPointMicroseconds Start;
+			std::chrono::microseconds ElapsedTime;
+			std::thread::id ThreadID;
+		};
+
+		struct InstrumentationSession
+		{
+			std::string Name;
+			
+			InstrumentationSession(std::string name) : Name(name)
+			{}
+
+			~InstrumentationSession()
+			{
+			}
+		};
+
+		class BenchMarker
+		{
+		public:
+			BenchMarker();
+			~BenchMarker();
+			BenchMarker(const BenchMarker&) = delete;
+			BenchMarker(BenchMarker&&) = delete;
+
+			void BeginSession(const std::string& name, const std::string& filepath = "C:\\dev\\Cresta\\results.json");
+			void EndSession();
+			void WriteProfile(const ProfileResult& result);
+			static BenchMarker& Get();
+
+			void WriteHeader();
+			void WriteFooter();
+			void InternalEndSession();
+
+		private:
+			static BenchMarker* sm_Instance;
+			InstrumentationSession* m_CurrentSession;
+			std::ofstream m_OutputStream;
+		};
+
+		template <size_t N>
+		struct ChangeResult
+		{
+			char Data[N];
+		};
+
+		class InstrumentationTimer
+		{
+		public:
+			InstrumentationTimer(const char* name)
+				: m_Name(name), m_Stopped(false)
+			{
+				m_StartTimepoint = std::chrono::steady_clock::now();
+			}
+
+			~InstrumentationTimer()
+			{
+				if (!m_Stopped)
+				{
+					Stop();
+				}
+			}
+
+			void Stop()
+			{
+				auto endTimepoint = std::chrono::steady_clock::now();
+				auto highResStart = FloatingPointMicroseconds{ m_StartTimepoint.time_since_epoch() };
+				auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
+
+				BenchMarker::Get().WriteProfile({ m_Name, highResStart, elapsedTime, std::this_thread::get_id() });
+
+				m_Stopped = true;
+			}
+		private:
+			const char* m_Name;
+			std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
+			bool m_Stopped;
+		};
+
+		template <size_t N, size_t K>
+		constexpr auto CleanupOutputString(const char(&expr)[N], const char(&remove)[K])
+		{
+			ChangeResult<N> result = {};
+
+			size_t srcIndex = 0;
+			size_t dstIndex = 0;
+			while (srcIndex < N)
+			{
+				size_t matchIndex = 0;
+				while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[matchIndex])
+				{
+					matchIndex++;
+				}
+
+				if (matchIndex == K - 1)
+				{
+					srcIndex += matchIndex;
+				}
+				result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+				srcIndex++;
+			}
+			return result;
+		}
+	}
+}
+
+#define CRESTA_PROFILE 1
+#if CRESTA_PROFILE 
+#define CRESTA_PROFILE_BEGIN_SESSION(name, filepath) ::Cresta::Profiler::BenchMarker::Get().BeginSession(name, filepath)
+#define CRESTA_PROFILE_END_SESSION() ::Cresta::Profiler::BenchMarker::Get().EndSession()
+#define CRESTA_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Cresta::Profiler::CleanupOutputString(name, "__cdecl ");\
+											   ::Cresta::Profiler::InstrumentationTimer timer##line(fixedName##line.Data)
+#define CRESTA_PROFILE_FUNCTION() CRESTA_PROFILE_SCOPE_LINE2(__FUNCSIG__, __LINE__)
+#else
+#define CRESTA_PROFILE_BEGIN_SESSION(name, filepath)
+#define CRESTA_PROFILE_END_SESSION()
+#define CRESTA_PROFILE_SCOPE_LINE2(name, line)
+#define CRESTA_PROFILE_FUNCTION()
+#endif
+\end{minted}
+
+\subsection*{4.4. Scene \& ECS}
 
  \includegraphics[width=0.9\textwidth]{Diagram/ECS.png} \\[2em]
 \begin{enumerate}[label={}]
     \item \textbf{I. Scene:} \\
     The Scene class in Cresta acts as the central manager for all game entities and their behaviors. It encapsulates an entt::registry, which is the backbone of the Entity Component System (ECS) architecture, allowing efficient management of entities and their associated components. The class provides utility functions to create, duplicate, find, and destroy entities using names or UUIDs. It supports physics integration by interfacing with physics-related operations like assigning rigid bodies or colliders. Additionally, it handles scene rendering aspects such as drawing the skybox and serializing scene data to disk.   
 \end{enumerate}
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \begin{enumerate}[label={}]
     \item \textbf{II. ECS:} \\
     ECS (Entity-Component-System) is a software architectural pattern commonly used in game engines and simulations to organize complex systems efficiently and flexibly. It breaks down into three core parts:
@@ -506,23 +843,103 @@ Cresta Uses OpenGL Cross-platform, widely used, older but still popular Graphics
     \item \textbf{OnFixedUpdate:} called at Fixed duration during play mode.
     \item \textbf{OnEnd:} called at the End of play mode.
 \end{itemize}
-
 \end{enumerate}
+    
+\vspace*{5em}
+\begin{minted}[linenos, breaklines=true]{c++}
+#pragma once
 
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
+#include "Crestaph.hpp"
+#include "ECS/UUID.hpp"
+#include "ECS/Components/Components.hpp"
 
+#include "entt/entt.hpp"
+#include "Renderer/Camera.hpp"
+#include "Renderer/Shader.hpp"
+#include "Renderer/Renderer.hpp"
+#include "Renderer/VertexArray.hpp"
+#include "Renderer/Texture.hpp"
+#include "Renderer/CubeMap/Cubemap.hpp"
+
+namespace Cresta 
+{
+	class Entity;
+	class Physics;
+	class SceneHierarchyPanel;
+	class SceneWrapper;
+
+	class Scene
+	{
+	public:
+		entt::registry m_Registry;
+
+	public:
+		template<typename... Components>
+		auto GetAllEntitiesWith()
+		{
+			return m_Registry.view<Components...>();
+		}
+
+		Scene();
+		~Scene();
+
+		void Save();
+		void Reset();
+		void OnRuntimeStart();
+		void OnRuntimeStop();
+
+		Ref<Entity> DuplicateEntity(const Ref<Entity> OriginalEntity,const std::string& name = std::string());
+		Ref<Entity> CreateEntity(const std::string& name = std::string(),uint64_t ID = -1);
+		Ref<Entity> FindEntityByName(std::string name);
+		Ref<Entity> FindEntityByID(UUID& ID);
+		Ref<Entity> GetPrimaryCameraEntity();
+
+		bool IsRunning() const { return m_Running; }
+		bool IsPaused() const { return m_Paused; }
+		void SetPaused(bool paused) { m_Paused = paused; }
+
+		void FixedUpate();
+		void OnUpdate();
+
+		void DestroyEntity(Ref<Entity> entity);
+		void AddSceneUpdateCallBack(const std::function<void()>& func);
+		void RemoveSceneUpdateCallBack(const std::function<void()>& func);
+
+		static void AssignPhysicsBody(const UUID& entity);
+		static void AddRigidBody(const UUID& entity);
+		static void AddCollider(const UUID& entity, const ColliderShape& shape);
+
+		static void RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID);
+		static void RemoveRigidBody(const UUID& entity);
+		static void RemoveCollider(const UUID& entity);
+
+		void DrawSkyBox();
+		void SerializeScene(const std::filesystem::path& path);
+
+	private:
+		void InvokeSceneUpdateCallBacks();
+
+	private:
+
+		std::unordered_map<UUID, Ref<Entity>> m_EntityMap;
+		std::vector<std::function<void()>> m_SceneUpdateCallBack;
+
+		bool m_Running = false;
+		bool m_Paused = false;
+
+		uint32_t m_ViewportWidth = 0;
+		uint32_t m_ViewportHeight = 0;
+
+		static int sm_Count;
+		CubeMap m_CubeMap;
+		
+		friend class SceneHierarchyPanel;
+		friend class SceneWrapper;
+	};
+}
+\end{minted}
 
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
-
 \begin{itemize}[label={}]
     \item \textbf{IV. Components:}
     \begin{itemize}[label={}]
@@ -536,55 +953,199 @@ Cresta Uses OpenGL Cross-platform, widely used, older but still popular Graphics
         Transform Component is responsible for creating and maintaining data related to Position, Rotation and Scale of the Entity, also inform other component about the change in the data that rely on the transform component for their function.  
         \item \textbf{iii. Renderer Components:}
         Render Components are category of components who's primary objective is to render an object on to the screen. This does not include components which render Gizmos or object as secondary functions(eg. BoxCollider).
-        \begin{itemize}
-            \item \textbf{Mesh Renderer:}
+        \begin{itemize}[label={}]
+            \item \textbf{(a) Mesh Renderer:}
             This Component uses the Model class of the Renderer to load model file such as obj or fbx and provide the functionality to render this model onto the screen, nothing else.
-            \item \textbf{Sprite Renderer:}
+            \item \textbf{(b) Sprite Renderer:}
             Sprite Renderer lets you render a texture onto the screen and lets you modify texture properties, such as texture size, rgb values.   
         \end{itemize}
         \item \textbf{iv. Physics Components:}
-        \begin{itemize}
-            \item \textbf{Rigid Body:}
+        \begin{itemize}[label={}]
+            \item \textbf{(a) Rigid Body:}
             Rigid Body component lets the entity be effected by Gravity.
-            \item \textbf{Box Collider:}
+            \item \textbf{(b) Box Collider:}
             This provides collision detection to a entity with a box around it, and also lets it act as a trigger.
             Box Collider Component lets you edit the rotation and scale of the box collider with the entity center position as the box collider center position.
-            \item \textbf{Sphere Collider:}
+            \item \textbf{(c) Sphere Collider:}
             Sphere Collider add the collision option with sphere shape.
-            \item \textbf{Capsule Collider:}
+            \item \textbf{(d) Capsule Collider:}
             Capsule Collider add the collision option with Capsule shape.
         \end{itemize}
     \end{itemize}
 \end{itemize}
 
-\vfill
-\begin{center}
-    \thepage\ | \textit{Page}
-\end{center}
-
-
 \newpage
-% Draw page border
-\begin{tikzpicture}[remember picture, overlay]
-    \draw[line width=1pt]
-       ($(current page.north west) + (0.5in,-0.5in)$) rectangle
-        ($(current page.south east) + (-0.5in,0.5in)$);
-\end{tikzpicture}
     \begin{itemize}[label={}]
         \item \textbf{v. Script:}
         Script component Lets the user add the custom user script to the an Entity in the Scene.
         \begin{itemize}[label={}]
-            \item User Scripting using Lua
-            \item Sol3
+            \item \textbf{(a) User Scripting using Lua:}\\
+            User scripting using Lua is important because it allows developers to expose flexible, high-level control to users without compromising the core engine's stability or performance. Lua’s lightweight nature and fast execution make it ideal for embedding in game engines, applications, and simulation environments. By enabling user scripting, developers empower users or designers to create custom behaviors, automate tasks, and extend functionality without modifying the source code. This not only speeds up development but also encourages modularity and creativity, making applications more dynamic and adaptable to varied use cases.
+            \item \textbf{(b) Sol3:}\\
+            Sol3 is a modern and powerful C++ library that provides seamless integration between C++ and the Lua scripting language. It simplifies the process of binding Lua scripts to C++ code by offering an easy-to-use, header-only interface that handles complex data conversions, function calls, and object management. Sol3 leverages advanced C++ features like templates and smart pointers to ensure safety, flexibility, and performance. It is widely used in game engines and software projects where scripting is essential, allowing developers to expose C++ classes, functions, and variables to Lua with minimal boilerplate code.
         \end{itemize}
     \end{itemize}
-    \begin{itemize}
-        \item \textbf{vi. Animator:}
-        \item \textbf{vii. Physics}
+    \begin{itemize}[label={}]
+        \item \textbf{VI. Animator:}
+        \begin{itemize}[label={}]
+            \item \textbf{i. Animator:}
+            The 'Animator' class in the Cresta engine is responsible for handling skeletal animations by updating bone transformations over time. It interfaces with the `Animation` class to manage and play animation sequences, calculating bone matrices based on a hierarchical node structure (`AssimpNodeData`) typically loaded through the Assimp library. The animator maintains a vector of final bone matrices used for GPU skinning and supports switching between different animations. It includes multithreading support with a dedicated animation thread and synchronization primitives like mutexes and condition variables to ensure smooth, real-time animation playback. The class offers functionality to start, end, and reset animations, and encapsulates timing controls using 'm\_CurrentTime', 'm\_DeltaTime', and a public 'timestep' for fine-grained control over animation speed.
+            \vspace*{3em}
+            \item \textbf{ii. Animation:}
+            The `Animation` class in the Cresta engine is responsible for loading and managing skeletal animation data from external files using the Assimp library. It stores essential information such as animation duration, ticks per second, and a list of bones involved in the animation. The class also constructs a hierarchical node structure (`AssimpNodeData`) that mirrors the bone hierarchy of the model, allowing for recursive transformation calculations during animation playback. Through the `SetAnimation` function or constructor, it parses the animation file and populates the bone and node data by reading missing bones and traversing the scene hierarchy. The class provides convenient access to the root node, bone map, and other metadata, and supports searching for specific bones by name—critical for applying animations accurately during runtime.
+
+        \item \textbf{iii. Animation Bones:}
+        The `Bone` class in the Cresta engine encapsulates the animation data and transformation logic for a single bone in a skeletal animation system. Each `Bone` instance holds its name, a unique ID, and keyframe data for position (`KeyPosition`), rotation (`KeyRotation`), and scale (`KeyScale`) extracted from the corresponding `aiNodeAnim` channel provided by Assimp. The `Update` method calculates the bone’s local transformation matrix for a given animation time by interpolating between keyframes, ensuring smooth transitions during playback. Internally, it uses helper functions to determine the correct keyframe indices and compute interpolation factors, enabling accurate blending of transformations over time. The class provides access to the bone's name, ID, and computed local transformation, which are crucial for constructing the final matrix hierarchy used in skeletal animation. Overall, it plays a vital role in enabling per-bone animation blending and motion within the larger animation system.
+
+ \includegraphics[width=0.9\textwidth]{Diagram/Animator.png} \\[2em]
+        \vspace{2em}
+        \end{itemize}
+        \item \textbf{VII. Physics}
+        \begin{itemize}[label={}]
+            \item \textbf{i. Physics Class \& Controller: }
+            \begin{enumerate}
+            \item \textbf{Physics Class:}
+            The `Physics` class in the Cresta engine serves as a high-level static interface for managing physical simulation, leveraging the Jolt Physics engine under the hood. It acts as a wrapper around the `PhysicsController`, which handles the actual logic for creating, updating, and managing physical bodies and their interactions in the scene. Through this interface, developers can easily add rigid bodies, attach colliders, set transformations, adjust physical properties like gravity and scale, and toggle trigger states for entities identified by their UUIDs. The class also allows querying and modifying entity positions and rotations in the physics world, enabling tight integration between game logic and physics simulation. With built-in support for starting, stopping, and stepping the simulation, the `Physics` class plays a crucial role in enabling dynamic, real-time interactions in the engine while maintaining modularity and encapsulation.
+            \item \textbf{Physics Contorller:}
+            The `PhysicsController` class in the "Cresta" engine is a core component responsible for managing and interfacing with the Jolt Physics System. It provides high-level functionality to create, configure, and manipulate physics bodies associated with entities identified by UUIDs. This class handles adding and removing colliders, switching between static and dynamic motion types, setting physical properties such as gravity, position, rotation, and scale, and managing sensor states (triggers). It encapsulates internal Jolt components like the physics system, job system, allocators, and body interface, and implements broadphase filtering and body activation/contact listening. The controller initializes the physics system, maintains a mapping between entities and their corresponding `BodyID`s, and includes debug tools like tracing and assert handling. Additionally, it defines key constants for physics simulation and supports runtime manipulation of physics bodies, making it a vital part of entity-physics integration in the engine.
+            \end{enumerate}
+        \end{itemize}
     \end{itemize}
-\vfill
+
+\newpage
+
 \begin{center}
-    \thepage\ | \textit{Page}
+    \textbf{\LARGE VI. REQUIREMENTS}\\
 \end{center}
+\begin{enumerate}[label={}]
+\item \textbf{I. Assimp} – The Open Asset Import Library (Assimp) is utilized for importing 3D models in various formats (e.g., .obj, .fbx, .dae). It abstracts the parsing of complex model data including meshes, bones, animations, and materials, enabling consistent internal representation across different asset sources.
+
+\item \textbf{II. entt} – A performant, header-only Entity Component System (ECS) library for C++ that manages game object composition and runtime data efficiently. It decouples object logic and promotes modular design, essential for real-time systems like game engines.
+
+\item \textbf{III. GLAD} – An OpenGL function loader generator that handles dynamic loading of OpenGL functions based on the context’s supported version. It ensures compatibility and access to modern graphics pipeline features across platforms.
+
+\item \textbf{IV. GLFW} – A cross-platform library responsible for creating and managing OpenGL contexts, windows, and handling input devices (keyboard, mouse, etc.). It serves as the foundational platform abstraction layer for rendering and event handling.
+
+\item \textbf{V. GLM} – OpenGL Mathematics (GLM) is a header-only C++ mathematics library that adheres to GLSL (OpenGL Shading Language) specifications. It provides core linear algebra types and operations (matrices, vectors, quaternions) required for graphics transformations and camera logic.
+
+\item \textbf{VI. IMGUI} – An immediate-mode GUI library designed for real-time applications. It is used to build editor interfaces, debug panels, and runtime tools that directly reflect and manipulate engine state with minimal overhead.
+
+\item \textbf{VII. IMGUIZMO} – An IMGUI extension offering 3D transformation gizmos (translate, rotate, scale) typically used in scene editors. It provides intuitive manipulation of entity transforms within the engine’s graphical user interface.
+
+\item \textbf{VIII. JSON} – Employed for data serialization and deserialization, using libraries like `nlohmann/json`. It is primarily used for saving and loading engine configurations, scene hierarchies, and runtime data in a structured and readable format.
+
+\item \textbf{IX. LUA} – A lightweight, embeddable scripting language that integrates with the engine to define game behavior, event triggers, and logic at runtime. Its integration allows rapid prototyping and live iteration without recompiling the engine.
+
+\item \textbf{X. SOL2} – A high-performance C++ library that binds C++ classes, functions, and objects to Lua scripts. It provides seamless interoperation between Lua and engine internals, enabling safe and efficient script-driven control over engine functionality.
+
+\item \textbf{XI. spdlog} – A header-only C++ logging library that provides high-performance logging with formatting, multi-threaded support, and log file output. It is critical for tracking internal engine states and debugging runtime behavior.
+
+\item \textbf{XII. stbi\_image} – A single-header image loading library from the stb collection, used for loading 2D textures from various file formats (e.g., PNG, JPG, BMP) into OpenGL-compatible memory representations.
+
+\item \textbf{XIII. yaml-cpp} – A YAML parser and emitter written in C++ used for reading and writing configuration files. It is leveraged for settings that benefit from hierarchy and human readability, such as scene metadata, editor preferences, or scripting configurations.
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \textbf{\LARGE VII. APPLICATIONS}\\
+\end{center}
+
+The Cresta Game Engine is a modular, extensible, and real\-time 3D game engine designed to facilitate the development of interactive applications, simulations, and games. By integrating a broad ecosystem of open-source libraries and a robust internal architecture, the engine provides developers with a flexible and performant platform to build content-rich experiences. The engine’s core architecture leverages an Entity-Component-System (ECS) paradigm via entt, which allows for decoupled logic and efficient data-oriented processing of game entities.
+
+One of the primary capabilities of the engine is its advanced asset pipeline, enabled through Assimp for model importing and stb\_image for texture handling. This allows artists and developers to bring complex 3D models (e.g., .fbx, .obj, .dae) into the engine with full support for mesh hierarchies, skeletal animations, and embedded textures. These assets can be transformed, rendered, and manipulated in real time using an OpenGL-based rendering backend. The graphics stack is managed through GLAD and GLFW, ensuring compatibility with modern rendering features and providing cross-platform windowing and input support.
+
+Cresta features a fully integrated editor GUI, built with ImGui and extended via ImGuizmo, providing developers with real-time scene editing capabilities. Users can manipulate entities directly in the viewport using transformation gizmos and modify component properties through custom editor panels. These tools significantly accelerate development workflows, especially during level design and debugging stages.
+
+In terms of scripting and runtime control, the engine embeds the Lua scripting language with bindings provided by sol2. This integration allows for dynamic definition of game logic, event-driven behavior, and interactive scripting without recompilation. Developers can expose engine functions, register component types, and create gameplay systems that are extensible by designers through Lua scripts.
+
+The engine also supports robust scene serialization, utilizing both JSON and yaml-cpp for storing and restoring complete scene hierarchies, object configurations, and user-defined data. This enables persistent storage of game states and seamless integration of user content, making it ideal for creating tools or games that rely on modifiability or external data.
+
+In addition, spdlog provides advanced logging and diagnostics, crucial for debugging complex systems in real time. Developers can trace runtime events, capture performance metrics, and log errors with minimal performance overhead.
+
+Overall, the Cresta Game Engine is equipped to handle a wide range of real-time 3D applications — from level editors, sandbox-style games, architectural visualizations, to simulation-based tools. Its modularity, scriptability, and tool-rich environment make it a powerful foundation for both rapid prototyping and full-scale development.
+
+\newpage
+
+\begin{center}
+    \textbf{\LARGE VIII. LIMITATIONS}\\
+\end{center}
+
+\section*{Limitations of the Cresta Game Engine}
+\addcontentsline{toc}{section}{Limitations of the Cresta Game Engine}
+
+While the Cresta Game Engine provides a robust foundation for real-time 3D applications and interactive content, several limitations exist due to the current scope of implementation and architectural choices. These constraints are outlined below to provide a clear understanding of areas requiring further development or optimization.
+
+\begin{itemize}
+    \item \textbf{Lack of Advanced Rendering Features:} The current rendering pipeline is limited to forward rendering and lacks support for modern techniques such as deferred shading, screen-space ambient occlusion (SSAO), and physically based rendering (PBR). This restricts the engine’s visual fidelity in high-end applications.
+
+    \item \textbf{No Built-in Physics Engine:} Physics simulation capabilities are currently absent. This means that essential features like rigidbody dynamics, collision response, and constraints must be implemented externally or through future integration with third-party physics engines using JOLT.
+
+    \item \textbf{Single-threaded Execution:} Most of the engine subsystems (rendering, logic update, resource loading) are executed on the main thread. This can become a performance bottleneck in scenes with high object counts or complex scripts, limiting scalability and responsiveness.
+
+    \item \textbf{Basic Animation System:} Although skeletal animations are supported through Assimp, there is no dedicated animation blending system or state machine for character animation control. This restricts the flexibility of animating complex models in interactive scenarios.
+
+    \item \textbf{Limited Scripting API Exposure:} While Lua is embedded via `sol2`, only a subset of the engine’s functionality is exposed to scripts. This limits the expressiveness and control that scripters have over runtime behavior and engine customization.
+
+    \item \textbf{Editor Constraints:} The editor, built using ImGui, while responsive and lightweight, lacks many quality-of-life features such as prefab management, asset browser integration, undo/redo history, and drag-and-drop functionality. These omissions impact productivity during large-scale development.
+
+    \item \textbf{No Networking or Multiplayer Support:} The engine is designed for single-player applications only. There is currently no support for real-time networking, client-server architecture, or multiplayer synchronization mechanisms.
+
+    \item \textbf{Inadequate Asset Management System:} Assets are loaded at runtime via absolute or hard-coded paths, without a centralized import pipeline or metadata tracking system. This may lead to redundant resource usage and difficult asset dependency resolution.
+
+    \item \textbf{Platform Limitation:} The engine is primarily tested on Windows environments. Although dependencies are cross-platform, the absence of platform abstraction layers for input, filesystem, and windowing reduces portability to Linux and macOS.
+
+    \item \textbf{No Build System for Deployment:} There is no automated packaging or deployment system. Users must manually configure build environments and dependencies, which hinders the ease of distributing games or tools created using the engine.
+\end{itemize}
+
+These limitations provide clear direction for future improvements and feature additions. Addressing them will enhance the engine's viability for both commercial and research-grade applications.
+
+\newpage
+\begin{center}
+    \textbf{\LARGE IX. FUTURE SCOPE}\\
+\end{center}
+The Cresta Game Engine, while functional in its current state, has significant potential for expansion and refinement. This section outlines the planned enhancements and future development goals aimed at addressing the limitations discussed previously.
+
+\begin{itemize}
+    \item \textbf{Integration of Physically Based Rendering (PBR):} To improve visual fidelity, a deferred rendering pipeline with PBR will be implemented. This will allow the engine to simulate realistic material properties under varying lighting conditions, supporting albedo, normal, roughness, and metallic maps.
+
+    \item \textbf{Physics Engine Integration:} The incorporation of a physics engine such as \texttt{Jolt Physics} or \texttt{Bullet} will enable simulation of rigidbodies, colliders, constraints, and collision detection. This will open up the possibility for physically accurate gameplay mechanics and object interactions.
+
+    \item \textbf{Multithreaded Task System:} To improve performance scalability, especially in large scenes, a job-based multithreading system will be introduced. Resource loading, animation updates, and logic systems will be offloaded from the main thread to improve frame rate and responsiveness.
+
+    \item \textbf{Advanced Animation Framework:} A robust animation system featuring blend trees, animation state machines, and runtime transitions will be developed. This will provide greater control over character and object animations in dynamic environments.
+
+    \item \textbf{Expanded Lua Scripting Interface:} More engine subsystems will be exposed to Lua through \texttt{sol2}, including rendering, physics, UI elements, and event dispatching. This will allow designers and scripters to build complete gameplay systems without modifying the core engine.
+
+    \item \textbf{Editor Feature Enhancements:} The editor will be extended with features such as asset browser integration, prefab creation, undo/redo support, scene hierarchy drag-and-drop, and keyboard shortcuts. These additions will streamline the development workflow and improve user productivity.
+
+    \item \textbf{Networking Layer for Multiplayer Support:} A low-level networking abstraction and synchronization layer will be added to support multiplayer applications. Features will include RPC (Remote Procedure Calls), state replication, and authoritative server simulation.
+
+    \item \textbf{Centralized Asset Management System:} A resource manager will be developed to handle asset importing, caching, dependency tracking, and memory usage. Metadata-based asset referencing will replace hardcoded paths to improve scalability and reliability.
+
+    \item \textbf{Cross-Platform Portability:} A platform abstraction layer will be introduced to support deployment on Linux and macOS alongside Windows. This will involve handling platform-specific input, file I/O, and OpenGL context initialization.
+
+    \item \textbf{Automated Build and Deployment Tools:} Scripts and systems for asset packaging, dependency bundling, and project exporting will be created. This will simplify the deployment of games and tools developed using the engine to end users.
+\end{itemize}
+
+These future enhancements are aimed at elevating Cresta into a more comprehensive and production-ready game development environment. Continued development in these areas will make the engine suitable for a wider range of use cases, including commercial game development, academic research, and real-time simulation applications.
+
+\newpage 
+
+\begin{center}
+    \textbf{\LARGE X. CONCLUSION }\\
+\end{center}
+
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+
+The development of the \textbf{Cresta Game Engine} represents a significant step toward creating a modular, extensible, and performant real-time 3D engine tailored for interactive applications. Throughout this project, core subsystems were designed and implemented, including an OpenGL-based rendering pipeline, an entity-component-system (ECS) architecture via \texttt{entt}, a user-friendly editor interface using \texttt{ImGui}, and a lightweight scripting interface through \texttt{Lua} and \texttt{sol2}. These components together provide a foundation for rapid prototyping, content authoring, and real-time simulation.
+
+Despite the current engine being in an early stage, it demonstrates capabilities such as 3D model import, scene serialization, runtime scripting, and interactive in-editor manipulation. The architecture is built with extensibility in mind, allowing for future integration of advanced systems such as physically based rendering, animation blending, physics simulation, and multiplayer networking.
+
+A detailed analysis of the limitations has helped identify areas that require architectural scaling, tooling refinement, and performance optimization. The outlined future scope provides a clear roadmap to evolve the engine from a functional prototype to a fully-featured, production-ready framework.
+
+In conclusion, the Cresta Game Engine lays a strong technical groundwork for future innovation in real-time graphics and interactive systems. It serves not only as a learning platform but also as a practical tool that can be expanded into a powerful solution for real-world game development and visualization tasks.
+
+
 
 \end{document}
