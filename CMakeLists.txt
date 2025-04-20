@@ -152,7 +152,7 @@ target_include_directories(Engine PUBLIC
 
 message("SOURCES " ${CMAKE_BINARY_DIR})
 set(LUA_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/Engine/vendor/lua)
-message("LUA PATH: "${LUA_LIBRARY})
+message("LUA PATH: " ${LUA_LIBRARY})
 target_link_libraries(Engine
         glfw
 		assimp

@@ -1,5 +1,6 @@
 #include "WrapperClasses.hpp"
 #include "Core/Application.hpp"
+#include "ScriptComponent.hpp"
 
 namespace Cresta
 {
@@ -12,6 +13,21 @@ namespace Cresta
 		//std::cout << "[C++] GetTransform() called!" << std::endl;
 		m_TransformWrapper.TransformComponent = &p_Entity->GetComponent<Transform>();
 		return m_TransformWrapper;
+	}
+
+	void EntityWrapper::AttachMeshRenderer()
+	{
+		p_Entity->AddComponent<MeshRenderer>();
+	}
+
+	void EntityWrapper::AttachBoxCollider()
+	{
+		p_Entity->AddComponent<BoxCollider>();
+	}
+
+	void EntityWrapper::AttachScript(std::string path)
+	{
+		p_Entity->AddComponent<ScriptComponent>().SetPath(path);
 	}
 
 	SceneWrapper::SceneWrapper()

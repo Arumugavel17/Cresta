@@ -537,7 +537,7 @@ namespace Cresta
 					if (ScriptComp)
 					{
 						auto& script = deserializedEntity->GetComponent<ScriptComponent>();
-						script.SetPath(ScriptComp["Path"].as<std::string>());
+						//script.SetPath(ScriptComp["Path"].as<std::string>());
 					}
 				}
 			}

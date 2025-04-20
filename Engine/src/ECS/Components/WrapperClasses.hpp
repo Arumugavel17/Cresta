@@ -200,30 +200,7 @@ namespace Cresta
 		Transform* TransformComponent;
 	};
 
-	class MeshRendererWrapper
-	{
-	public:
-		MeshRendererWrapper(Entity* entity)
-		{
-			if (!entity)
-			{
-				delete this;
-			}
-			else
-			{
-				m_Entity = entity;
-			}
-		}
-
-		void SetPath(std::string path)
-		{
-			m_Entity->GetComponent<MeshRenderer>().SetPath(path);
-		}
-
-	private:
-		Entity* m_Entity;
-	};
-
+	
 	class SpriteRendererWrapper
 	{
 	public:
@@ -255,7 +232,7 @@ namespace Cresta
 		{
 			if (!entity)
 			{
-				delete this;
+				throw std::runtime_error("Invalid Entity passed to Wrapper");
 			}
 			else
 			{
@@ -280,17 +257,22 @@ namespace Cresta
 	class CapsuleColliderWrapper;
 	class AnimatorWrapper;
 	class ScriptWrapper;
+	class MeshRendererWrapper;
 
 	class EntityWrapper
 	{
 	public:
 		EntityWrapper(Entity* entity);
 		TransformWrapper& GetTransform();
-
+		void AttachMeshRenderer();
+		void AttachBoxCollider();
+		void AttachScript(std::string path);
 
 	private:
 		Entity* p_Entity;
 		TransformWrapper m_TransformWrapper;
+
+		friend class MeshRendererWrapper;
 	};
 
 	class SceneWrapper
@@ -298,8 +280,24 @@ namespace Cresta
 	public:
 		SceneWrapper();
 		EntityWrapper CreateEntity();
-
 	private:
 		Ref<Scene> m_Scene;
+	};
+
+	class MeshRendererWrapper
+	{
+	public:
+		static void SetPath(EntityWrapper entity,std::string path)
+		{
+			
+			if (entity.p_Entity->HasComponent<MeshRenderer>())
+			{
+				entity.p_Entity->GetComponent<MeshRenderer>().SetPath(path);
+			}
+			else 
+			{
+				CRESTA_ASSERT("MeshRenderer Is Not Attached");
+			}
+		}
 	};
 }

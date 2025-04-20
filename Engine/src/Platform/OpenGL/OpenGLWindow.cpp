@@ -30,7 +30,6 @@ namespace Cresta {
 		bool status = glfwInit();	
 		CRESTA_ASSERT(!status,"Failed to Initalize GLFW");
 
-
 		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 		m_Window = glfwCreateWindow(p_Data.Width, p_Data.Height, p_Data.Title.c_str(), NULL, NULL);
@@ -46,6 +45,7 @@ namespace Cresta {
 			return;
 		}
 		
+		std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 		glfwSetWindowUserPointer(m_Window, &p_Data);
 
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)

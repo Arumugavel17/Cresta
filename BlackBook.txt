@@ -1,6 +1,8 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage{graphicx}
 \usepackage[margin=1in]{geometry}
+\usepackage{color,xcolor}
+\usepackage{parskip}
 \usepackage{titling}
 \usepackage{setspace}
 \usepackage{fancyhdr}
@@ -19,7 +21,23 @@
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{tcolorbox}
+% Define a blue box for section headers
+\definecolor{customblue}{RGB}{210, 225, 245} % Soft blue shade
 
+\newtcolorbox{bluebox}{
+  colback=customblue,
+  colframe=customblue,
+  boxrule=0pt,
+  arc=0pt,
+  outer arc=0pt,
+  left=6pt,
+  right=6pt,
+  top=3pt,
+  bottom=3pt,
+  width=\textwidth,
+  boxsep=0pt
+}
 \backgroundsetup{
   scale=1,
   color=black,
@@ -36,139 +54,9 @@
 }
 
 \begin{document}
-\begin{center}
-\vspace*{3em}  % or adjust (e.g., 4em, 5em) to control how far down it shifts
-    \textbf{Shri Vile Parle Kelavani Mandal} \\[0.5em]
-    \textbf{\LARGE Shri Bhagubhai Mafatlal Polytechnic and}\\
-    \textbf{\LARGE College of Engineering} \\[0.5em]
-    Vile Parle-(West), Mumbai-400056 \\[2em]
-    
-    \includegraphics[width=0.3\textwidth]{college_logo.png} \\[2em]
-    
-    \textbf{\Large Information Technology Department} \\[0.5em]
-    \textbf{VI Semester Diploma} \\[2em]
-    
-    \textbf{Cresta: 3D (Game Engine)} \\[4em]
-    
-    \textbf{Synopsis by} \\[0.5em]
-    (Group no. 12) \\[0.5em]
-    Arumugavel Subramanian (57498220011) \\[4em]
-    
-    \textbf{Under Guidance Of} \\[0.5em]
-    Mrs. Swapna Naik
-\end{center}
 
-\newpage
-\begin{center}
-    \textbf{\LARGE INDEX}\\
-\end{center}
-
-\renewcommand{\arraystretch}{1.5}
-\begin{table}[h!]
-\centering
-\begin{tabularx}{\textwidth}{|c|>{\raggedright\arraybackslash}X|c|}
-\hline
-\textbf{Sr. No.} & \textbf{Contents} & \textbf{Page no.} \\
-\hline
-1. & ABSTRACT & 3 \\
-\hline
-2. & INTRODUCTION & 3 \\
-\hline
-3. & PROBLEM STATEMENT & 4 \\
-\hline
-4. & FEATURES 
-\begin{enumerate}[label=4]
-    \begin{enumerate}[label*=.\arabic*]
-        \item Model Loading
-        \item Animation
-        \item Physics System
-        \item Project System
-        \item Scene System
-        \item Entity Component System
-        \item Renderer System using OpenGL
-        \item Item Selection in the Editor Window
-        \item User Scripting
-    \end{enumerate}
-\end{enumerate}
-& 4 \\
-\hline
-5. & \parbox[t]{\hsize}{
-    ARCHITECTURE
-\begin{enumerate}[label=5]
-    \begin{enumerate}[label*=.\arabic*]
-      \item Project and Application Lifecycle 
-        \begin{enumerate}[label=\Roman*.]
-            \item Core Application Creation
-            \item Editor Application  Setup
-            \item Project Handling
-            \item Application Loop
-        \end{enumerate}
-      \item Renderer Abstraction and OpenGL
-        \begin{enumerate}[label=\Roman*.]
-            \item Renderer
-                \begin{enumerate}[label=\roman*]
-                    \item Model Loader
-                    \item Draw Model
-                \end{enumerate}
-            \item Renderer Principle
-            \item OpenGL Implementation
-        \end{enumerate}
-      \item Profiler
-        \begin{enumerate}[label=\Roman*.]
-            \item Bench Marker
-            \item Instrumentation Timer 
-        \end{enumerate}
-
-    \end{enumerate}
-\end{enumerate}
-
-} & 8 \\
-\hline
-\end{tabularx}
-\caption*{}
-\end{table}
-
-\newpage
-
-\renewcommand{\arraystretch}{1.5}
-\begin{table}[h!]
-\centering
-\begin{tabularx}{\textwidth}{|c|>{\raggedright\arraybackslash}X|c|}
-    \hline
-    \textbf{Sr. No.} & \textbf{Contents} & \textbf{Page no.} \\
-    \hline
-    & \begin{enumerate}[label={5}]
-        \begin{enumerate}[label*=.\arabic*]
-            \setcounter{enumii}{3}
-            \item Scene \& ECS
-            \begin{enumerate}[label=\Roman*.]
-                \item Scene
-                \item ECS
-                \item Life Cycle Methods
-                \item Components
-            \end{enumerate}    
-            \item Animator
-            \item Physics
-        \end{enumerate}
-    \end{enumerate} & \\
-    \hline
-    6. & REQUIREMENTS & 13 \\
-    \hline
-    7. & APPLICATIONS & 14 \\
-    \hline
-    8. & LIMITATIONS & 14 \\
-    \hline
-    9. & FUTURE SCOPE & 15 \\
-    \hline
-    10. & CONCLUSION & 15 \\
-    \hline
-     & REFERENCES  & 16 \\
-    \hline
-\end{tabularx}
-\caption*{}
-\end{table}
-
-\newpage
+\input{Section/Headers}
+\input{Section/Index}
 
 \setcounter{section}{1}
 \begin{center}
@@ -287,13 +175,30 @@ In parallel, the Application class also integrates an ImGui overlay, which is up
 By centralizing system setup and loop integration, the Application class provides a robust foundation for building flexible.
 \end{enumerate}
 
-\newpage
-\justifying
-\onehalfspacing
+\vspace{10em}
 
-\begin{minted}[linenos, breaklines=true]{c++}
+\begin{minted}[linenos, breaklines=true, tabsize = 1]{c++}
+//Application.hpp
 #pragma once
-#include "ApplicationHeader.hpp"
+
+#include "Core/Window.hpp"
+#include "Core/Input.hpp"
+
+#include "Core/Events/Event.hpp"
+#include "Core/Events/WindowEvent.hpp"
+#include "Core/Events/KeyBoardEvent.hpp"
+#include "Core/Events/MouseEvent.hpp"
+
+#include "Core/Layers/Layer.hpp"
+#include "Core/Layers/LayerStack.hpp"
+#include "Core/Layers/ImGUILayer.hpp"
+
+#include "Renderer/Renderer.hpp"
+
+#include "ECS/Scene/Scene.hpp"
+
+#include <iostream>
+#include <memory>
 
 namespace Cresta 
 {
@@ -356,7 +261,249 @@ namespace Cresta
 
 	Application* CreateApplication();
 }
+
+//Application.cpp
+
+#include "Application.hpp"
+#include "Core/Time.hpp"
+#include "Platform/OpenGL/Utils.hpp"
+#include "ECS/Scene/SceneSerializer.hpp"
+#include "Crestaph.hpp"
+
+namespace Cresta
+{
+	Application* Application::sp_Instance = nullptr;
+	Ref<Scene> Application::sp_ActiveScene = nullptr;
+	
+	Application::Application() : p_Running(true), p_Minimized(false)
+	{
+		Application::sp_Instance = this;
+		p_Window = Window::Create();
+		p_Window->SetEventCallBack(CRESTA_BIND_EVENT_FN(Application::OnEvent));
+
+		Log::Init();
+		Renderer::Init();
+		Init();
+	}
+
+	void Application::Init()
+	{
+		CRESTA_PROFILE_FUNCTION();
+		sp_ActiveScene = CreateRef<Scene>();
+
+		p_ImGUILayer = new ImGUILayer(sp_ActiveScene);
+		PushOverlay(p_ImGUILayer);
+	}
+
+	Application::~Application()
+	{
+		Log::Shutdown();
+		Renderer::Shutdown();
+	}
+	
+	void Application::PushLayer(Layer* layer)
+	{
+		CRESTA_PROFILE_FUNCTION();
+
+		p_LayerStack.PushLayer(layer);
+		layer->OnAttach();
+	}
+
+	void Application::PushOverlay(Layer* layer)
+	{
+		CRESTA_PROFILE_FUNCTION();
+
+		p_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
+	}
+
+	void Application::Run()
+	{
+		CRESTA_PROFILE_FUNCTION();
+		const float fixedTimestep = 1.0f / 60.0f; 
+		float accumulatedTime = 0.0f;
+
+		int frameCount = 0;
+		float fpsTimer = 0.0f;          
+		float currentFPS = 0.0f;        
+
+		int fixedUpdateCount = 0;       
+
+		while (p_Running)
+		{
+			float time = RenderCommand::GetTime();	 
+			float timestep = time - p_LastFrameTime; 
+			p_LastFrameTime = time;
+			Time::SetDeltaTime(timestep);
+
+			accumulatedTime += timestep;
+			fpsTimer += timestep;       
+			frameCount++;               
+
+			// Update FPS every second
+			if (fpsTimer >= 1.0f)
+			{
+				CRESTA_INFO("Update Count: {0} || Fixed Update Count: {1}", frameCount, fixedUpdateCount);
+
+				currentFPS = frameCount;           
+				frameCount = 0;                    
+				fpsTimer = 0.0f;                   
+
+				//CRESTA_INFO("FPS: {0}", currentFPS);
+				fixedUpdateCount = 0;
+			}
+
+			while (accumulatedTime >= fixedTimestep)
+			{
+				for (Layer* layer : p_LayerStack)
+				{
+					layer->OnFixedUpdate();
+				}
+				accumulatedTime -= fixedTimestep;
+				fixedUpdateCount++;
+			}
+
+			p_Window->Begin();
+
+			if (!p_Minimized)
+			{
+				for (Layer* layer : p_LayerStack)
+				{
+					layer->OnUpdate();
+				}
+
+				p_ImGUILayer->Begin();
+				{
+					for (Layer* layer : p_LayerStack)
+					{
+						layer->OnImGUIRender();
+					}
+				}
+				p_ImGUILayer->End();
+			}
+
+			p_Window->End();
+		}
+	}
+
+	void Application::OnEvent(Event& e)
+	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>
+        (CRESTA_BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>
+        (CRESTA_BIND_EVENT_FN(Application::OnWindowResize));
+		for (auto it = p_LayerStack.rbegin(); it != 
+        p_LayerStack.rend(); ++it)
+		{
+			if (e.Handled)
+				break;
+			(*it)->OnEvent(e);
+		}
+	}
+
+	Ref<Scene> Application::GetActiveScene()
+	{
+		return sp_ActiveScene;
+	}
+
+	void Application::NewScene()
+	{
+		sp_ActiveScene = CreateRef<Scene>();
+		SetSceneForLayers();
+	}
+
+	void Application::OpenScene()
+	{
+		std::string filepath = Utils::FileDialogs::OpenScene("Cresta Scene (*.cresta)\0*.cresta\0");
+		if (!filepath.empty())
+		{
+			return OpenScene(filepath);
+		}
+	}
+
+	void Application::OpenScene(const std::filesystem::path& path)
+	{
+	
+		if (path.extension().string() != ".cresta")
+		{
+			CRESTA_CORE_WARN("Could not load {0} - not a scene file", path.filename().string());
+			return;
+		}
+
+		Ref<Scene> newScene = CreateRef<Scene>();
+		if (SceneSerializer::Deserialize(*newScene ,path.string()))
+		{
+			//Ref<Scene> temp = sp_ActiveScene;
+			sp_ActiveScene = newScene;
+			p_ActiveScenePath = path;
+			SetSceneForLayers();
+			return;
+		}
+
+		CRESTA_CORE_WARN("Could not load {0} - not a scene file", path.filename().string());
+	}
+
+	//All the layer has a local Reference to the scene this method updates all the Layer
+	void Application::SetSceneForLayers()
+	{
+		for (Layer* layer : p_LayerStack)
+		{
+			layer->SetScene(sp_ActiveScene);
+		}
+	}
+
+	void Application::SaveScene()
+	{
+		if (!p_ActiveScenePath.empty())
+		{
+			sp_ActiveScene->SerializeScene(p_ActiveScenePath);
+		}
+		else
+		{
+			SaveSceneAs();
+		}
+	}
+
+	void Application::SaveSceneAs()
+	{
+		std::string filepath = Utils::FileDialogs::SaveScene("Cresta Scene (*.cresta)\0*.cresta\0");
+		if (!filepath.empty())
+		{
+			sp_ActiveScene->SerializeScene(filepath);
+			p_ActiveScenePath = filepath;
+		}
+	}
+
+	bool Application::OnWindowClose(WindowCloseEvent& e) 
+	{
+		p_Running = false;
+		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e) 
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			p_Minimized = true;
+			return false;
+		}
+		p_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		return true;	
+	}
+
+	void Application::Close()
+	{
+		p_Running = false;
+	}
+}
 \end{minted}
+
+
+\newpage
+\justifying
+\onehalfspacing
 
 \newpage
 \justifying
@@ -389,9 +536,10 @@ namespace Cresta
 \begin{itemize}[label={}]
     \item \textbf{IV. Application Loop:} \\
     The Application loop (or game loop) is the core part of the Application that keeps the game/Engine running. It's a continuous loop that performs all the necessary updates and rendering until the game is closed. Cleanup and Exit: Handles memory cleanup before terminating the application.
-\end{itemize}
 
-\begin{minted}[linenos, breaklines=true]{c++}
+\begin{minted}[linenos, breaklines=true, tabsize = 1]{c++}
+//Editor Application.hpp
+
 #pragma once
 #include "Core/Application.hpp"
 #include "EditorLayer.hpp"
@@ -423,17 +571,320 @@ namespace Editor
 	};
 }
 
-
-
 namespace Cresta
 {
 	Application* CreateApplication()
 	{
 		return new Editor::EditorApplication();
 	}
-}
-\end{minted}
+}    
 
+//EditorApplication.cpp
+#include "Crestaph.hpp"
+#include "EditorApplication.hpp"
+#include "Platform/OpenGL/Utils.hpp"
+#include "ToastMessage.hpp"
+
+#include <nlohmann/json.hpp>
+
+namespace Editor
+{
+	namespace fs = std::filesystem;
+	using json = nlohmann::json;
+
+	struct ProjectList
+	{
+		uint32_t TimeStamp;
+		std::string ProjectName;
+		std::string ProjectPath;
+	};
+	
+	static void ReadProjectsList(std::vector<ProjectList>& output)
+	{
+		std::string filePath = "assets/Projects.json";
+		std::ifstream AlreadyOpenedProject(filePath);
+
+		if (!AlreadyOpenedProject) 
+		{
+			// File does not exist, create it
+			std::ofstream outFile(filePath);
+			json j = json::object();  // Ensure it's a valid JSON object `{}` instead of `[]`
+			outFile << j;
+			outFile.close();
+
+			AlreadyOpenedProject.open(filePath);  // Open the newly created file
+		}
+
+		// Check if the file is empty
+		if (AlreadyOpenedProject.peek() == std::ifstream::traits_type::eof()) 
+		{
+			CRESTA_TRACE("File is empty, skipping parsing.");
+			AlreadyOpenedProject.close();
+			return;
+		}
+
+		// Now safe to parse
+		json JProject;
+		AlreadyOpenedProject >> JProject;
+
+		for (json::iterator it = JProject.begin(); it != JProject.end(); ++it) 
+		{
+			json::iterator ProjectData = it.value().begin();
+			std::string ProjectPath = ProjectData.value().get<std::string>(); // Directly get string
+			++ProjectData;
+			output.emplace_back(ProjectData.value().get<uint32_t>(), it.key(), ProjectPath);
+		}
+
+		AlreadyOpenedProject.close();
+	}
+
+	static void CreateOpenWindow()
+	{
+		ImVec4 customColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // RGBA
+		ImVec4 previousColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
+		ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = customColor;
+		bool dockSpaceOpen = true;
+		ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+
+		windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
+		windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		ImGui::Begin("OpenWindow", &dockSpaceOpen, windowFlags);
+		ImGui::DockSpace(ImGui::GetID("OpenWindow"), ImVec2(0.0f, 0.0f), dockSpaceFlags);
+		ImGui::End();
+	}
+
+	void EditorApplication::SaveProject()
+	{
+		std::string filepath = Utils::FileDialogs::SaveScene("Cresta Scene (*.cproj)\0*.cproj\0");
+		if (!filepath.empty())
+		{
+			std::ofstream save(filepath);
+			save.close();
+			p_ActiveProjectPath.ProjectFile = filepath.substr(filepath.find_last_of("\\")+1,filepath.length());
+			p_ActiveProjectPath.ProjectFolder = filepath;
+		}
+	}
+
+	void EditorApplication::NewProject()
+	{
+		std::string filepath = Utils::FileDialogs::GetProjectFolder();
+		if (!filepath.empty())
+		{
+			p_ActiveProjectPath.ProjectFile = filepath.substr(filepath.find_last_of("\\") + 1, filepath.length());
+			p_ActiveProjectPath.ProjectFolder = filepath;
+		}
+	}
+
+	void EditorApplication::OpenProject()
+	{
+		std::string filepath = Utils::FileDialogs::OpenProject();
+		if (!filepath.empty())
+		{
+			string strpath = filepath;
+			p_ActiveProjectPath.ProjectFile = strpath.substr(strpath.find_last_of("\\") + 1, strpath.length());
+			p_ActiveProjectPath.ProjectFolder = strpath.substr(0,strpath.find_last_of("\\"));
+
+			std::ifstream IProjectList("assets/Projects.json");
+			json j;
+			IProjectList >> j;
+			IProjectList.close();
+			std::ofstream OProjectList("assets/Projects.json");
+			j[p_ActiveProjectPath.ProjectFile] = {
+				p_ActiveProjectPath.ProjectFolder,
+				std::time(nullptr)
+			};
+			OProjectList << j;
+			OProjectList.close();
+		}
+	}
+
+	std::string EditorApplication::GetProjectFolder()
+	{
+		return Utils::FileDialogs::GetProjectFolder();
+	}
+
+	void EditorApplication::OnEvent(Event& e)
+	{
+		Application::OnEvent(e);
+	}
+
+
+	bool hasCprojFile(const std::string& folderPath) 
+	{
+		if (!fs::exists(folderPath) || !fs::is_directory(folderPath)) 
+		{
+			std::cerr << "Invalid directory: " << folderPath << std::endl;
+			return false;
+		}
+
+		for (const auto& entry : fs::directory_iterator(folderPath)) 
+		{
+			if (entry.is_regular_file() && entry.path().extension() == ".cproj") 
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+
+	void EditorApplication::Run()
+	{
+		std::vector<ProjectList> ProjectList_;
+		ReadProjectsList(ProjectList_);
+
+		RenderCommand::SetViewport(50, 50,400,400);
+		static char ProjectPath[256] = ""; // Make sure it's large enough to hold the path
+		static char ProjectName[256] = ""; // Make sure it's large enough to hold the path
+
+		bool ShowNewProjectWindow = false;
+		while (p_Running)
+		{
+			p_ImGUILayer->Begin();
+			p_Window->Begin();	
+
+			CreateOpenWindow();
+
+			ImGui::Begin("Projects");
+			ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.01,0.5)); // Increase padding
+
+			for (ProjectList& i : ProjectList_)
+			{
+				if (ImGui::Button((i.ProjectName + "\n" + i.ProjectPath).c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 50)))
+				{
+					p_ActiveProjectPath.ProjectFile = i.ProjectName;
+					p_ActiveProjectPath.ProjectFolder = i.ProjectPath;
+					break;
+				}
+			}
+			ImGui::PopStyleVar();
+			ImGui::End();
+
+			ImGui::Begin("Project Options");
+			if (ImGui::Button("New Project", ImVec2(ImGui::GetContentRegionAvail().x, 50)))
+			{
+				ShowNewProjectWindow = true;
+			}
+			if (ImGui::Button("Open Project",ImVec2(ImGui::GetContentRegionAvail().x, 50)))
+			{
+				OpenProject();
+			}
+			ImGui::End();			
+			
+			if (ShowNewProjectWindow)
+			{
+				ImGui::Begin("Browse");
+				ImGui::InputText("Project Name", ProjectName, 50);
+				ImGui::InputText("Project Path", ProjectPath, 50);
+				ImGui::SameLine();
+				if (ImGui::Button("Browse..."))
+				{
+					std::string filepath = GetProjectFolder();
+					strncpy(ProjectPath, filepath.c_str(), sizeof(ProjectPath) - 1); // Copy safely
+					ProjectPath[sizeof(ProjectPath) - 1] = '\0'; // Ensure null termination
+				}
+
+				if (ImGui::Button("Create", ImVec2(ImGui::GetContentRegionAvail().x / 2, 30)))
+				{
+					string strProjectName(ProjectName);
+					string strProjectPath(ProjectPath);
+					bool exits = false;
+					if (!strProjectName.empty() && !strProjectPath.empty())
+					{
+						if (strProjectName.find(" ") != std::string::npos)
+						{
+							ShowToast("Project Name cannot have spaces");
+						}
+						else
+						{
+for (auto& i : ProjectList_)
+{
+    if (i.ProjectPath == strProjectPath)
+    {
+        exits = true;
+    }
+}
+
+if (exits)
+{
+    ShowToast("Project Already Exists");
+    }
+							else
+							{
+								if (hasCprojFile(strProjectPath))
+								{
+									ShowToast("Folder already contains a Cresta project");
+								}
+								else
+								{
+									json j;
+									std::ifstream inFile("assets/Projects.json");
+									if (inFile.is_open() && inFile.peek() != std::ifstream::traits_type::eof()) 
+									{
+										inFile >> j;
+									}
+									inFile.close();
+
+									j[strProjectName] = {
+											strProjectPath,
+											std::time(nullptr)
+										};
+
+									std::ofstream outFile("assets/Projects.json");
+									if (outFile.is_open()) 
+									{
+										outFile << std::setw(4) << j << std::endl; 
+									}
+									outFile.close();
+
+									std::ofstream Create(strProjectPath + "/" + strProjectName + ".cproj");
+									Create.close();
+
+									p_ActiveProjectPath.ProjectFile = strProjectName;
+									p_ActiveProjectPath.ProjectFolder = strProjectPath;
+									ShowNewProjectWindow = false;
+								}
+							}
+						}
+					}
+					else
+					{
+						ShowToast("Project Name or Project Path cannot be Empty");
+					}
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 30)))
+				{
+					ShowNewProjectWindow = false;
+				}
+
+				ImGui::End();
+			}
+			RenderToasts();
+			p_ImGUILayer->End();
+			p_Window->End();
+
+			if (!p_ActiveProjectPath.ProjectFile.empty() && !p_ActiveProjectPath.ProjectFolder.empty())
+			{
+				Application::Run();
+				break;
+			}
+		}
+	}
+}
+
+\end{minted}
+\end{itemize}
+
+\vspace{10em}
 
 \subsection*{4.2. Renderer Abstraction and OpenGL}
 A graphics API (Application Programming Interface) is a set of tools and functions that allows developers to interact with the GPU (Graphics Processing Unit) to render 2D and 3D graphics in applications like games, simulations, or visualization software.
@@ -447,7 +898,6 @@ Cresta Uses OpenGL Cross-platform, widely used, older but still popular Graphics
         \item \textbf{i. Model Loader:}\\
         The Model class is responsible for loading, processing, and rendering 3D models using the Assimp library. It handles complex model structures that may include multiple meshes, textures, and bones required for skeletal animations. Upon loading a model from a file path, it recursively processes the scene hierarchy to extract mesh data, including vertex positions, normals, texture coordinates, and bone weights. It manages bone information throuh a mapping system that assigns unique IDs to each bone, enabling proper animation handling. The class also caches textures to prevent redundant loading and provides functions to render the complete model using a shader. Overall, it serves as a central structure for integrating detailed and animated 3D assets into a rendering engine.
 
-\newpage
 \justifying
 \onehalfspacing
 
@@ -603,54 +1053,106 @@ The final MVP matrix is a combination of these three matrices:
 This matrix is applied to each vertex in the vertex shader to transform the 3D coordinates into 2D screen coordinates.
 \end{enumerate}
 \end{enumerate}
-\begin{minted}[linenos, breaklines=true]{c++}
+\vspace{5em}
+
+\begin{minted}[linenos, breaklines=true, tabsize = 1]{c++}    
+//OpenGLBuffer.hpp
 #pragma once
-#include "Crestaph.hpp"
-#include "Renderer/Camera.hpp"
-#include "Renderer/Shader.hpp"
-#include "Renderer/RendererAPI.hpp"
-#include "Renderer/RendererCommand.hpp"
-#include "Renderer/Model.hpp"
+#include "Renderer/Buffer.hpp"
 
 namespace Cresta 
 {
-	class Renderer
+	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
-		static void Init();
-		static void Shutdown();
-
-		static void OnWindowResize(uint32_t width, uint32_t height);
-
-		static void BeginScene(Camera& camera);
-		
-		static void EndScene();
-		static void Flush();
-		static void DrawSprite(const glm::vec4& color, const Ref<Texture2D>& texture, const glm::mat4& transform, float Mixfactor = 0);
-		static void DrawTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount);
-		static void DrawIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
-		static void DrawIndexed(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer);
-
-		static void DrawGizmoTriangle(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, unsigned int IndicesCount);
-		static void DrawGizmoIndexed(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
-		static void DrawGizmoIndexed(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer);
-
-		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+		OpenGLVertexBuffer(uint32_t size);
+		OpenGLVertexBuffer(void* vertices, uint32_t size);
+		~OpenGLVertexBuffer();
+		void Bind() const override;
+		void Unbind() const override;
+		void SetData(const void* data, uint32_t size) override;
+		const BufferLayout& GetLayout() const override { return m_Layout; }
+		void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
 	private:
-		struct SceneData
-		{
-			glm::vec3 CamerPosition;
-			glm::mat4 ViewProjectionMatrix;
-			glm::mat4 ProjectionMatrix;
-			glm::mat4 ViewMatrix;
-		};
+		uint32_t m_RendererID;
+		BufferLayout m_Layout;
+	};
+	class OpenGLIndexBuffer : public IndexBuffer
+	{
+	public:
+		OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
+		virtual ~OpenGLIndexBuffer();
 
-		static Ref<Shader> sm_SpriteShader;
-		static Ref<VertexArray> sm_SpriteVertexArray;
-		static Scope<SceneData> sm_SceneData;
+		 void Bind() const;
+		 void Unbind() const;
+
+		uint32_t GetCount() const { return m_Count; }
+
+	private:
+		uint32_t m_RendererID;
+		uint32_t m_Count;
 	};
 }
 
+//OpenGLBuffer.cpp
+#include "Crestaph.hpp"
+#include "Platform/OpenGL/OpenGLBuffer.hpp"
+
+#include <glad/glad.h>
+
+namespace Cresta
+{
+	// VertexBuffer
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+	{
+		glGenBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
+	OpenGLVertexBuffer::OpenGLVertexBuffer(void* vertices, uint32_t size)
+	{
+		glGenBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+	}
+	OpenGLVertexBuffer::~OpenGLVertexBuffer()
+	{
+		glDeleteBuffers(1, &m_RendererID);
+	}
+	void OpenGLVertexBuffer::Bind() const
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+	}
+	void OpenGLVertexBuffer::Unbind() const
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
+// IndexBuffer 
+OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
+		: m_Count(count)
+	{
+		glGenBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+	}
+	OpenGLIndexBuffer::~OpenGLIndexBuffer()
+	{
+		glDeleteBuffers(1, &m_RendererID);
+	}
+	void OpenGLIndexBuffer::Bind() const
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+	}
+	void OpenGLIndexBuffer::Unbind() const
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+}
 \end{minted}
 
 \newpage
@@ -675,8 +1177,10 @@ namespace Cresta
    The InstrumentationTimer is a lightweight RAII-based(Resource Acquisition Is Initialization) utility that measures the duration of a scoped code block. When created, it records the start time using a high-resolution clock. Upon destruction—or when Stop() is manually called—it calculates the elapsed time and sends the profiling data (name, duration, thread ID, and start timestamp) to the BenchMarker via WriteProfile(). This allows automatic and precise timing of functions or scopes with minimal code and ensures the data is logged even if the scope exits unexpectedly.
 \end{enumerate}
 
-\begin{minted}[linenos, breaklines=true]{c++}
-#pragma once
+\begin{minted}[linenos, breaklines=true, tabsize = 1]{c++}
+//Profiler.hpp
+
+    #pragma once
 #include "Crestaph.hpp"
 
 namespace Cresta
@@ -754,9 +1258,15 @@ namespace Cresta
 
 			void Stop()
 			{
-				auto endTimepoint = std::chrono::steady_clock::now();
-				auto highResStart = FloatingPointMicroseconds{ m_StartTimepoint.time_since_epoch() };
-				auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
+				auto endTimepoint = 
+                std::chrono::steady_clock::now();
+				auto highResStart = FloatingPointMicroseconds{ 
+                m_StartTimepoint.time_since_epoch() };
+				auto elapsedTime = 
+std::chrono::time_point_cast<std::chrono::microseconds>
+(endTimepoint).time_since_epoch() - 
+std::chrono::time_point_cast<std::chrono::microseconds>
+(m_StartTimepoint).time_since_epoch();
 
 				BenchMarker::Get().WriteProfile({ m_Name, highResStart, elapsedTime, std::this_thread::get_id() });
 
@@ -808,7 +1318,124 @@ namespace Cresta
 #define CRESTA_PROFILE_SCOPE_LINE2(name, line)
 #define CRESTA_PROFILE_FUNCTION()
 #endif
+
+//Profiler.cpp
+#include "Profiler.hpp"
+
+#include <mutex>
+
+namespace Cresta
+{
+	namespace Profiler
+	{
+		BenchMarker* BenchMarker::sm_Instance = nullptr;
+
+		void BenchMarker::BeginSession(const std::string& name, const std::string& filepath)
+		{
+			if (m_CurrentSession)
+			{
+				// If there is already a current session, then close it before beginning new one.
+				// Subsequent profiling output meant for the original session will end up in the
+				// newly opened session instead.  That's better than having badly formatted
+				// profiling output.
+				if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
+				{
+					CRESTA_CORE_INFO("Instrumentor::BeginSession('{0}') when session '{1}' already open.", name, m_CurrentSession->Name);
+				}
+				InternalEndSession();
+			}
+
+			m_OutputStream.open(filepath);
+
+			if (m_OutputStream.is_open())
+			{
+				m_CurrentSession = new InstrumentationSession(name);
+				WriteHeader();
+			}
+			else
+			{
+				if (Log::GetCoreLogger()) // Edge case: BeginSession() might be before Log::Init()
+				{
+					CRESTA_CORE_INFO("Instrumentor could not open results file '{0}'.", filepath);
+				}
+			}
+		}
+
+		void BenchMarker::EndSession()
+		{
+			InternalEndSession();
+		}
+
+		void BenchMarker::WriteProfile(const ProfileResult& result)
+		{
+			std::stringstream json;
+
+			json << std::setprecision(3) << std::fixed;
+			json << ",{";
+			json << "\"cat\":\"function\",";
+			json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
+			json << "\"name\":\"" << result.Name << "\",";
+			json << "\"ph\":\"X\",";
+			json << "\"pid\":0,";
+			json << "\"tid\":" << result.ThreadID << ",";
+			json << "\"ts\":" << result.Start.count();
+			json << "}";
+
+			if (m_CurrentSession)
+			{
+				m_OutputStream << json.str();
+				m_OutputStream.flush();
+			}
+		}
+
+		BenchMarker& BenchMarker::Get()
+		{
+			if (sm_Instance)
+			{
+				return *sm_Instance;
+			}
+			static BenchMarker instance;
+			sm_Instance = &instance;
+			return instance;
+		}
+
+		BenchMarker::BenchMarker()
+		{
+
+		}
+
+		BenchMarker::~BenchMarker()
+		{
+			EndSession();
+		}
+
+		void BenchMarker::WriteHeader()
+		{
+			m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
+			m_OutputStream.flush();
+		}
+
+		void BenchMarker::WriteFooter()
+		{
+			m_OutputStream << "]}";
+			m_OutputStream.flush();
+		}
+
+		void BenchMarker::InternalEndSession()
+		{
+			if (m_CurrentSession)
+			{
+				WriteFooter();
+				m_OutputStream.close();
+				delete m_CurrentSession;
+				m_CurrentSession = nullptr;
+			}
+		}
+	}
+}
+
 \end{minted}
+
 
 \subsection*{4.4. Scene \& ECS}
 
@@ -818,7 +1445,6 @@ namespace Cresta
     The Scene class in Cresta acts as the central manager for all game entities and their behaviors. It encapsulates an entt::registry, which is the backbone of the Entity Component System (ECS) architecture, allowing efficient management of entities and their associated components. The class provides utility functions to create, duplicate, find, and destroy entities using names or UUIDs. It supports physics integration by interfacing with physics-related operations like assigning rigid bodies or colliders. Additionally, it handles scene rendering aspects such as drawing the skybox and serializing scene data to disk.   
 \end{enumerate}
 
-\newpage
 \begin{enumerate}[label={}]
     \item \textbf{II. ECS:} \\
     ECS (Entity-Component-System) is a software architectural pattern commonly used in game engines and simulations to organize complex systems efficiently and flexibly. It breaks down into three core parts:
@@ -844,100 +1470,6 @@ namespace Cresta
     \item \textbf{OnEnd:} called at the End of play mode.
 \end{itemize}
 \end{enumerate}
-    
-\vspace*{5em}
-\begin{minted}[linenos, breaklines=true]{c++}
-#pragma once
-
-#include "Crestaph.hpp"
-#include "ECS/UUID.hpp"
-#include "ECS/Components/Components.hpp"
-
-#include "entt/entt.hpp"
-#include "Renderer/Camera.hpp"
-#include "Renderer/Shader.hpp"
-#include "Renderer/Renderer.hpp"
-#include "Renderer/VertexArray.hpp"
-#include "Renderer/Texture.hpp"
-#include "Renderer/CubeMap/Cubemap.hpp"
-
-namespace Cresta 
-{
-	class Entity;
-	class Physics;
-	class SceneHierarchyPanel;
-	class SceneWrapper;
-
-	class Scene
-	{
-	public:
-		entt::registry m_Registry;
-
-	public:
-		template<typename... Components>
-		auto GetAllEntitiesWith()
-		{
-			return m_Registry.view<Components...>();
-		}
-
-		Scene();
-		~Scene();
-
-		void Save();
-		void Reset();
-		void OnRuntimeStart();
-		void OnRuntimeStop();
-
-		Ref<Entity> DuplicateEntity(const Ref<Entity> OriginalEntity,const std::string& name = std::string());
-		Ref<Entity> CreateEntity(const std::string& name = std::string(),uint64_t ID = -1);
-		Ref<Entity> FindEntityByName(std::string name);
-		Ref<Entity> FindEntityByID(UUID& ID);
-		Ref<Entity> GetPrimaryCameraEntity();
-
-		bool IsRunning() const { return m_Running; }
-		bool IsPaused() const { return m_Paused; }
-		void SetPaused(bool paused) { m_Paused = paused; }
-
-		void FixedUpate();
-		void OnUpdate();
-
-		void DestroyEntity(Ref<Entity> entity);
-		void AddSceneUpdateCallBack(const std::function<void()>& func);
-		void RemoveSceneUpdateCallBack(const std::function<void()>& func);
-
-		static void AssignPhysicsBody(const UUID& entity);
-		static void AddRigidBody(const UUID& entity);
-		static void AddCollider(const UUID& entity, const ColliderShape& shape);
-
-		static void RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID);
-		static void RemoveRigidBody(const UUID& entity);
-		static void RemoveCollider(const UUID& entity);
-
-		void DrawSkyBox();
-		void SerializeScene(const std::filesystem::path& path);
-
-	private:
-		void InvokeSceneUpdateCallBacks();
-
-	private:
-
-		std::unordered_map<UUID, Ref<Entity>> m_EntityMap;
-		std::vector<std::function<void()>> m_SceneUpdateCallBack;
-
-		bool m_Running = false;
-		bool m_Paused = false;
-
-		uint32_t m_ViewportWidth = 0;
-		uint32_t m_ViewportHeight = 0;
-
-		static int sm_Count;
-		CubeMap m_CubeMap;
-		
-		friend class SceneHierarchyPanel;
-		friend class SceneWrapper;
-	};
-}
-\end{minted}
 
 \newpage
 \begin{itemize}[label={}]
@@ -1000,6 +1532,251 @@ namespace Cresta
  \includegraphics[width=0.9\textwidth]{Diagram/Animator.png} \\[2em]
         \vspace{2em}
         \end{itemize}
+
+\begin{minted}[linenos, breaklines=true, tabsize = 1]{c++}
+#pragma once
+#include "Crestaph.hpp"
+#include "Renderer/Camera.hpp"
+#include "Renderer/Model.hpp"
+#include "Renderer/Texture.hpp"
+#include "ECS/UUID.hpp"
+#include "Core/Physics/PhysicsUtils.hpp"
+
+#include <exception>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <Jolt/Physics/Body/BodyID.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+
+namespace Cresta 
+{
+	class Dispatcher
+	{
+	public:		
+		void Subscribe(const std::string& key, std::function<void(bool)> function)
+		{
+			Observers[key] = function;
+		}
+
+		void UnSubscribe(const std::string& key)
+		{
+			Observers.erase(key);
+		}
+
+		void post(bool value) const
+		{
+			for (auto& observer : Observers)
+			{
+				observer.second(value);
+			}
+		}
+
+	private:
+		std::map<std::string, std::function<void(bool)>> Observers;
+	};
+
+	// Helper to check if a class overrides OnStart
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnStart : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnStart <Base, Derived, std::void_t<decltype(&Base::OnStart), decltype(&Derived::OnStart)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnStart), decltype(&Derived::OnStart)>;
+	};
+
+	// Helper to check if a class overrides OnRender
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnRender : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnRender<Base, Derived, std::void_t<decltype(&Base::OnRender), decltype(&Derived::OnRender)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnRender), decltype(&Derived::OnRender)>;
+	};
+
+	// Helper to check if a class overrides OnUpdate
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnUpdate : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnUpdate<Base, Derived, std::void_t<decltype(&Base::OnUpdate), decltype(&Derived::OnUpdate)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnUpdate), decltype(&Derived::OnUpdate)>;
+	};
+
+	// Helper to check if a class overrides OnFixedUpdate
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnFixedUpdate : std::false_type {}; // Defaults to false if OnFixedUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnFixedUpdate<Base, Derived, std::void_t<decltype(&Base::OnFixedUpdate), decltype(&Derived::OnFixedUpdate)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnFixedUpdate), decltype(&Derived::OnFixedUpdate)>;
+	};
+
+	// Helper to check if a class overrides OnEnd
+	template <typename Base, typename Derived, typename = void>
+	struct has_overridden_OnEnd : std::false_type {}; // Defaults to false if OnUpdate doesn't exist
+
+	template <typename Base, typename Derived>
+	struct has_overridden_OnEnd <Base, Derived, std::void_t<decltype(&Base::OnEnd), decltype(&Derived::OnEnd)>> {
+		static constexpr bool value = !std::is_same_v<decltype(&Base::OnEnd), decltype(&Derived::OnEnd)>;
+	};
+
+	class Entity;
+
+	class ComponentTemplate 
+	{
+	public:
+		explicit ComponentTemplate(Entity* entity) : p_Entity(entity) {}
+		virtual ~ComponentTemplate() = default;
+
+		ComponentTemplate(ComponentTemplate&& other) noexcept : p_Entity(std::exchange(other.p_Entity, nullptr)) {}
+		ComponentTemplate& operator=(ComponentTemplate&& other) noexcept {
+			if (this != &other) {
+				p_Entity = std::exchange(other.p_Entity, nullptr);
+			}
+			return *this;
+		}
+
+		virtual void UI() = 0;
+		virtual void OnStart() {}
+		virtual void OnRender() {}
+		virtual void OnUpdate() {}
+		virtual void OnFixedUpdate() {}
+		virtual void OnEnd() {}
+		virtual void OnGizmo() {}
+		virtual void OnComponentAdded() {}
+		virtual void OnComponentRemoved() {}
+		virtual std::string ToString() = 0;
+
+		Entity* GetEntity() { return p_Entity; }
+		const Entity* GetEntity() const { return p_Entity; }
+
+	protected:
+		Entity* p_Entity;
+	};
+
+	class IDComponent
+	{
+	private:
+		UUID m_ID;
+	public:
+		IDComponent()
+		{
+			std::cout << "Default Construct\n";
+		}
+		IDComponent(Entity* entity) 
+		{ 
+		}
+		IDComponent(Entity* entity, uint64_t ID) : m_ID(ID)	
+		{
+		}
+
+		void OnComponentAdded();
+		void OnComponentRemoved();
+
+		inline const UUID& GetUUID() const { 
+			return m_ID; 
+		}
+		std::string ToString()
+		{
+			return "IDComponent";
+		}
+	};
+
+	class TagComponent : public ComponentTemplate
+	{
+	public:
+		std::string Tag;
+		TagComponent(Entity* entity, const std::string& tag) : ComponentTemplate(entity),Tag(tag) {}
+
+		void UI() override {}
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
+		std::string ToString() override
+		{
+			return "Tag Component";
+		}
+	};
+
+	class TransformWrapper;
+
+	class Transform : public ComponentTemplate 
+	{
+	public:
+		Transform(Entity* entity) : ComponentTemplate(entity) {}
+
+		inline void SetPosition(const glm::vec3& Position)		{ m_Translation = Position;	OnValidate.post(false);	}
+		inline void SetScale(const glm::vec3& Scale)			{ m_Scale = Scale;			OnValidate.post(false);	}
+		inline void SetRotation(const glm::quat& rotation)		
+		{
+			m_Rotation = rotation;	
+			this->rotation = glm::degrees(glm::eulerAngles(m_Rotation));
+			
+			OnValidate.post(false);	
+		}
+
+		inline constexpr glm::vec3& GetPosition() const { return *(new glm::vec3(m_Translation)); }
+		inline constexpr glm::quat& GetRotation() const { return *(new glm::quat(m_Rotation));	}
+		inline constexpr glm::vec3& GetScale()	  const { return *(new glm::vec3(m_Scale));		}
+
+		glm::mat4 GetTransform() const
+		{
+			return glm::translate(glm::mat4(1.0f), m_Translation)
+				* glm::toMat4(m_Rotation)
+				* glm::scale(glm::mat4(1.0f), m_Scale);
+		}
+
+		std::string ToString() override { return "Transform Component"; }
+
+		void UI() override;
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
+
+	private:
+		inline void PhysicsSetPosition(const glm::vec3& Position) { m_Translation = Position;	OnValidate.post(true); }
+		inline void PhysicsSetScale(const glm::vec3& Scale) { m_Scale = Scale;			OnValidate.post(true); }
+		inline void PhysicsSetRotation(const glm::quat& rotation)
+		{
+			m_Rotation = rotation;
+			this->rotation = glm::degrees(glm::eulerAngles(m_Rotation));
+
+			OnValidate.post(true);
+		}
+
+	private:
+		glm::vec3 m_Translation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 rotation = { 0.0f,0.0f, 0.0f };
+		glm::quat m_Rotation = { 1.0f, 0.0f, 0.0f, 0.0f };
+		glm::vec3 m_Scale = { 1.0f, 1.0f, 1.0f };
+	public:
+		Dispatcher OnValidate;
+
+		friend class TransformWrapper;
+	};
+
+	class CameraComponent : public ComponentTemplate
+	{
+	public:
+		CameraComponent(Entity* entity) : ComponentTemplate(entity) {}
+
+		Camera Camera;
+		bool Primary = true; // TODO: think about moving to Scene
+		bool FixedAspectRatio = false;
+
+
+		std::string ToString() override
+		{
+			return "Camera Component";
+		}
+
+		void UI() override {}
+		void OnComponentAdded() override;
+		void OnComponentRemoved() override;
+	};
+}   
+\end{minted}
+        
         \item \textbf{VII. Physics}
         \begin{itemize}[label={}]
             \item \textbf{i. Physics Class \& Controller: }
@@ -1014,9 +1791,636 @@ namespace Cresta
 
 \newpage
 
+\begin{minted}[linenos, breaklines=true, tabsize = 1]{c++}
+//Physics.hpp
+#pragma once
+#include "PhysicsController.hpp"
+
+// Member variable to store the initial state
+using namespace JPH;
+using namespace JPH::literals;
+
+namespace Cresta
+{
+	class Scene;
+
+	class Physics
+	{
+	public:
+		static void ClearBodies();
+		static void MakeBodyStatic(const UUID& EntityID);
+		static void CreateBody(const UUID& EntityID);
+
+		static void AddRigidBody(const UUID& EntityID);
+		static void AddCollider(const UUID& EntityID,const ColliderShape& shape);
+		static void SetColliderTrigger(const UUID& EntityID,bool IsTrigger);
+		static void RemoveCollider(const UUID& EntityID);
+		
+		static glm::vec3 GetBodyPosition(const UUID& EntityID);
+		static glm::quat GetBodyRotation(const UUID& EntityID);
+		
+		static void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
+		static void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
+
+		static void SetGravityFactor(const UUID& EntityID, float gravityfactor);
+
+		static void SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& scale);
+		static void SetBodyRadius(const UUID& EntityID, const float radius);
+		static void SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale);
+
+	private:
+		static void Step();
+		static void Start();
+		static void Stop();
+
+	private:
+		static Scope<PhysicsController> sm_PhysicsController;
+		friend class Scene;
+	};
+}
+
+//Physics.cpp
+#include "Physics.hpp"
+#include "Physics.hpp"
+#include <Jolt/Physics/Collision/Shape/ScaledShape.h>
+#include <Jolt/Physics/Body/BodyCreationSettings.h>
+
+namespace Cresta
+{
+	Scope<PhysicsController> Physics::sm_PhysicsController = CreateScope<PhysicsController>();
+
+	void Physics::ClearBodies()
+	{
+		sm_PhysicsController->ClearBodies();
+	}
+
+	void Physics::MakeBodyStatic(const UUID& EntityID)
+	{
+		sm_PhysicsController->MakeBodyStatic(EntityID);
+	}
+
+	void Physics::CreateBody(const UUID& EntityID)
+	{
+		sm_PhysicsController->CreateBody(EntityID);
+	}
+
+	void Physics::AddRigidBody(const UUID& EntityID)
+	{
+		sm_PhysicsController->AddRigidBody(EntityID);
+	}
+
+	void Physics::RemoveCollider(const UUID& EntityID)
+	{
+		sm_PhysicsController->RemoveCollider(EntityID);
+	}
+
+	void Physics::AddCollider(const UUID& EntityID, const ColliderShape& shape)
+	{
+		sm_PhysicsController->AddCollider(EntityID, shape);
+	}
+
+	void Physics::SetColliderTrigger(const UUID& EntityID, bool IsTrigger)
+	{
+		sm_PhysicsController->SetColliderTrigger(EntityID,IsTrigger);
+	}
+
+	void Physics::SetBodyPosition(const UUID& EntityID, const glm::vec3& position)
+	{
+		sm_PhysicsController->SetBodyPosition(EntityID, position);
+	}
+
+	void Physics::SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& scale)
+	{
+		sm_PhysicsController->SetBodyShapeOffset(EntityID, scale);
+	}
+
+	void Physics::SetBodyRadius(const UUID& EntityID, const float radius)
+	{
+		sm_PhysicsController->SetBodyShapeRadius(EntityID, radius);
+	}
+
+	void Physics::SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale)
+	{
+		sm_PhysicsController->SetBodyShapeScale(EntityID, scale);
+	}
+
+	glm::quat Physics::GetBodyRotation(const UUID& EntityID)
+	{
+		return sm_PhysicsController->GetBodyRotation(EntityID);
+	}
+
+	void Physics::SetBodyRotation(const UUID& EntityID, const glm::quat& rotation)
+	{
+		sm_PhysicsController->SetBodyRotation(EntityID, rotation);
+	}
+
+	void Physics::SetGravityFactor(const UUID& EntityID, float gravityfactor)
+	{
+		sm_PhysicsController->SetGravityFactor(EntityID, gravityfactor);
+	}
+
+	glm::vec3 Physics::GetBodyPosition(const UUID& EntityID)
+	{
+		return sm_PhysicsController->GetBodyPosition(EntityID);
+	}
+
+	void Physics::Step()
+	{	
+		sm_PhysicsController->Step();
+	}
+
+	void Physics::Start()
+	{
+		sm_PhysicsController->Start();
+	}
+
+	void Cresta::Physics::Stop()
+	{
+		sm_PhysicsController->Stop();
+	}
+}
+
+//PhysicsController.hpp
+#pragma once
+#include "Crestaph.hpp"
+#include "PhysicsUtils.hpp"
+#include "entt/entt.hpp"
+#include "ECS/UUID.hpp"
+
+#include <Jolt/Physics/StateRecorder.h>
+#include <Jolt/Physics/StateRecorderImpl.h>
+
+
+// Member variable to store the initial state
+using namespace JPH;
+using namespace JPH::literals;
+
+namespace Cresta
+{
+	class Physics;
+
+	class PhysicsController
+	{
+	public:
+		static void TraceImpl(const char* inFMT, ...);
+
+#ifdef JPH_ENABLE_ASSERTS
+		// Callback for asserts, connect this to your own assert handler if you have one
+		static bool AssertFailedImpl(const char* inExpression, const char* inMessage, const char* inFile, uint inLine);
+#endif // JPH_ENABLE_ASSERTS
+
+		PhysicsController();
+		~PhysicsController();
+
+		void ClearBodies();
+
+		void MakeBodyStatic(const UUID& EntityID);
+
+		void RemoveCollider(const UUID& EntityID);
+
+		void AddRigidBody(const UUID& EntityID);
+
+		void CreateBody(const UUID& EntityID);
+		void AddCollider(const UUID& EntityID, const ColliderShape& shape);
+		void SetColliderTrigger(const UUID& EntityID,bool IsTrigger);
+
+		glm::vec3 GetBodyPosition(const UUID& EntityID);
+		glm::quat GetBodyRotation(const UUID& EntityID);
+
+		void SetCapsuleHeightRadius(const UUID& EntityID,float HalfHeight, float Radius);
+
+		void SetBodyPosition(const UUID& EntityID, const glm::vec3& position);
+		void SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& CenterOfMass);
+		void SetBodyShapeRadius(const UUID& EntityID, float radius);
+		void SetBodyRotation(const UUID& EntityID, const glm::quat& rotation);
+		void SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale);
+
+		void SetGravityFactor(const UUID& EntityID, float gravityfactor );
+
+		void Step();
+		void Start();
+		void Stop();
+
+	public:
+		RVec3 position;
+		Vec3 velocity;
+
+	private:
+		void Init();
+
+	private:
+		// Constants for physics simulation
+		static constexpr uint cm_NumBodies = 10240;
+		static constexpr uint cm_NumBodyMutexes = 0; // Auto-detect
+		static constexpr uint cm_MaxBodyPairs = 65536;
+		static constexpr uint cm_MaxContactConstraints = 20480;
+
+		const RVec3 cm_Position = RVec3(0.0_r, 0.0_r, 0.0_r);
+		const RVec3 cm_HalfExtents = RVec3(1.0f, 1.0f, 1.0f);
+
+		const Quat cm_IdentityRotation = Quat::sIdentity();
+
+		const float cm_CapsuleHalfHeight = 1.0f; // Half the distance between the hemispherical ends
+		const float cm_Radius = 0.5f;     // Radius of the capsule
+		const float cm_DeltaTime = 1.0f / 60.0f;
+
+		// Jolt components
+
+		StateRecorderImpl m_InitialStateRecorder;
+
+		Scope<JobSystem> m_JobSystem;
+		Scope<TempAllocator> m_TempAllocator;
+		PhysicsSystem m_PhysicsSystem;
+
+		BodyInterface* m_BodyInterface;
+
+		// Broadphase filters
+		BPLayerInterfaceImpl m_BroadPhaseLayerInterface;
+		ObjectLayerPairFilterImpl m_ObjectVsObjectLayerFilter;
+		ObjectVsBroadPhaseLayerFilterImpl m_ObjectVsBroadPhaseLayerFilter;
+
+		// Entity-to-Body map
+		std::unordered_map<UUID, JPH::BodyID> m_EntityToBody;
+
+		friend class Physics;
+
+		ColliderBodyActivationListener CBAL;
+		ColliderContactListener CCL;
+	};
+}
+
+//PhysicsController.cpp
+#include "PhysicsController.hpp"
+
+#include <Jolt/Physics/Collision/Shape/ScaledShape.h>
+#include <Jolt/Physics/Body/BodyCreationSettings.h>
+#include <Jolt/Physics/Collision/Shape/CompoundShape.h>
+
+#define JOLT
+
+#ifdef JOLT
+namespace Cresta
+{
+	void PhysicsController::TraceImpl(const char* inFMT, ...)
+	{
+		va_list list;
+		va_start(list, inFMT);
+		char buffer[1024];
+		vsnprintf(buffer, sizeof(buffer), inFMT, list);
+		va_end(list);
+		CRESTA_TRACE("{}", buffer);
+	}
+
+#ifdef JPH_ENABLE_ASSERTS
+
+	bool PhysicsController::AssertFailedImpl(const char* inExpression, const char* inMessage, const char* inFile, uint inLine)
+	{
+		// Print to the TTY
+		std::cout << inFile << ":" << inLine << ": (" << inExpression << ") " << (inMessage != nullptr ? inMessage : "") << std::endl;
+
+		// Breakpoint
+		return true;
+	}
+#endif // JPH_ENABLE_ASSERTS
+
+	PhysicsController::PhysicsController()
+	{
+		RegisterDefaultAllocator();
+		Factory::sInstance = new Factory();
+		RegisterTypes();
+
+		m_JobSystem = CreateScope<JobSystemThreadPool>(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
+		m_TempAllocator = CreateScope<TempAllocatorImpl>(32 * 1024 * 1024);
+
+		m_BodyInterface = &m_PhysicsSystem.GetBodyInterface();
+
+		Init();
+	}
+
+	PhysicsController::~PhysicsController()
+	{
+		ClearBodies();
+		delete Factory::sInstance;
+		Factory::sInstance = nullptr;
+		UnregisterTypes();
+	}
+
+	void PhysicsController::Init()
+	{
+		m_PhysicsSystem.Init(
+			cm_NumBodies,
+			cm_NumBodyMutexes,
+			cm_MaxBodyPairs,
+			cm_MaxContactConstraints,
+			m_BroadPhaseLayerInterface,
+			m_ObjectVsBroadPhaseLayerFilter,
+			m_ObjectVsObjectLayerFilter);
+
+		m_PhysicsSystem.SetBodyActivationListener(&CBAL);
+		m_PhysicsSystem.SetContactListener(&CCL);
+	}
+
+	void PhysicsController::MakeBodyStatic(const UUID& EntityID)
+	{
+		m_BodyInterface->SetMotionType(m_EntityToBody[EntityID], EMotionType::Static, EActivation::Activate);
+		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(m_EntityToBody[EntityID]);
+
+		if (Layer == Layers::Colliders)
+		{
+			return;
+		}
+		else if (Layer == Layers::MOVING)
+		{
+			m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::NON_MOVING);
+		}
+	}
+
+	void PhysicsController::RemoveCollider(const UUID& EntityID)
+	{
+		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::NoCollision);
+	}
+
+	void PhysicsController::ClearBodies()
+	{
+		for (auto& entity : m_EntityToBody)
+		{
+			m_BodyInterface->RemoveBody(entity.second);
+		}
+		m_EntityToBody.clear();
+	}
+
+	void PhysicsController::CreateBody(const UUID& EntityID)
+	{
+		if (m_EntityToBody.find(EntityID) != m_EntityToBody.end())
+		{
+			return;
+		}
+		RefConst<Shape> scaled_sphere_shape = /* new ScaledShape( */new SphereShape(1.0f)/*, {1.0f,1.0f,1.0f})*/;
+		BodyCreationSettings settings(scaled_sphere_shape,
+			RVec3(0, 0, 0),
+			Quat::sIdentity(),
+			EMotionType::Static, Layers::NoCollision);
+
+		settings.mAllowDynamicOrKinematic = true;
+
+		m_EntityToBody[EntityID] = m_BodyInterface->CreateAndAddBody(settings, EActivation::Activate);
+	}
+
+	void PhysicsController::AddCollider(const UUID& EntityID, const ColliderShape& shape)
+	{
+		CreateBody(EntityID);
+		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::Colliders);
+
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
+		if (lock.Succeeded())
+		{
+			Body& body = lock.GetBody();
+			switch (shape)
+			{
+			case ColliderShape::BoxCollider:
+				body.SetShapeInternal(new BoxShape(cm_HalfExtents), true);
+				break;
+			case ColliderShape::SphereCollider:
+				body.SetShapeInternal(new SphereShape(10), true);
+				break;
+			case ColliderShape::CapsuleCollider:
+				body.SetShapeInternal(new CapsuleShape(cm_CapsuleHalfHeight, cm_Radius), true);
+				break;
+			}
+			lock.ReleaseLock();
+		}
+	}
+
+	void PhysicsController::SetColliderTrigger(const UUID& EntityID, bool IsTrigger)
+	{
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
+		if (lock.Succeeded())
+		{
+			Body& body = lock.GetBody();
+			body.SetIsSensor(IsTrigger);
+			lock.ReleaseLock();
+		}
+	}
+
+	void PhysicsController::AddRigidBody(const UUID& EntityID)
+	{
+		CreateBody(EntityID);
+		m_BodyInterface->SetMotionType(m_EntityToBody[EntityID], EMotionType::Dynamic, EActivation::Activate);
+
+		ObjectLayer Layer = m_BodyInterface->GetObjectLayer(m_EntityToBody[EntityID]);
+
+		if (Layer == Layers::Colliders)
+		{
+			return;
+		}
+
+		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::MOVING);
+	}
+
+
+	void PhysicsController::SetBodyPosition(const UUID& EntityID, const glm::vec3& position)
+	{
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
+
+		if (lock.Succeeded())
+		{
+			Vec3 Pos({ position.x,position.y,position.z });
+
+			Body& body = lock.GetBody();
+			Vec3 BodyPos = body.GetPosition();
+			Vec3 CenterOfMass = body.GetShape()->GetCenterOfMass();
+
+			if (Pos == BodyPos)
+			{
+				lock.ReleaseLock();
+				return;
+			}
+
+			body.SetPositionAndRotationInternal(Pos,body.GetRotation());
+			lock.ReleaseLock();
+			AABox Box = body.GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
+
+			m_BodyInterface->ActivateBodiesInAABox(
+				Box,
+				m_PhysicsSystem.GetDefaultBroadPhaseLayerFilter(body.GetObjectLayer()),
+				m_PhysicsSystem.GetDefaultLayerFilter(body.GetObjectLayer())
+			);
+		}
+	}
+
+	void PhysicsController::SetBodyShapeOffset(const UUID& EntityID, const glm::vec3& CenterOfMass)
+	{
+
+	}
+
+	void PhysicsController::SetBodyShapeRadius(const UUID& EntityID, float radius)
+	{
+		m_BodyInterface->SetShape(m_EntityToBody[EntityID],new ScaledShape(new SphereShape(1.0f),Vec3(radius, radius, radius)),true,EActivation::Activate);
+	}
+
+	void PhysicsController::SetBodyShapeScale(const UUID& EntityID, const glm::vec3& scale)
+	{
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
+
+		if (lock.Succeeded())
+		{
+			Vec3 Scale({ scale.x,scale.y,scale.z });
+
+			Body& body = lock.GetBody();
+
+			Vec3 BodyScale = body.GetShape()->GetLocalBounds().GetExtent();
+			Vec3 CenterOfMass = body.GetShape()->GetCenterOfMass();
+
+			if (Scale == BodyScale)
+			{
+				lock.ReleaseLock();
+				return;
+			}
+			BodyScale = Scale / BodyScale;
+			Shape::ShapeResult new_shape = body.GetShape()->ScaleShape(BodyScale);
+			if (new_shape.IsValid())
+			{
+				m_PhysicsSystem.GetBodyInterfaceNoLock().SetShape(body.GetID(), new_shape.Get(), true, EActivation::Activate);
+			}
+			lock.ReleaseLock();
+		
+			AABox Box = body.GetShape()->GetLocalBounds().Scaled(Vec3::sReplicate(10.0f));
+
+			m_BodyInterface->ActivateBodiesInAABox(
+				Box,
+				m_PhysicsSystem.GetDefaultBroadPhaseLayerFilter(body.GetObjectLayer()),
+				m_PhysicsSystem.GetDefaultLayerFilter(body.GetObjectLayer())
+			);
+		}
+	}
+
+	void PhysicsController::SetGravityFactor(const UUID& EntityID, float gravityfactor)
+	{
+		m_BodyInterface->SetGravityFactor(m_EntityToBody[EntityID],gravityfactor);
+	}
+
+	glm::quat PhysicsController::GetBodyRotation(const UUID& EntityID)
+	{
+		Quat bodyRotation = m_BodyInterface->GetRotation(m_EntityToBody[EntityID]);
+		return {
+			bodyRotation.GetW(),
+			bodyRotation.GetX(),
+			bodyRotation.GetY(),
+			bodyRotation.GetZ()
+		};
+	}
+
+	void PhysicsController::SetCapsuleHeightRadius(const UUID& EntityID, float HalfHeight, float Radius)
+	{
+		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
+		if (lock.Succeeded())
+		{
+			Body& body = lock.GetBody();
+			body.SetShapeInternal(new CapsuleShape(HalfHeight, Radius), true);
+			lock.ReleaseLock();
+		}
+	}
+
+
+	void PhysicsController::SetBodyRotation(const UUID& EntityID, const glm::quat& v_rotation)
+	{
+		glm::quat rotation = glm::normalize(v_rotation);
+		m_BodyInterface->SetRotation(m_EntityToBody[EntityID], { rotation.x, rotation.y, rotation.z, rotation.w }, EActivation::Activate);
+	}
+
+	glm::vec3 PhysicsController::GetBodyPosition(const UUID& EntityID)
+	{
+		RVec3 bodyPosition = m_BodyInterface->GetCenterOfMassPosition(m_EntityToBody[EntityID]);
+		return {
+			bodyPosition.GetX(),
+			bodyPosition.GetY(),
+			bodyPosition.GetZ()
+		};
+	}
+
+	void PhysicsController::Step()
+	{
+		const int cCollisionSteps = 1;
+		m_PhysicsSystem.OptimizeBroadPhase();
+		m_PhysicsSystem.Update(cm_DeltaTime, cCollisionSteps, m_TempAllocator.get(), m_JobSystem.get());
+	}
+
+	void PhysicsController::Start()
+	{
+		m_InitialStateRecorder.Clear();
+		m_PhysicsSystem.SaveState(m_InitialStateRecorder);
+	}
+
+	void PhysicsController::Stop()
+	{
+		m_PhysicsSystem.RestoreState(m_InitialStateRecorder);
+	}
+}
+
+#endif
+\end{minted}
+\newpage
+\newpage
+\begin{center}
+    \textbf{\LARGE VI. SNAP SHOTS}\\[1cm]
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Diagram/Output1.png}
+    \caption{Main Menu}
+    \label{fig:enter-label1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Diagram/Output8.png}
+    \caption{Project Creation}
+    \label{fig:enter-label2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Diagram/Output2.png}
+    \caption{New Default Scene on Creation}
+    \label{fig:enter-label}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Diagram/Output3.png}
+    \caption{Model Loading}
+    \label{fig:enter-label}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Diagram/Output4.png}
+    \caption{Model Animation}
+    \label{fig:enter-label}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Diagram/Output5.png}
+    \caption{Model Movement With User Scripting}
+    \label{fig:enter-label}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Diagram/Output6.png}
+    \caption{Physics Demo}
+    \label{fig:enter-label}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Diagram/Output7.png}
+    \caption{Large Scale Model Loading}
+    \label{fig:enter-label}
+\end{figure}
+\newpage
+
 \begin{center}
     \textbf{\LARGE VI. REQUIREMENTS}\\
 \end{center}
+
 \begin{enumerate}[label={}]
 \item \textbf{I. Assimp} – The Open Asset Import Library (Assimp) is utilized for importing 3D models in various formats (e.g., .obj, .fbx, .dae). It abstracts the parsing of complex model data including meshes, bones, animations, and materials, enabling consistent internal representation across different asset sources.
 
@@ -1078,23 +2482,15 @@ While the Cresta Game Engine provides a robust foundation for real-time 3D appli
 \begin{itemize}
     \item \textbf{Lack of Advanced Rendering Features:} The current rendering pipeline is limited to forward rendering and lacks support for modern techniques such as deferred shading, screen-space ambient occlusion (SSAO), and physically based rendering (PBR). This restricts the engine’s visual fidelity in high-end applications.
 
-    \item \textbf{No Built-in Physics Engine:} Physics simulation capabilities are currently absent. This means that essential features like rigidbody dynamics, collision response, and constraints must be implemented externally or through future integration with third-party physics engines using JOLT.
-
     \item \textbf{Single-threaded Execution:} Most of the engine subsystems (rendering, logic update, resource loading) are executed on the main thread. This can become a performance bottleneck in scenes with high object counts or complex scripts, limiting scalability and responsiveness.
 
-    \item \textbf{Basic Animation System:} Although skeletal animations are supported through Assimp, there is no dedicated animation blending system or state machine for character animation control. This restricts the flexibility of animating complex models in interactive scenarios.
-
     \item \textbf{Limited Scripting API Exposure:} While Lua is embedded via `sol2`, only a subset of the engine’s functionality is exposed to scripts. This limits the expressiveness and control that scripters have over runtime behavior and engine customization.
-
-    \item \textbf{Editor Constraints:} The editor, built using ImGui, while responsive and lightweight, lacks many quality-of-life features such as prefab management, asset browser integration, undo/redo history, and drag-and-drop functionality. These omissions impact productivity during large-scale development.
 
     \item \textbf{No Networking or Multiplayer Support:} The engine is designed for single-player applications only. There is currently no support for real-time networking, client-server architecture, or multiplayer synchronization mechanisms.
 
     \item \textbf{Inadequate Asset Management System:} Assets are loaded at runtime via absolute or hard-coded paths, without a centralized import pipeline or metadata tracking system. This may lead to redundant resource usage and difficult asset dependency resolution.
 
     \item \textbf{Platform Limitation:} The engine is primarily tested on Windows environments. Although dependencies are cross-platform, the absence of platform abstraction layers for input, filesystem, and windowing reduces portability to Linux and macOS.
-
-    \item \textbf{No Build System for Deployment:} There is no automated packaging or deployment system. Users must manually configure build environments and dependencies, which hinders the ease of distributing games or tools created using the engine.
 \end{itemize}
 
 These limitations provide clear direction for future improvements and feature additions. Addressing them will enhance the engine's viability for both commercial and research-grade applications.
@@ -1146,6 +2542,59 @@ A detailed analysis of the limitations has helped identify areas that require ar
 
 In conclusion, the Cresta Game Engine lays a strong technical groundwork for future innovation in real-time graphics and interactive systems. It serves not only as a learning platform but also as a practical tool that can be expanded into a powerful solution for real-world game development and visualization tasks.
 
+\newpage
+\begin{center}
+    \textbf{\LARGE REFERENCES}\\
+\end{center}
+\begin{thebibliography}{99}
+\addcontentsline{toc}{section}{References}
+
+\bibitem{assimp}
+Assimp – Open Asset Import Library. \textit{https://github.com/assimp/assimp}
+
+\bibitem{entt}
+M. De Gregorio, \textit{entt – Entity Component System (ECS) for C++}. \textit{https://github.com/skypjack/entt}
+
+\bibitem{glad}
+GLAD – Multi-Language GL/GLES/EGL/GLX/WGL Loader Generator. \textit{https://glad.dav1d.de}
+
+\bibitem{glfw}
+GLFW – An Open Source Multi-platform Library for OpenGL, OpenGL ES and Vulkan. \textit{https://www.glfw.org}
+
+\bibitem{glm}
+GLM – OpenGL Mathematics. \textit{https://github.com/g-truc/glm}
+
+\bibitem{imgui}
+O. Cornut, \textit{Dear ImGui}. \textit{https://github.com/ocornut/imgui}
+
+\bibitem{imguizmo}
+Cedric Guillemet, \textit{ImGuizmo – Gizmo for Dear ImGui}. \textit{https://github.com/CedricGuillemet/ImGuizmo}
+
+\bibitem{nlohmann}
+Niels Lohmann, \textit{JSON for Modern C++}. \textit{https://github.com/nlohmann/json}
+
+\bibitem{lua}
+Lua.org, \textit{The Lua Programming Language}. \textit{https://www.lua.org}
+
+\bibitem{sol2}
+ThePhD, \textit{sol2 – A C++ <-> Lua Wrapper}. \textit{https://github.com/ThePhD/sol2}
+
+\bibitem{spdlog}
+Gabi Melman, \textit{spdlog – Fast C++ Logging Library}. \textit{https://github.com/gabime/spdlog}
+
+\bibitem{stb}
+Sean Barrett, \textit{stb\_image – Image Loading Library}. \textit{https://github.com/nothings/stb}
+
+\bibitem{yaml}
+Jbeder, \textit{yaml-cpp – YAML Parser for C++}. \textit{https://github.com/jbeder/yaml-cpp}
+
+\bibitem{opengl}
+Khronos Group, \textit{OpenGL Specification}. \textit{https://www.khronos.org/opengl/}
+
+\bibitem{gameengines}
+Gregory, Jason. \textit{Game Engine Architecture}. A K Peters/CRC Press, 2017.
+
+\end{thebibliography}
 
 
 \end{document}

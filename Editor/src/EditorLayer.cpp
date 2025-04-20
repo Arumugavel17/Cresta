@@ -89,7 +89,7 @@ namespace Editor
         Renderer::BeginScene(*m_EditorCamera);
         {
             m_EditorCamera->OnUpdate();
-            if (!teri)
+            if (!StopEditor)
             {
                 m_Framebuffer->Bind();
             }
@@ -103,7 +103,7 @@ namespace Editor
                 Renderer::DrawTriangle(m_GridShader, m_GridVertexArray, NULL, 6);
 
                 m_EntityID = m_Framebuffer->ReadPixel(1, m_MouseX, m_MouseY);
-                if (!teri)
+                if (!StopEditor)
                 {
                     m_Framebuffer->Unbind();
                 }
@@ -273,9 +273,9 @@ namespace Editor
     {
         CRESTA_PROFILE_FUNCTION();
 
-        if (e.Has(Key::O) && e.GetKeyCount() == 1)
+        if (e.Has(Key::O) && e.Has(Key::F) && e.GetKeyCount() == 2)
         {
-            teri = !teri;
+            StopEditor = !StopEditor;
             RenderCommand::SetViewport(0,0,1920,1080);
             return true;
         }
@@ -445,7 +445,7 @@ namespace Editor
     void EditorLayer::OnImGUIRender()
     {
         CRESTA_PROFILE_FUNCTION();
-        if (!teri)
+        if (!StopEditor)
         {
             CreateDockSpace();
             UI_Toolbar();
@@ -453,12 +453,12 @@ namespace Editor
 
         string RootPath = Application::GetApplication().p_ActiveProjectPath.ProjectFolder.string();
 
-        if (!teri)
+        if (!StopEditor)
         {
             ShowScene();
         }
 
-        if (teri)
+        if (StopEditor)
         {
             return;
         }

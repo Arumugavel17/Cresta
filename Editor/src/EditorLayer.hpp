@@ -80,7 +80,7 @@ namespace Editor
 		Cresta::Ref<Framebuffer> m_Framebuffer;
 		int m_GizmoType = -1;
 
-		bool teri = false;
+		bool StopEditor = false;
 
 		Cresta::Ref<Shader> m_GridShader;
 		Cresta::Ref<VertexArray> m_GridVertexArray;

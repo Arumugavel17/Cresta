@@ -11,7 +11,6 @@
 
 namespace Cresta
 {
-
 	static void BindKeyEnum(sol::state& lua)
 	{
 		sol::table keyTable = lua.create_table();
@@ -215,7 +214,16 @@ namespace Cresta
 			m_Lua.new_usertype<EntityWrapper>(
 				"Entity",
 				sol::constructors<EntityWrapper(Entity*)>(), // Constructor binding
-				"GetTransform", &EntityWrapper::GetTransform
+				"GetTransform", &EntityWrapper::GetTransform,
+				"AttachMeshRenderer", &EntityWrapper::AttachMeshRenderer,
+				"AttachBoxCollider", &EntityWrapper::AttachBoxCollider,
+				"AttachScript", &EntityWrapper::AttachScript
+			);
+
+			m_Lua.new_usertype<MeshRendererWrapper>(
+				"MeshRenderer",
+				sol::constructors<MeshRendererWrapper>(), // Constructor binding
+				"SetPath", &MeshRendererWrapper::SetPath
 			);
 
 			m_Lua.new_usertype<vec3>("vec3",
@@ -281,6 +289,12 @@ namespace Cresta
 			m_Lua["scene"] = &m_SceneWrapper;
 
 			m_Lua.set_function("CreateVec3", CreateVec3);
+			//m_Lua.set_function("", CreateEntity);
+		}
+
+		void CreateEntity(std::string ent_name = "Empty Entity")
+		{
+			
 		}
 
 		void OnRender() override
