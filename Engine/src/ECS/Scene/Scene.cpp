@@ -62,13 +62,24 @@ namespace Cresta
 		return entity;
 	}
 
+	void Scene::DestroyEntity(Entity* entity)
+	{
+		CRESTA_PROFILE_FUNCTION();
+		const UUID& ID = entity->GetUUID();
+		m_EntityMap[ID]->CleanUp();
+		m_Registry.destroy((entt::entity)*entity);
+		m_EntityMap[ID].~shared_ptr();
+		m_EntityMap.erase(ID);
+		InvokeSceneUpdateCallBacks();
+	}
+
 	void Scene::DestroyEntity(Ref<Entity> entity)
 	{
 		CRESTA_PROFILE_FUNCTION();
-		entity->CleanUp();
 		const UUID& ID = entity->GetUUID();
+		m_EntityMap[ID]->CleanUp();
 		m_EntityMap[ID].~shared_ptr();
-		m_Registry.destroy(*entity);
+		m_Registry.destroy((entt::entity)*entity);
 		m_EntityMap.erase(ID);
 		InvokeSceneUpdateCallBacks();
 	}

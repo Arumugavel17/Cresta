@@ -1,12 +1,61 @@
 #pragma once
 #include "Crestaph.hpp"
 #include "PhysicsHeaders.hpp"
+#include "Core/Dispatcher.hpp"
 
 using namespace JPH;
 using namespace JPH::literals;
 
 namespace Cresta
 {
+	enum class CollisionEventType
+	{
+		ContactAdded,
+		ContactPersisted,
+		ContactRemoved
+	};
+
+	class CollisionEvent
+	{
+	public:
+		CollisionEvent(CollisionEventType EventType,const Body& inBody1, const Body& inBody2) : m_Body1(inBody1), m_Body2(inBody2)
+		{
+			m_EventType = EventType;
+		}
+
+		CollisionEventType GetCollisionType()
+		{
+			return m_EventType;
+		}
+
+		CollisionEventType m_EventType;
+		const Body& Body1;
+		const Body& Body2;
+	};
+
+	//class ContactAdded : CollisionEvent
+	//{
+	//public:
+	//	ContactAdded(const Body& inBody1, const Body& inBody2) : CollisionEvent(CollisionEventType::ContactAdded,inBody1,inBody2)
+	//	{
+	//	}
+	//};
+
+	//class ContactPersisted : CollisionEvent
+	//{
+	//	ContactPersisted(const Body& inBody1, const Body& inBody2) : CollisionEvent(CollisionEventType::ContactPersisted, inBody1, inBody2)
+	//	{
+	//	}
+	//};
+
+	//class ContactRemoved : CollisionEvent
+	//{
+	//	ContactRemoved(const Body& inBody1, const Body& inBody2) : CollisionEvent(CollisionEventType::ContactRemoved, inBody1, inBody2)
+	//	{
+	//	}
+	//};
+
+
 	enum class ColliderShape
 	{
 		BoxCollider,
@@ -128,25 +177,30 @@ namespace Cresta
 		virtual ValidateResult	OnContactValidate(const Body& inBody1, const Body& inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override
 		{
 			CRESTA_TRACE("Contact validate callback");
-
+			DispatchEvent(CollisionEventType::ContactAdded, inBody1, inBody2);
 			// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
 			return ValidateResult::AcceptAllContactsForThisBodyPair;
 		}
 
 		virtual void OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 		{
+			DispatchEvent(CollisionEventType::ContactPersisted, inBody1, inBody2);
 			CRESTA_TRACE("A contact was added");
 		}
 
 		virtual void OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 		{
 			CRESTA_TRACE("A contact was persisted");
+			DispatchEvent(CollisionEventType::ContactRemoved, inBody1, inBody2);
 		}
 
 		virtual void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override
 		{
 			CRESTA_TRACE("A contact was removed");
 		}
+
+		void DispatchEvent(CollisionEventType EventType,const Body& inBody1, const Body& inBody2);
+
 	};
 
 	// An example activation listener

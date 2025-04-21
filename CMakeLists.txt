@@ -17,6 +17,8 @@ set(GENERATE_DEBUG_SYMBOLS ON)
 # When turning this option on, the library will override the default CMAKE_CXX_FLAGS_DEBUG/RELEASE values, otherwise they will use the platform defaults
 set(OVERRIDE_CXX_FLAGS ON)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+
 # When turning this option on, the library will be compiled in such a way to attempt to keep the simulation deterministic across platforms
 set(CROSS_PLATFORM_DETERMINISTIC OFF)
 
@@ -172,6 +174,7 @@ target_compile_definitions(Engine PRIVATE
 target_compile_options(Engine PRIVATE "/utf-8")
 
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "Engine")
+
 project(Editor)
 
 file(GLOB_RECURSE ENGINE_SRC_SOURCES ${PROJECT_SOURCE_DIR}/Editor/src/*.cpp)
@@ -191,6 +194,8 @@ add_custom_target(copy_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_SOURCE_DIR} ${ASSETS_DEST_DIR}
     COMMENT "Copying assets to the build directory..."
 )
+
+add_dependencies(Engine copy_assets)
 add_dependencies(Engine copy_assets)
 
 add_custom_target(copy_lua ALL

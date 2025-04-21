@@ -52,6 +52,7 @@ namespace Cresta
 		void FixedUpate();
 		void OnUpdate();
 
+		void DestroyEntity(Entity* entity);
 		void DestroyEntity(Ref<Entity> entity);
 		void AddSceneUpdateCallBack(const std::function<void()>& func);
 		void RemoveSceneUpdateCallBack(const std::function<void()>& func);

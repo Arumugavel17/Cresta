@@ -5,6 +5,7 @@
 #include "Renderer/Texture.hpp"
 #include "ECS/UUID.hpp"
 #include "Core/Physics/PhysicsUtils.hpp"
+#include "Core/Dispatcher.hpp"
 
 #include <exception>
 #include <glm/glm.hpp>
@@ -16,30 +17,6 @@
 
 namespace Cresta 
 {
-	class Dispatcher
-	{
-	public:		
-		void Subscribe(const std::string& key, std::function<void(bool)> function)
-		{
-			Observers[key] = function;
-		}
-
-		void UnSubscribe(const std::string& key)
-		{
-			Observers.erase(key);
-		}
-
-		void post(bool value) const
-		{
-			for (auto& observer : Observers)
-			{
-				observer.second(value);
-			}
-		}
-
-	private:
-		std::map<std::string, std::function<void(bool)>> Observers;
-	};
 
 	// Helper to check if a class overrides OnStart
 	template <typename Base, typename Derived, typename = void>
@@ -180,9 +157,9 @@ namespace Cresta
 			OnValidate.post(false);	
 		}
 
-		inline constexpr glm::vec3& GetPosition() const { return *(new glm::vec3(m_Translation)); }
-		inline constexpr glm::quat& GetRotation() const { return *(new glm::quat(m_Rotation));	}
-		inline constexpr glm::vec3& GetScale()	  const { return *(new glm::vec3(m_Scale));		}
+		inline constexpr glm::vec3 GetPosition() const { return glm::vec3(m_Translation); }
+		inline constexpr glm::quat GetRotation() const { return glm::quat(m_Rotation);	}
+		inline constexpr glm::vec3 GetScale()	 const { return glm::vec3(m_Scale);		}
 
 		glm::mat4 GetTransform() const
 		{

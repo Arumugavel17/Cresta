@@ -4,14 +4,14 @@
 
 namespace Cresta
 {
-	EntityWrapper::EntityWrapper(Entity* entity) : p_Entity(entity)
+	EntityWrapper::EntityWrapper(Entity* entity)
 	{
+		this->p_Entity = entity;
 	}
 
 	TransformWrapper& EntityWrapper::GetTransform()
 	{
-		//std::cout << "[C++] GetTransform() called!" << std::endl;
-		m_TransformWrapper.TransformComponent = &p_Entity->GetComponent<Transform>();
+		m_TransformWrapper.TransformComponent = &this->p_Entity->GetComponent<Transform>();
 		return m_TransformWrapper;
 	}
 
@@ -41,5 +41,12 @@ namespace Cresta
 		EntityWrapper Entity(m_Scene->CreateEntity("EmtityEntity").get());
 
 		return Entity;
+	}
+
+	bool SceneWrapper::DestroyEntity(EntityWrapper entity)
+	{
+		m_Scene = Application::GetApplication().GetActiveScene();
+		m_Scene->DestroyEntity(entity.p_Entity);
+		return false;
 	}
 }

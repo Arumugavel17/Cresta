@@ -13,7 +13,7 @@ namespace Cresta
 		Entity() = default;
 		Entity(entt::entity handle, Scene* scene = nullptr) : m_EntityHandle(handle), m_Scene(scene) 
 		{
-			//std::cout << "Entity Created: " << "\n";
+			std::cout << "Created Entity: " << (uint32_t)this->m_EntityHandle << "\n";
 		}
 		Entity(const Entity& other)
 		{
@@ -21,8 +21,10 @@ namespace Cresta
 			OnUpdateFunctions = other.OnUpdateFunctions;
 			m_EntityHandle = other.m_EntityHandle;
 			m_Scene = other.m_Scene;
+		}
 
-			//std::cout << "Entity Created: " << "\n";
+		~Entity()
+		{
 		}
 
 		void CleanUp()
@@ -77,10 +79,6 @@ namespace Cresta
 						[&](const auto& pair) { return pair.first == typeid(CapsuleCollider).name(); }),
 					OnRenderFunctions.end());
 			}
-		}
-
-		~Entity()
-		{
 		}
 
 		template<typename T, typename... Args>

@@ -9,6 +9,8 @@
 #ifdef JOLT
 namespace Cresta
 {
+	PhysicsController* PhysicsController::sm_Instance = nullptr;
+
 	void PhysicsController::TraceImpl(const char* inFMT, ...)
 	{
 		va_list list;
@@ -33,6 +35,12 @@ namespace Cresta
 
 	PhysicsController::PhysicsController()
 	{
+		if (sm_Instance && sm_Instance != this)
+		{
+			CRESTA_ASSERT("TWO PHYSICS CONTROLLER CANNOT EXIST");
+		}
+		sm_Instance = this;
+
 		RegisterDefaultAllocator();
 		Factory::sInstance = new Factory();
 		RegisterTypes();
@@ -51,6 +59,8 @@ namespace Cresta
 		delete Factory::sInstance;
 		Factory::sInstance = nullptr;
 		UnregisterTypes();
+
+		sm_Instance = nullptr;
 	}
 
 	void PhysicsController::Init()
@@ -95,6 +105,7 @@ namespace Cresta
 			m_BodyInterface->RemoveBody(entity.second);
 		}
 		m_EntityToBody.clear();
+		m_BodyToEntity.clear();
 	}
 
 	void PhysicsController::CreateBody(const UUID& EntityID)
@@ -112,6 +123,7 @@ namespace Cresta
 		settings.mAllowDynamicOrKinematic = true;
 
 		m_EntityToBody[EntityID] = m_BodyInterface->CreateAndAddBody(settings, EActivation::Activate);
+		m_BodyToEntity[m_EntityToBody[EntityID].GetIndexAndSequenceNumber()] = EntityID;
 	}
 
 	void PhysicsController::AddCollider(const UUID& EntityID, const ColliderShape& shape)
@@ -302,6 +314,11 @@ namespace Cresta
 	void PhysicsController::Stop()
 	{
 		m_PhysicsSystem.RestoreState(m_InitialStateRecorder);
+	}
+
+	void PhysicsController::OnCollision(CollisionEvent event)
+	{
+
 	}
 }
 

@@ -198,8 +198,11 @@ namespace Cresta
 	class ScriptComponent : public ComponentTemplate
 	{
 	public:
-		ScriptComponent(Entity* entiy) : ComponentTemplate(entiy), m_ScriptPath(""), m_EntityWrapper(entiy)
+		ScriptComponent(Entity* entiy) : ComponentTemplate(entiy), m_ScriptPath("")
 		{
+			m_EntityWrapper = CreateScope<EntityWrapper>(entiy);
+			m_SceneWrapper =  CreateScope<SceneWrapper>();
+
 			m_Lua.open_libraries(sol::lib::base);
 			m_Lua.set_function("RegisterEntity",  [this](sol::table entityTable) {
 				this->m_ComponentTable = entityTable;
@@ -208,22 +211,30 @@ namespace Cresta
 			m_Lua.new_usertype<SceneWrapper>(
 				"Scene",
 				sol::constructors<SceneWrapper>(), // Constructor binding
-				"CreateEntity", &SceneWrapper::CreateEntity
+				"CreateEntity", &SceneWrapper::CreateEntity,
+				"DestroyEntity", &SceneWrapper::DestroyEntity
 			);
 
 			m_Lua.new_usertype<EntityWrapper>(
 				"Entity",
-				sol::constructors<EntityWrapper(Entity*)>(), // Constructor binding
 				"GetTransform", &EntityWrapper::GetTransform,
 				"AttachMeshRenderer", &EntityWrapper::AttachMeshRenderer,
 				"AttachBoxCollider", &EntityWrapper::AttachBoxCollider,
-				"AttachScript", &EntityWrapper::AttachScript
+				"AttachScript", &EntityWrapper::AttachScript,
+				"PrintHandle", &EntityWrapper::PrintHandle
 			);
 
 			m_Lua.new_usertype<MeshRendererWrapper>(
 				"MeshRenderer",
 				sol::constructors<MeshRendererWrapper>(), // Constructor binding
 				"SetPath", &MeshRendererWrapper::SetPath
+			);
+
+			m_Lua.new_usertype<BoxColliderWrapper>(
+				"BoxColliderWrapper",
+				sol::constructors<BoxColliderWrapper>(), // Constructor binding
+				"SetPath", &BoxColliderWrapper::SetScale,
+				"SetRotation", &BoxColliderWrapper::SetRotation
 			);
 
 			m_Lua.new_usertype<vec3>("vec3",
@@ -285,16 +296,10 @@ namespace Cresta
 				"GetScale",		&TransformWrapper::GetScale
 			);
 
-			m_Lua["thisEntity"] = &m_EntityWrapper;
-			m_Lua["scene"] = &m_SceneWrapper;
+			m_Lua["thisEntity"] = m_EntityWrapper.get();
+			m_Lua["scene"] = m_SceneWrapper.get();
 
 			m_Lua.set_function("CreateVec3", CreateVec3);
-			//m_Lua.set_function("", CreateEntity);
-		}
-
-		void CreateEntity(std::string ent_name = "Empty Entity")
-		{
-			
 		}
 
 		void OnRender() override
@@ -397,6 +402,7 @@ namespace Cresta
 		}
 
 		void UI() override;
+
 	private:
 		std::filesystem::path m_ScriptPath;
 		std::filesystem::file_time_type m_ScriptWriteTime;
@@ -405,7 +411,7 @@ namespace Cresta
 		sol::table m_MethodsTable;
 		sol::table m_ComponentTable;
 
-		SceneWrapper m_SceneWrapper;
-		EntityWrapper m_EntityWrapper;
+		Scope<SceneWrapper> m_SceneWrapper;
+		Scope<EntityWrapper> m_EntityWrapper;
  	};
 }

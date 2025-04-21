@@ -204,61 +204,15 @@ namespace Cresta
 	class SpriteRendererWrapper
 	{
 	public:
-		SpriteRendererWrapper(Entity* entity)
-		{
-			if (!entity)
-			{
-				delete this;
-			}
-			else
-			{
-				m_Entity = entity;
-			}
-		}
-
 		void SetPath(std::string path)
 		{
-			m_Entity->GetComponent<SpriteRenderer>().SetPath(path);
+			//m_Entity->GetComponent<SpriteRenderer>().SetPath(path);
 		}
-
-	private:
-		Entity* m_Entity;
 	};
 
-	class BoxColliderWrapper
-	{
-	public:
-		BoxColliderWrapper(Entity* entity) : m_Entity(nullptr)
-		{
-			if (!entity)
-			{
-				throw std::runtime_error("Invalid Entity passed to Wrapper");
-			}
-			else
-			{
-				m_Entity = entity;
-			}
-		}
-
-		void SetScale(vec3 scale)
-		{
-			m_Entity->GetComponent<BoxCollider>().SetScale(scale);
-		}
-
-		void SetRotation(quat rotation)
-		{
-			m_Entity->GetComponent<BoxCollider>().SetRotation(rotation);
-		}
-
-	private:
-		Entity* m_Entity;
-	};
-	class SphereColliderWrapper;
-	class CapsuleColliderWrapper;
-	class AnimatorWrapper;
-	class ScriptWrapper;
+	class SceneWrapper;
+	class BoxColliderWrapper;
 	class MeshRendererWrapper;
-
 	class EntityWrapper
 	{
 	public:
@@ -267,11 +221,17 @@ namespace Cresta
 		void AttachMeshRenderer();
 		void AttachBoxCollider();
 		void AttachScript(std::string path);
+		void PrintHandle()
+		{
+			std::cout << (uint32_t)*p_Entity << "\n";
+		}
 
 	private:
-		Entity* p_Entity;
+		Entity* p_Entity = nullptr;
 		TransformWrapper m_TransformWrapper;
 
+		friend class SceneWrapper;
+		friend class BoxColliderWrapper;
 		friend class MeshRendererWrapper;
 	};
 
@@ -280,6 +240,7 @@ namespace Cresta
 	public:
 		SceneWrapper();
 		EntityWrapper CreateEntity();
+		bool DestroyEntity(EntityWrapper entity);
 	private:
 		Ref<Scene> m_Scene;
 	};
@@ -298,6 +259,20 @@ namespace Cresta
 			{
 				CRESTA_ASSERT("MeshRenderer Is Not Attached");
 			}
+		}
+	};
+
+	class BoxColliderWrapper
+	{
+	public:
+		void SetScale(EntityWrapper entity, vec3 scale)
+		{
+			entity.p_Entity->GetComponent<BoxCollider>().SetScale(scale);
+		}
+
+		void SetRotation(EntityWrapper entity, quat rotation)
+		{
+			entity.p_Entity->GetComponent<BoxCollider>().SetRotation(rotation);
 		}
 	};
 }

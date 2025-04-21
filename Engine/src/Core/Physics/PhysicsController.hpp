@@ -4,6 +4,7 @@
 #include "entt/entt.hpp"
 #include "ECS/UUID.hpp"
 
+
 #include <Jolt/Physics/StateRecorder.h>
 #include <Jolt/Physics/StateRecorderImpl.h>
 
@@ -58,6 +59,8 @@ namespace Cresta
 		void Start();
 		void Stop();
 
+		void OnCollision(CollisionEvent event);
+
 	public:
 		RVec3 position;
 		Vec3 velocity;
@@ -98,10 +101,16 @@ namespace Cresta
 
 		// Entity-to-Body map
 		std::unordered_map<UUID, JPH::BodyID> m_EntityToBody;
+		// Body-to-Entity map
+		std::unordered_map<uint32, uint64_t> m_BodyToEntity;
 
 		friend class Physics;
 
 		ColliderBodyActivationListener CBAL;
 		ColliderContactListener CCL;
+
+		static PhysicsController* sm_Instance;
+
+		friend class ColliderContactListener;
 	};
 }
