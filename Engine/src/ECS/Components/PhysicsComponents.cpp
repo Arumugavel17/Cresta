@@ -32,7 +32,10 @@ namespace Cresta
 		Scene::AddRigidBody(m_EnityID);
 	}
 
-	BoxCollider::BoxCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) {}
+	BoxCollider::BoxCollider(Entity* entity) : Collider(entity, ColliderShape::BoxCollider) 
+	{
+
+	}
 
 	void BoxCollider::OnComponentAdded()
 	{
@@ -92,6 +95,50 @@ namespace Cresta
 		if (std::abs(collider->m_Scale.x) > 0.1f && std::abs(collider->m_Scale.y) > 0.1f && std::abs(collider->m_Scale.z) > 0.1f)
 		{
 			Physics::SetBodyShapeScale(entity->GetUUID(), collider->m_Scale);
+		}
+	}
+
+	void Collider::CollisionCallBack(CollisionEvent event)
+	{
+		switch (event.GetCollisionType())
+		{
+		case CollisionEventType::ContactAdded:
+			OnCollisionEnter();
+			break;
+		case CollisionEventType::ContactPersisted:
+			OnCollisionPersisted();
+			break;
+		case CollisionEventType::ContactRemoved:
+			OnCollisionExited();
+			break;
+		default:
+			break;
+		}
+	}
+
+	void Collider::OnCollisionEnter()
+	{
+		std::cout << CollisionAdded.size() << "\n";
+
+		for (auto& callback : CollisionAdded)
+		{
+			callback();
+		}
+	}
+
+	void Collider::OnCollisionPersisted()
+	{
+		for (auto& callback : CollisionPersisted)
+		{
+			callback();
+		}
+	}
+
+	void Collider::OnCollisionExited()
+	{
+		for (auto& callback : CollisionExited)
+		{
+			callback();
 		}
 	}
 
@@ -199,4 +246,5 @@ namespace Cresta
 	{
 		Scene::RemoveCollider(p_Entity->GetUUID());
 	}
+
 }

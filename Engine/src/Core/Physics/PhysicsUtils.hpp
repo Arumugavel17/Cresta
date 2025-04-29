@@ -15,13 +15,14 @@ namespace Cresta
 		ContactRemoved
 	};
 
-	class CollisionEvent
+	struct CollisionEvent
 	{
 	public:
-		CollisionEvent(CollisionEventType EventType,const Body& inBody1, const Body& inBody2) : m_Body1(inBody1), m_Body2(inBody2)
+		CollisionEvent(CollisionEventType EventType, const Body& inBody1, const Body& inBody2)
+			: Body1(inBody1), Body2(inBody2), m_EventType(EventType)
 		{
-			m_EventType = EventType;
 		}
+
 
 		CollisionEventType GetCollisionType()
 		{
@@ -176,7 +177,7 @@ namespace Cresta
 		// See: ContactListener
 		virtual ValidateResult	OnContactValidate(const Body& inBody1, const Body& inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override
 		{
-			CRESTA_TRACE("Contact validate callback");
+			//CRESTA_TRACE("Contact validate callback");
 			DispatchEvent(CollisionEventType::ContactAdded, inBody1, inBody2);
 			// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
 			return ValidateResult::AcceptAllContactsForThisBodyPair;
@@ -184,13 +185,13 @@ namespace Cresta
 
 		virtual void OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 		{
+			//CRESTA_TRACE("A contact was added");
 			DispatchEvent(CollisionEventType::ContactPersisted, inBody1, inBody2);
-			CRESTA_TRACE("A contact was added");
 		}
 
 		virtual void OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 		{
-			CRESTA_TRACE("A contact was persisted");
+			//CRESTA_TRACE("A contact was persisted");
 			DispatchEvent(CollisionEventType::ContactRemoved, inBody1, inBody2);
 		}
 

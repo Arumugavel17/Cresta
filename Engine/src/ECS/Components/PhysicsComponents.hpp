@@ -45,7 +45,12 @@ namespace Cresta
 	public:
 
 		ColliderShape m_Shape;
-		Collider(Entity* entity, ColliderShape shape) : ComponentTemplate(entity), m_Shape(shape) {}
+		Collider(Entity* entity, ColliderShape shape) : ComponentTemplate(entity), m_Shape(shape) 
+		{
+			CollisionAdded.clear();
+			CollisionPersisted.clear();
+			CollisionExited.clear();
+		}
 
 		virtual void UI() override {}
 
@@ -62,7 +67,29 @@ namespace Cresta
 
 		static void Revaluate(Entity* entity, ColliderShape shape, bool reflectphysics = false);
 
+		void SubscribeCollisionAdded(std::function<void()> callback) 
+		{ 
+			CollisionAdded.push_back(callback); 
+		}
+		void SubscribeCollisionPersisted(std::function<void()> callback) 
+		{ 
+			CollisionPersisted.push_back(callback); 
+		}
+		void SubscribeCollisionExited(std::function<void()> callback) 
+		{ 
+			CollisionExited.push_back(callback); 
+		}
+
+		void CollisionCallBack(CollisionEvent event);
+		void OnCollisionEnter();
+		void OnCollisionPersisted();
+		void OnCollisionExited();
+
 	protected:
+		std::vector<std::function<void()>> CollisionAdded;
+		std::vector<std::function<void()>> CollisionPersisted;
+		std::vector<std::function<void()>> CollisionExited;
+
 		bool m_IsTrigger = false;
 		
 		glm::quat m_Rotation;

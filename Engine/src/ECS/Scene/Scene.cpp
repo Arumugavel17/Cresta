@@ -1,5 +1,4 @@
 #include "Scene.hpp"
-#include "Scene.hpp"
 #include "Core/Application.hpp"
 #include "Core/Physics/Physics.hpp"
 #include "Renderer/PrimitiveMeshes.hpp"
@@ -10,6 +9,7 @@
 namespace Cresta 
 {
 	int Scene::sm_Count = 0;
+	std::unordered_map<UUID, Ref<Entity>> Scene::m_EntityMap;
 
 	Scene::Scene()
 	{
@@ -99,7 +99,43 @@ namespace Cresta
 	void Scene::AddCollider(const UUID& entity, const ColliderShape& shape)
 	{
 		CRESTA_PROFILE_FUNCTION();
-		Physics::AddCollider(entity, shape);
+		std::function<void(CollisionEvent)> CallBack;
+
+		switch (shape)
+		{
+		case ColliderShape::BoxCollider: {
+			auto& collider = m_EntityMap[entity]->GetComponent<BoxCollider>();
+			CallBack = [&collider](CollisionEvent e) {
+				collider.CollisionCallBack(e);
+				};
+			break;
+		}
+		case ColliderShape::SphereCollider: {
+			auto& collider = m_EntityMap[entity]->GetComponent<SphereCollider>();
+			CallBack = [&collider](CollisionEvent e) {
+				collider.CollisionCallBack(e);
+				};
+			break;
+		}
+		case ColliderShape::CapsuleCollider: {
+			auto& collider = m_EntityMap[entity]->GetComponent<CapsuleCollider>();
+			CallBack = [&collider](CollisionEvent e) {
+				collider.CollisionCallBack(e);
+				};
+			break;
+		}
+		case ColliderShape::MeshCollider: {
+			auto& collider = m_EntityMap[entity]->GetComponent<MeshCollider>();
+			CallBack = [&collider](CollisionEvent e) {
+				collider.CollisionCallBack(e);
+				};
+			break;
+		}
+		default:
+			break;
+		}
+
+		Physics::AddCollider(entity, shape, CallBack);
 	}
 
 	void Scene::RemovePhysicsObject(const UUID& entity, JPH::BodyID& ID)

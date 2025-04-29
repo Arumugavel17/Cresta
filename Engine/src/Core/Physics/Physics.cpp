@@ -32,9 +32,9 @@ namespace Cresta
 		sm_PhysicsController->RemoveCollider(EntityID);
 	}
 
-	void Physics::AddCollider(const UUID& EntityID, const ColliderShape& shape)
+	void Physics::AddCollider(const UUID& EntityID, const ColliderShape& shape, std::function<void(CollisionEvent)> CollisionCallBack)
 	{
-		sm_PhysicsController->AddCollider(EntityID, shape);
+		sm_PhysicsController->AddCollider(EntityID, shape,CollisionCallBack);
 	}
 
 	void Physics::SetColliderTrigger(const UUID& EntityID, bool IsTrigger)

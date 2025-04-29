@@ -39,7 +39,7 @@ namespace Cresta
 		void AddRigidBody(const UUID& EntityID);
 
 		void CreateBody(const UUID& EntityID);
-		void AddCollider(const UUID& EntityID, const ColliderShape& shape);
+		void AddCollider(const UUID& EntityID, const ColliderShape& shape, std::function<void(CollisionEvent)> Callback);
 		void SetColliderTrigger(const UUID& EntityID,bool IsTrigger);
 
 		glm::vec3 GetBodyPosition(const UUID& EntityID);
@@ -100,17 +100,17 @@ namespace Cresta
 		ObjectVsBroadPhaseLayerFilterImpl m_ObjectVsBroadPhaseLayerFilter;
 
 		// Entity-to-Body map
-		std::unordered_map<UUID, JPH::BodyID> m_EntityToBody;
+		std::unordered_map<UUID, BodyID> m_EntityToBody;
 		// Body-to-Entity map
 		std::unordered_map<uint32, uint64_t> m_BodyToEntity;
 
-		friend class Physics;
-
+		std::unordered_map<BodyID, std::function<void(CollisionEvent)>> m_CallBackFunctions;
 		ColliderBodyActivationListener CBAL;
 		ColliderContactListener CCL;
 
 		static PhysicsController* sm_Instance;
 
+		friend class Physics;
 		friend class ColliderContactListener;
 	};
 }

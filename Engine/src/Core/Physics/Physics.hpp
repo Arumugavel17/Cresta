@@ -17,7 +17,7 @@ namespace Cresta
 		static void CreateBody(const UUID& EntityID);
 
 		static void AddRigidBody(const UUID& EntityID);
-		static void AddCollider(const UUID& EntityID,const ColliderShape& shape);
+		static void AddCollider(const UUID& EntityID,const ColliderShape& shape, std::function<void(CollisionEvent)> CollisionCallBack);
 		static void SetColliderTrigger(const UUID& EntityID,bool IsTrigger);
 		static void RemoveCollider(const UUID& EntityID);
 		
