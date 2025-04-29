@@ -338,51 +338,8 @@ namespace Cresta
 			}
 		}
 
-		void CollisionOnEnterCallBack()
-		{
-			if (m_MethodsTable["OnCollisionEnter"].valid())
-			{
-				m_MethodsTable["OnCollisionEnter"](m_ComponentTable);
-			}
-		}
-
-		void CollisionCallBack()
-		{
-			if (m_MethodsTable["OnCollision"].valid())
-			{
-				m_MethodsTable["OnCollision"](m_ComponentTable);
-			}
-		}
-
-		void CollisionOnExitedCallBack()
-		{
-			if (m_MethodsTable["OnCollisionExit"].valid())
-			{
-				m_MethodsTable["OnCollisionExit"](m_ComponentTable);
-			}
-		}
-
 		void OnUpdate()
 		{
-			if (!CollisionCallBackAdded && p_Entity->HasComponent<BoxCollider>())
-			{
-				p_Entity->GetComponent<BoxCollider>().SubscribeCollisionAdded([this]()
-					{
-						this->CollisionOnEnterCallBack();
-					}
-				);
-				p_Entity->GetComponent<BoxCollider>().SubscribeCollisionPersisted([this]()
-					{
-						this->CollisionCallBack();
-					}
-				);
-				p_Entity->GetComponent<BoxCollider>().SubscribeCollisionExited([this]()
-					{
-						this->CollisionOnExitedCallBack();
-					}
-				);
-			}
-
 			if (m_ScriptPath.empty())
 			{
 				return;
@@ -447,9 +404,6 @@ namespace Cresta
 		void UI() override;
 
 	private:
-
-		bool CollisionCallBackAdded = false;
-
 		std::filesystem::path m_ScriptPath;
 		std::filesystem::file_time_type m_ScriptWriteTime;
 

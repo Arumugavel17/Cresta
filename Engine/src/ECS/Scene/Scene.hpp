@@ -73,7 +73,7 @@ namespace Cresta
 
 	private:
 
-		static std::unordered_map<UUID, Ref<Entity>> m_EntityMap;
+		std::unordered_map<UUID, Ref<Entity>> m_EntityMap;
 		std::vector<std::function<void()>> m_SceneUpdateCallBack;
 
 		bool m_Running = false;

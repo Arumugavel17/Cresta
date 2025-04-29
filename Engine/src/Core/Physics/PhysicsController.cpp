@@ -126,11 +126,10 @@ namespace Cresta
 		m_BodyToEntity[m_EntityToBody[EntityID].GetIndexAndSequenceNumber()] = EntityID;
 	}
 
-	void PhysicsController::AddCollider(const UUID& EntityID, const ColliderShape& shape, std::function<void(CollisionEvent)> callback)
+	void PhysicsController::AddCollider(const UUID& EntityID, const ColliderShape& shape)
 	{
 		CreateBody(EntityID);
 		m_BodyInterface->SetObjectLayer(m_EntityToBody[EntityID], Layers::Colliders);
-		m_CallBackFunctions[m_EntityToBody[EntityID]] = callback;
 
 		BodyLockWrite lock(m_PhysicsSystem.GetBodyLockInterface(), m_EntityToBody[EntityID]);
 		if (lock.Succeeded())
@@ -319,14 +318,7 @@ namespace Cresta
 
 	void PhysicsController::OnCollision(CollisionEvent event)
 	{
-		if (m_CallBackFunctions.find(event.Body1.GetID()) != m_CallBackFunctions.end())
-		{
-			m_CallBackFunctions[event.Body1.GetID()](event);
-		}
-		if (m_CallBackFunctions.find(event.Body2.GetID()) != m_CallBackFunctions.end())
-		{
-			m_CallBackFunctions[event.Body2.GetID()](event);
-		}
+
 	}
 }
 
