@@ -18,7 +18,7 @@ namespace Cresta
 	class CollisionEvent
 	{
 	public:
-		CollisionEvent(CollisionEventType EventType,const Body& inBody1, const Body& inBody2) : m_Body1(inBody1), m_Body2(inBody2)
+		CollisionEvent(CollisionEventType EventType,const Body& inBody1, const Body& inBody2) : Body1(inBody1), Body2(inBody2)
 		{
 			m_EventType = EventType;
 		}
